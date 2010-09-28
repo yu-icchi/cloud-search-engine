@@ -44,5 +44,6 @@
 	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/slf4j-jdk14-1.5.5.jar"/>
 	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/wstx-asl-3.2.7.jar"/>
 	<classpathentry kind="lib" path="lib/jsonic-1.2.0/jsonic-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/juniversalchardet-1.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
