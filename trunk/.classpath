@@ -2,5 +2,47 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/jsonic-1.2.0/jsonic-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/jcl-over-slf4j-1.5.5.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/easymock.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/wstx-asl-3.2.7.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/commons-csv-1.0-SNAPSHOT-r609327.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/commons-fileupload-1.2.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/junit-4.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/servlet-api-2.4.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/slf4j-api-1.5.5.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/slf4j-jdk14-1.5.5.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/lucene-core-2.9.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/lucene-misc-2.9.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/lucene-analyzers-2.9.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/lucene-highlighter-2.9.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/lucene-memory-2.9.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/lucene-queries-2.9.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/lucene-snowball-2.9.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-solr-1.4.1/lucene-spellchecker-2.9.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/antlr-3.1.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/avro-1.2.0-dev.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/clhm-production.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/commons-codec-1.2.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/google-collections-1.0.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/hadoop-core-0.20.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/high-scale-lib.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/ivy-2.1.0.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/jackson-core-asl-1.4.0.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/jackson-mapper-asl-1.4.0.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/jline-0.9.94.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/libthrift-r917130.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/slf4j-api-1.5.8.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/slf4j-log4j12-1.5.8.jar"/>
+	<classpathentry kind="lib" path="/Users/yuta/Documents/workspace/cloud-search-engine/lib/apache-cassandra-0.6.2/apache-cassandra-0.6.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
