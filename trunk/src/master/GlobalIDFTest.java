@@ -8,24 +8,25 @@ public class GlobalIDFTest {
 
 	/**
 	 * @param args
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
 
 		GlobalIDF g_idf = new GlobalIDF();
-		//g_idf.setSuperColumn("http://localhost:8983/solr/");
+		//g_idf.set("http://localhost:8983/solr/");
 		//g_idf.set("http://localhost:7574/solr/");
 		//String[] arr = {"ipod", "solr"};
 		//Map<String, Object> map = g_idf.get(arr);
 		//System.out.println(map.get("maxDocs"));
 		//System.out.println(map.get("docFreq"));
 		//System.out.println(map.get("url"));
+
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("ipod");
 		list.add("solr");
 		list.add("electron");
 		list.add("1");
-		list.add("é");
+
 		//Map<String, Map<String, Object>> map = g_idf.multiGet(list);
 		//System.out.println(map);
 		/*
@@ -35,7 +36,7 @@ public class GlobalIDFTest {
 		*/
 		Map<String, Object> obj = g_idf.get(list);
 		System.out.println(obj);
-		//g_idf.getSuperColumn("1");
+		//g_idf.get("solr");
 		//g_idf.delete("http://localhost:8983/solr/");
 		//g_idf.delete("http://localhost:7574/solr/");
 		//g_idf.deleteTerm("MaxDocs");
