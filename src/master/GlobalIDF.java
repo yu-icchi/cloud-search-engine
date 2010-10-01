@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.arnx.jsonic.JSON;
 
@@ -61,24 +63,27 @@ public class GlobalIDF {
 	 * --------------------------------------------------*/
 	@SuppressWarnings("unchecked")
 	public void set(String url) throws Exception {
-		//MaxDocsデータを格納する
-		setMaxDocs(url);
-		//idf値を取得する
-		List<Object> list = docFreq(url + "terms");
-		//List → List<Map<String, String>>
-		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-		Map<String, String> map;
-		for (int i = 0; i < list.size(); i+=2) {
-			map = new HashMap<String, String>();
-			map.put("term", list.get(i).toString());
-			map.put("docFreq", list.get(i + 1).toString());
-			map.put("url", url);
-			data.add(map);
+		//URLのチェック
+		if (urlCheck(url)) {
+			//MaxDocsデータを格納する
+			setMaxDocs(url);
+			//idf値を取得する
+			List<Object> list = docFreq(url + "terms");
+			//List → List<Map<String, String>>
+			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+			Map<String, String> map;
+			for (int i = 0; i < list.size(); i+=2) {
+				map = new HashMap<String, String>();
+				map.put("term", list.get(i).toString());
+				map.put("docFreq", list.get(i + 1).toString());
+				map.put("url", url);
+				data.add(map);
+			}
+			//Cassandraに接続する
+			CassandraClient cc = new CassandraClient(_host, _port);
+			cc.insertDocFreq(data);
+			cc.closeConnection();
 		}
-		//Cassandraに接続する
-		CassandraClient cc = new CassandraClient(_host, _port);
-		cc.insertDocFreq(data);
-		cc.closeConnection();
 	}
 	
 	/**----------------------------------------------------
@@ -101,24 +106,27 @@ public class GlobalIDF {
 	 * --------------------------------------------------*/
 	@SuppressWarnings("rawtypes")
 	public void setSuperColumn(String url) throws Exception {
-		//MaxDocsデータを格納する
-		setMaxDocs(url);
-		//idf値を取得する
-		List list = docFreq(url + "terms");
-		//List → List<Map<String, String>>
-		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-		Map<String, String> map;
-		for (int i = 0; i < list.size(); i+=2) {
-			map = new HashMap<String, String>();
-			map.put("term", list.get(i).toString());
-			map.put("docFreq", list.get(i + 1).toString());
-			map.put("url", url);
-			data.add(map);
+		//URLのチェック
+		if (urlCheck(url)) {
+			//MaxDocsデータを格納する
+			setMaxDocs(url);
+			//idf値を取得する
+			List list = docFreq(url + "terms");
+			//List → List<Map<String, String>>
+			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+			Map<String, String> map;
+			for (int i = 0; i < list.size(); i+=2) {
+				map = new HashMap<String, String>();
+				map.put("term", list.get(i).toString());
+				map.put("docFreq", list.get(i + 1).toString());
+				map.put("url", url);
+				data.add(map);
+			}
+			//Cassandraに接続する
+			CassandraClient cc = new CassandraClient(_host, _port);
+			cc.insertSuperColumn(data);
+			cc.closeConnection();
 		}
-		//Cassandraに接続する
-		CassandraClient cc = new CassandraClient(_host, _port);
-		cc.insertSuperColumn(data);
-		cc.closeConnection();
 	}
 	
 	/**----------------------------------------------------
@@ -357,14 +365,17 @@ public class GlobalIDF {
 	 * --------------------------------------------------*/
 	@SuppressWarnings("rawtypes")
 	public void delete(String url) throws Exception {
-		//idf値を取得する
-		List list = docFreq(url + "terms");
-		for (int i = 0; i < list.size(); i+=2) {
-			//Cassandraのデータベースを削除する
-			CassandraClient cc = new CassandraClient(_host, _port);
-			//一致するタームフィールドを削除する
-			cc.delete(list.get(i).toString(), url);
-			cc.closeConnection();
+		//URLのチェック
+		if (urlCheck(url)) {
+			//idf値を取得する
+			List list = docFreq(url + "terms");
+			for (int i = 0; i < list.size(); i+=2) {
+				//Cassandraのデータベースを削除する
+				CassandraClient cc = new CassandraClient(_host, _port);
+				//一致するタームフィールドを削除する
+				cc.delete(list.get(i).toString(), url);
+				cc.closeConnection();
+			}
 		}
 	}
 	
@@ -385,9 +396,12 @@ public class GlobalIDF {
 	 * @param url (String)MaxDocsの中から指定したURLを削除する
 	 * --------------------------------------------------*/
 	public void deleteMaxDocs(String url) {
-		CassandraClient cc = new CassandraClient(_host, _port);
-		cc.delete("MaxDocs", url);
-		cc.closeConnection();
+		//URLのチェック
+		if (urlCheck(url)) {
+			CassandraClient cc = new CassandraClient(_host, _port);
+			cc.delete("MaxDocs", url);
+			cc.closeConnection();
+		}
 	}
 	
 	/**----------------------------------------------------
@@ -399,12 +413,24 @@ public class GlobalIDF {
 		cc.closeConnection();
 	}
 	
+	/**----------------------------------------------------
+	 * deleteSuperColumnメソッド
+	 * ----------------------------------------------------
+	 * @param key
+	 * @param url
+	 * --------------------------------------------------*/
 	public void deleteSuperColumn(String key, String url) {
-		CassandraClient cc = new CassandraClient(_host, _port);
-		cc.deleteSuperColumn(key, url);
-		cc.closeConnection();
+		//URLのチェック
+		if (urlCheck(url)) {
+			CassandraClient cc = new CassandraClient(_host, _port);
+			cc.deleteSuperColumn(key, url);
+			cc.closeConnection();
+		}
 	}
 	
+	/**
+	 * 未開発
+	 */
 	public void describe() {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.describe();
@@ -425,8 +451,6 @@ public class GlobalIDF {
 	
 	/**----------------------------------------------------
 	 * maxDocsメソッド
-	 * ----------------------------------------------------
-	 *  @param (String) urlを指定する
 	 * --------------------------------------------------*/
 	public static int getMaxDocs() {
 		int maxDocs_number = 0;
@@ -449,11 +473,19 @@ public class GlobalIDF {
 	/**----------------------------------------------------
 	 * urlCheckメソッド
 	 * ----------------------------------------------------
-	 *  @param (String) URLを指定する
+	 *  @param url (String) URLを指定する
 	 *   @return (boolean) True or False
 	 * --------------------------------------------------*/
 	static boolean urlCheck(String url) {
-		return true;
+		//「http://localhost:8983/solr/」or「http://localhost:8983/core0/solr/」のような形にマッチするようになっている
+		final String MATCH_URL = "^https?:\\/\\/[-_.a-zA-Z0-9]+(:[0-9]+)*(\\/[-_a-zA-Z0-9]+)*(\\/solr\\/)$";
+		Pattern pattern = Pattern.compile(MATCH_URL);
+		Matcher match = pattern.matcher(url);
+		if (match.find()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**----------------------------------------------------
