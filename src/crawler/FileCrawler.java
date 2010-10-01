@@ -3,7 +3,6 @@ package crawler;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -30,19 +29,19 @@ public class FileCrawler {
 		ArrayList<String> arr = new ArrayList<String>();
 		listPath(dir, arr);
 		//solrサーバにアクセスする
-		//SolrServer server = new CommonsHttpSolrServer(url);
+		SolrServer server = new CommonsHttpSolrServer(url);
 		for (int i = 0; i < arr.size(); i ++) {
 			String str = readTextFile(arr.get(i));
 			System.out.println(arr.get(i));
 			System.out.println(str);
 			//Solrサーバにインデックスを登録
-			//SolrInputDocument document = new SolrInputDocument();
-			//document.addField("id", arr.get(i));
-			//document.addField("text", str);
-			//server.add(document);
+			SolrInputDocument document = new SolrInputDocument();
+			document.addField("id", arr.get(i));
+			document.addField("text", str);
+			server.add(document);
 		}
 		//コミット
-		//server.commit();
+		server.commit();
 	}
 
 	//-------------------------------------------

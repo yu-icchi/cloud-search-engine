@@ -21,12 +21,27 @@ public class GlobalIDF {
 
 	//Solrサーバのタームフィールドの指定
 	static String _termField = "text";
+	//ホスト名
+	static String _host = "localhost";
+	//ポート番号
+	static int _port = 9160;
 	
 	/**----------------------------------------------------
-	 * コンストラクタ
+	 * コンストラクタ(デフォルト)
 	 * --------------------------------------------------*/
 	public GlobalIDF() {
 		
+	}
+	
+	/**----------------------------------------------------
+	 * コンストラクタ
+	 * ----------------------------------------------------
+	 * @param host (String) ホストを指定する
+	 * @param port (int) ポート番号を指定する
+	 * --------------------------------------------------*/
+	public GlobalIDF(String host, int port) {
+		_host = host;
+		_port = port;
 	}
 	
 	/**----------------------------------------------------
@@ -41,7 +56,7 @@ public class GlobalIDF {
 	/**----------------------------------------------------
 	 * setメソッド(格納)
 	 * ----------------------------------------------------
-	 *  @param (String) URLを指定する
+	 *  @param url (String) URLを指定する
 	 *  @throws Exception
 	 * --------------------------------------------------*/
 	@SuppressWarnings("unchecked")
@@ -49,83 +64,61 @@ public class GlobalIDF {
 		//MaxDocsデータを格納する
 		setMaxDocs(url);
 		//idf値を取得する
-		List list = docFreq(url + "terms");
+		List<Object> list = docFreq(url + "terms");
 		//List → List<Map<String, String>>
-		List<Map<String, String>> data = new ArrayList();
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 		Map<String, String> map;
 		for (int i = 0; i < list.size(); i+=2) {
-			map = new HashMap();
+			map = new HashMap<String, String>();
 			map.put("term", list.get(i).toString());
 			map.put("docFreq", list.get(i + 1).toString());
 			map.put("url", url);
 			data.add(map);
 		}
 		//Cassandraに接続する
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.insertDocFreq(data);
 		cc.closeConnection();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void setSuper(String url) throws Exception {
-		//MaxDocsデータを格納する
-		setMaxDocs(url);
-		//idf値を取得する
-		List list = docFreq(url + "terms");
-		//List → List<Map<String, String>>
-		List<Map<String, String>> data = new ArrayList();
-		Map<String, String> map;
-		for (int i = 0; i < list.size(); i+=2) {
-			map = new HashMap();
-			map.put("term", list.get(i).toString());
-			map.put("docFreq", list.get(i + 1).toString());
-			map.put("url", url);
-			data.add(map);
-		}
-		//Cassandraに接続する
-		CassandraClient cc = new CassandraClient();
-		cc.insertSuperColumn(data);
+	/**----------------------------------------------------
+	 * setMaxDocsメソッド
+	 * ----------------------------------------------------
+	 *  @param  url (String) URLを指定する
+	 *  @throws Exception 
+	 * --------------------------------------------------*/
+	public static void setMaxDocs(String url) throws Exception {
+		CassandraClient cc = new CassandraClient(_host, _port);
+		cc.insertMaxDoc(url, maxDoc(url + "admin/luke"));
 		cc.closeConnection();
 	}
 	
-	@SuppressWarnings("unchecked")
+	/**----------------------------------------------------
+	 * setSuperColumnメソッド
+	 * ----------------------------------------------------
+	 *  @param url (String) URLを指定する
+	 *  @throws Exception
+	 * --------------------------------------------------*/
+	@SuppressWarnings("rawtypes")
 	public void setSuperColumn(String url) throws Exception {
 		//MaxDocsデータを格納する
 		setMaxDocs(url);
 		//idf値を取得する
 		List list = docFreq(url + "terms");
 		//List → List<Map<String, String>>
-		List<Map<String, String>> data = new ArrayList();
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 		Map<String, String> map;
 		for (int i = 0; i < list.size(); i+=2) {
-			map = new HashMap();
+			map = new HashMap<String, String>();
 			map.put("term", list.get(i).toString());
 			map.put("docFreq", list.get(i + 1).toString());
 			map.put("url", url);
 			data.add(map);
 		}
 		//Cassandraに接続する
-		CassandraClient cc = new CassandraClient();
-		cc.insertSuper(data);
+		CassandraClient cc = new CassandraClient(_host, _port);
+		cc.insertSuperColumn(data);
 		cc.closeConnection();
-	}
-	
-	/**----------------------------------------------------
-	 * addメソッド(キーが既に存在しない場合のみ格納)
-	 * ----------------------------------------------------
-	 *  @param (String) URLを指定する
-	 * --------------------------------------------------*/
-	public void add(String url) {
-		
-	}
-	
-	/**----------------------------------------------------
-	 * replaceメソッド(キーが既に存在する場合のみ変更)
-	 * ----------------------------------------------------
-	 *  @param (String) URLを指定する
-	 * --------------------------------------------------*/
-	public void replace(String url) {
-		
 	}
 	
 	/**----------------------------------------------------
@@ -140,7 +133,7 @@ public class GlobalIDF {
 		//MaxDocsの値を取得する
 		int maxDocs_number = getMaxDocs();
 		int docFreq_number = 0;
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		List<Map<String, String>> list = cc.get(term);
 		for (int i = 0; i < list.size(); i++) {
 			for (Map.Entry<String, String> e : list.get(i).entrySet()) {
@@ -172,7 +165,7 @@ public class GlobalIDF {
 		//MaxDocsの値を取得する
 		int maxDocs_number = getMaxDocs();
 		int docFreq_number = 0;
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		for (String str : terms) {
 			List<Map<String, String>> list = cc.get(str);
 			for (int i = 0; i < list.size(); i++) {
@@ -213,7 +206,7 @@ public class GlobalIDF {
 		Map<String, Integer> term = new HashMap<String, Integer>();
 		ArrayList<String> urlList = new ArrayList<String>();
 		//Cassandraに接続する
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		//複数クエリの結果を取得する
 		List<Map<String, String>> list = cc.get(input);
 		//接続を切断する
@@ -259,7 +252,7 @@ public class GlobalIDF {
 		Map<String, Object> map;
 		ArrayList<String> urlList;
 		//Cassandraに接続
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc =new CassandraClient(_host, _port);
 		//複数クエリの結果を取得する
 		List<Map<String, String>> list = cc.get(arr);
 		//接続を切断する
@@ -288,12 +281,13 @@ public class GlobalIDF {
 		return result;
 	}
 	
-	/**
-	 * 
-	 * @param keys
-	 */
+	/**---------------------------------------------------
+	 * getSuperColumnメソッド
+	 * ---------------------------------------------------
+	 * @param key (String) キーを指定する
+	 * --------------------------------------------------*/
 	public void getSuperColumn(String key) {
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.getSuperColumn(key);
 		cc.closeConnection();
 	}
@@ -307,7 +301,7 @@ public class GlobalIDF {
 	public int getDocFreq(String term) {
 		int docFreq_number = 0;
 		//Cassandra接続する
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		List<Map<String, String>> list = cc.get(term);
 		for (int i = 0; i < list.size(); i++) {
 			for (Map.Entry<String, String> e : list.get(i).entrySet()) {
@@ -330,7 +324,7 @@ public class GlobalIDF {
 	 * --------------------------------------------------*/
 	public List<String> getURL(String term) {
 		List<String> urlList = new ArrayList<String>();
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		List<Map<String, String>> list = cc.get(term);
 		for (int i = 0; i < list.size(); i++) {
 			for (Map.Entry<String, String> e : list.get(i).entrySet()) {
@@ -350,7 +344,7 @@ public class GlobalIDF {
 	 *  @return
 	 * --------------------------------------------------*/
 	public ArrayList<String> terms() {
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		ArrayList<String> list = cc.terms();
 		cc.closeConnection();
 		return list;
@@ -361,13 +355,13 @@ public class GlobalIDF {
 	 * ----------------------------------------------------
 	 *  @param (String) URLを指定する
 	 * --------------------------------------------------*/
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void delete(String url) throws Exception {
 		//idf値を取得する
 		List list = docFreq(url + "terms");
 		for (int i = 0; i < list.size(); i+=2) {
 			//Cassandraのデータベースを削除する
-			CassandraClient cc = new CassandraClient();
+			CassandraClient cc = new CassandraClient(_host, _port);
 			//一致するタームフィールドを削除する
 			cc.delete(list.get(i).toString(), url);
 			cc.closeConnection();
@@ -380,8 +374,19 @@ public class GlobalIDF {
 	 *  @param (String) Termを指定する
 	 * --------------------------------------------------*/
 	public void deleteTerm(String term) {
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.delete(term);
+		cc.closeConnection();
+	}
+	
+	/**----------------------------------------------------
+	 * deleteMaxDocsメソッド
+	 * ----------------------------------------------------
+	 * @param url (String)MaxDocsの中から指定したURLを削除する
+	 * --------------------------------------------------*/
+	public void deleteMaxDocs(String url) {
+		CassandraClient cc = new CassandraClient(_host, _port);
+		cc.delete("MaxDocs", url);
 		cc.closeConnection();
 	}
 	
@@ -389,19 +394,19 @@ public class GlobalIDF {
 	 * deleteSuperColumnメソッド
 	 * --------------------------------------------------*/
 	public void deleteSuperColumn() {
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.deleteSuperColumn();
 		cc.closeConnection();
 	}
 	
 	public void deleteSuperColumn(String key, String url) {
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.deleteSuperColumn(key, url);
 		cc.closeConnection();
 	}
 	
 	public void describe() {
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.describe();
 		cc.closeConnection();
 	}
@@ -413,7 +418,7 @@ public class GlobalIDF {
 	 * @param end
 	 * --------------------------------------------------*/
 	public void search(String start, String end) {
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.search(start, end);
 		cc.closeConnection();
 	}
@@ -425,7 +430,7 @@ public class GlobalIDF {
 	 * --------------------------------------------------*/
 	public static int getMaxDocs() {
 		int maxDocs_number = 0;
-		CassandraClient cc = new CassandraClient();
+		CassandraClient cc = new CassandraClient(_host, _port);
 		//cc.insertMaxDoc(url, maxDoc(url + "admin/luke"));
 		List<Map<String, String>> list = cc.getMaxDocs();
 		for (int i = 0; i < list.size(); i++) {
@@ -440,19 +445,6 @@ public class GlobalIDF {
 		cc.closeConnection();
 		return maxDocs_number;
 	}
-	
-	/**----------------------------------------------------
-	 * setMaxDocsメソッド
-	 * ----------------------------------------------------
-	 *  @param (String) urlを指定する
-	 *  @throws Exception 
-	 * --------------------------------------------------*/
-	public static void setMaxDocs(String url) throws Exception {
-		CassandraClient cc = new CassandraClient();
-		cc.insertMaxDoc(url, maxDoc(url + "admin/luke"));
-		cc.closeConnection();
-	}
-	
 	
 	/**----------------------------------------------------
 	 * urlCheckメソッド
@@ -471,7 +463,7 @@ public class GlobalIDF {
 	 *  @return (List) List< Map<String, String, String> >
 	 *  @throws Exception
 	 * --------------------------------------------------*/
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	static List docFreq(String url) throws Exception {
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL(url);
@@ -498,7 +490,7 @@ public class GlobalIDF {
 	 *  @return (String) maxDoc値を返す
 	 *  @throws Exception
 	 * --------------------------------------------------*/
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	static String maxDoc(String url) throws Exception {
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL(url);

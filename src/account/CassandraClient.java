@@ -1,7 +1,7 @@
 //---------------------------------------------------------
-//CassandraClientクラス(GlobalIDF用)
+//CassandraClientクラス
 //---------------------------------------------------------
-package master;
+package account;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,21 +37,26 @@ public class CassandraClient {
 	static final String TERM = "term";
 	static TTransport transport = null;
 	static Cassandra.Client client = null;
-	static String host;
-	static int port;
+	static String host = "localhost";
+	static int port = 9160;
 	
 	/**----------------------------------------------------
-	 * コンストラクタ(引数あり)
+	 * コンストラクタ
+	 * --------------------------------------------------*/
+	public CassandraClient() {
+		//接続する
+		client = openConnection();
+	}
+	
+	/**----------------------------------------------------
+	 * コンストラクタ(HOSTとPORTを指定する)
 	 * ----------------------------------------------------
-	 * @param _host
-	 * @param _port
+	 *  @param _host (String)ホストの指定
+	 *  @param _port (int)ポート番号の指定
 	 * --------------------------------------------------*/
 	public CassandraClient(String _host, int _port) {
-		//ホスト名の指定
 		host = _host;
-		//ポート番号の指定
 		port = _port;
-		//接続する
 		client = openConnection();
 	}
 	
@@ -169,12 +174,39 @@ public class CassandraClient {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param data
+	 */
+	public void insertSuperColumn(List<Map<String, String>> data) {
+		try {
+			long timestamp = System.currentTimeMillis();
+			for (int i = 0; i < data.size(); i++) {
+				String term = data.get(i).get("term");
+				String doc = data.get(i).get("docFreq");
+				String url = data.get(i).get("url");
+				Map<String, Map<String, List<Mutation>>> mutationMap = new HashMap<String, Map<String, List<Mutation>>>();
+				Map<String, List<Mutation>> columnFamilyMap = new HashMap<String, List<Mutation>>();
+				List<Mutation> mutations = new ArrayList<Mutation>();
+				SuperColumn superColumn = new SuperColumn();
+				superColumn.setName(term.getBytes("utf-8"));
+				superColumn.addToColumns(new Column(url.getBytes("utf-8"), doc.getBytes("utf-8"), timestamp));
+				mutations.add(new Mutation().setColumn_or_supercolumn(new ColumnOrSuperColumn().setSuper_column(superColumn)));
+				columnFamilyMap.put(SUPER_COLUMN, mutations);
+				mutationMap.put(TERM, columnFamilyMap);
+				client.batch_mutate(KEYSPACE, mutationMap, ConsistencyLevel.ONE);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**----------------------------------------------------
-	 * insertSuperColumnメソッド
+	 * insertSuperメソッド
 	 * ----------------------------------------------------
 	 *  @param data
 	 * --------------------------------------------------*/
-	public void insertSuperColumn(List<Map<String, String>> data) {
+	public void insertSuper(List<Map<String, String>> data) {
 		try {
 			//格納用のデータ構造
 			Map<String, Map<String, List<Mutation>>> mutationMap = new HashMap<String, Map<String, List<Mutation>>>();
@@ -195,16 +227,15 @@ public class CassandraClient {
 		}
 	}
 	
-	/**----------------------------------------------------
-	 * addMutationSuperColumn関数
-	 * ----------------------------------------------------
+	/**
+	 * 
 	 * @param map
 	 * @param columnFamily
 	 * @param superName
 	 * @param name
 	 * @param value
 	 * @param timestamp
-	 * --------------------------------------------------*/
+	 */
 	static void addMutationSuperColumn(Map<String, List<Mutation>> map, String columnFamily, byte[] superName, byte[] name, byte[] value, long timestamp) {
 		Column column = new Column(name, value, timestamp);
 		SuperColumn superColumn = new SuperColumn().setName(superName);
@@ -504,13 +535,6 @@ public class CassandraClient {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param map
-	 * @param columnFamily
-	 * @param superName
-	 * @param timestamp
-	 */
 	static void addDeletionSuperColumn(Map<String, List<Mutation>> map, String columnFamily, byte[] superName, long timestamp) {
 		Deletion deletion = new Deletion(timestamp).setSuper_column(superName);
 		Mutation mutation = new Mutation().setDeletion(deletion);
@@ -522,9 +546,6 @@ public class CassandraClient {
 		list.add(mutation);
 	}
 	
-	/**
-	 * 
-	 */
 	public void describe() {
 		try {
 			Set<String> set = client.describe_keyspaces();
