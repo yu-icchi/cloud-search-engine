@@ -308,6 +308,7 @@ public class CassandraClient {
 	 * getメソッド(入力Termが複数の場合)
 	 * ----------------------------------------------------
 	 *  @param keys 複数のTerm入力
+	 *  @return
 	 * --------------------------------------------------*/
 	public List<Map<String, String>> get(ArrayList<String> keys) {
 		try {
@@ -351,27 +352,76 @@ public class CassandraClient {
 	/**----------------------------------------------------
 	 * getSuperColumnメソッド
 	 * ----------------------------------------------------
-	 *  @param keys 複数のTerm入力
+	 *  @param key 複数のTerm入力
+	 *  @return (List<Map<String, String>>) Listを返す
 	 * --------------------------------------------------*/
-	public void getSuperColumn(String key) {
+	public List<Map<String, String>> getSuperColumn(String key) {
 		try {
+			//カラムの取得範囲を全部にする
 			SlicePredicate slicePredicate = new SlicePredicate();
 			SliceRange sliceRange = new SliceRange();
 			sliceRange.setStart(new byte[0]);
 			sliceRange.setFinish(new byte[0]);
 			slicePredicate.setSlice_range(sliceRange);
+			//スーパーカラムを指定する
 			ColumnParent columnParent = new ColumnParent(SUPER_COLUMN);
+			//探しているスーパーカラム名を指定する
 			columnParent.setSuper_column(key.getBytes("utf-8"));
-			List<ColumnOrSuperColumn> list = client.get_slice(KEYSPACE, TERM, columnParent, slicePredicate, ConsistencyLevel.ONE);
-			for (ColumnOrSuperColumn cosc : list) {
-				Column column = cosc.getColumn();
-				String name = new String(column.getName(), "utf-8");
-				String value = new String(column.getValue(), "utf-8");
-				System.out.println(name + ":" + value);
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, TERM, columnParent, slicePredicate, ConsistencyLevel.ONE);
+			//結果を出力する変数
+			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+			for (ColumnOrSuperColumn c : results) {
+				if (c.getColumn() != null) {
+					String name = new String(c.getColumn().getName(), "utf-8");
+					String value = new String(c.getColumn().getValue(), "utf-8");
+					Map<String, String> map = new HashMap<String, String>();
+					map.put("url", name);
+					map.put("docFreq", value);
+					list.add(map);
+				}
 			}
+			return list;
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+	
+	/**----------------------------------------------------
+	 * getSuperColumnメソッド(入力Termが複数の場合)
+	 * ----------------------------------------------------
+	 *  @param keys 複数のTerm入力
+	 *  @return 
+	 * --------------------------------------------------*/
+	public List<Map<String, String>> getSuperColumn(ArrayList<String> keys) {
+		try {
+			ColumnParent columnParent = new ColumnParent(SUPER_COLUMN);
+			SlicePredicate slicePredicate = new SlicePredicate();
+			for (String str : keys) {
+				slicePredicate.addToColumn_names(str.getBytes("utf-8"));
+			}
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, TERM, columnParent, slicePredicate, ConsistencyLevel.ONE);
+			//結果を出力する変数
+			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+			for (ColumnOrSuperColumn cs : results) {
+				SuperColumn superColumn = cs.getSuper_column();
+				String key = new String(superColumn.getName(), "utf-8");
+				List<Column> column = superColumn.getColumns();
+				for (Column c : column) {
+					String name = new String(c.getName(), "utf-8");
+					String value = new String(c.getValue(), "utf-8");
+					Map<String, String> map = new HashMap<String, String>();
+					map.put("url", name);
+					map.put("docFreq", value);
+					map.put("key", key);
+					list.add(map);
+				}
+			}
+			return list;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	/**----------------------------------------------------
@@ -438,6 +488,24 @@ public class CassandraClient {
 	}
 	
 	/**----------------------------------------------------
+	 * termsLengthメソッド
+	 * ----------------------------------------------------
+	 * @return
+	 * --------------------------------------------------*/
+	public int termsLength() {
+		try {
+			//スーパーカラムを指定する
+			ColumnParent columnParent = new ColumnParent(SUPER_COLUMN);
+			//登録しているターム数を調べる
+			int count = client.get_count(KEYSPACE, TERM, columnParent, ConsistencyLevel.ONE);
+			return count;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	/**----------------------------------------------------
 	 * deleteメソッド
 	 * ----------------------------------------------------
 	 *  @param (String) keyを指定する
@@ -474,7 +542,7 @@ public class CassandraClient {
 	/**----------------------------------------------------
 	 * deleteSuperColumnメソッド(このメソッドの場合だと、term全て削除する)
 	 * --------------------------------------------------*/
-	public void deleteSuperColumn() {
+	public void deleteSuperColumnAll() {
 		try {
 			ColumnPath columnPath = new ColumnPath(SUPER_COLUMN);
 			client.remove(KEYSPACE, TERM, columnPath, System.currentTimeMillis(), ConsistencyLevel.ALL);

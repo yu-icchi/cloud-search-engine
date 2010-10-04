@@ -28,11 +28,15 @@ public class GlobalIDFTest {
 		//-------------------------------------------------
 		//getメソッド
 		//-------------------------------------------------
+		
+		//g_idf.queryParser("(solr AND ipod)");
+		
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("ipod");
 		list.add("solr");
 		list.add("electron");
 		list.add("1");
+		
 		Map<String, Object> obj = g_idf.get(list);
 		System.out.println(obj);
 		
@@ -40,7 +44,8 @@ public class GlobalIDFTest {
 		
 		//System.out.println(GlobalIDF.getMaxDocs());
 		
-		g_idf.getSuperColumn("electron");
+		g_idf.getSuperColumn("solr");
+		g_idf.getSuperColumn(list);
 		
 		//-------------------------------------------------
 		//deleteメソッド
@@ -52,13 +57,15 @@ public class GlobalIDFTest {
 		
 		//g_idf.deleteMaxDocs("http://localhost:8983/solr/");
 		
-		//g_idf.deleteSuperColumn();
+		//g_idf.deleteSuperColumnAll();
 		
 		
 		//-------------------------------------------------
 		//otherメソッド
 		//-------------------------------------------------
 		//System.out.println(g_idf.terms());
+		
+		//System.out.println(g_idf.termsLength());
 		
 		//g_idf.search("apach", "base");
 		
