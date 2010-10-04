@@ -15,7 +15,7 @@ import location.GlobalIDF;
 //分散検索するために、トップレベルサーバに問い合わせをするプログラム
 //-----------------------------------------------
 public class ShardsSolrApp {
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static void main(String[] args) throws Exception {
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL("http://localhost:8983/solr/select");
