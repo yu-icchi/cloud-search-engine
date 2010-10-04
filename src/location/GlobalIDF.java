@@ -27,6 +27,9 @@ public class GlobalIDF {
 	static String _host = "localhost";
 	//ポート番号
 	static int _port = 9160;
+	//クエリ
+	static String _query;
+	
 	
 	/**----------------------------------------------------
 	 * コンストラクタ(デフォルト)
@@ -53,6 +56,15 @@ public class GlobalIDF {
 	 * --------------------------------------------------*/
 	public static void termField(String field) {
 		_termField = field;
+	}
+	
+	/**----------------------------------------------------
+	 * queryParserメソッド (未完成)
+	 * ----------------------------------------------------
+	 * @param query
+	 * --------------------------------------------------*/
+	public void queryParser(String query) {
+		
 	}
 	
 	/**----------------------------------------------------
@@ -290,13 +302,26 @@ public class GlobalIDF {
 	}
 	
 	/**---------------------------------------------------
-	 * getSuperColumnメソッド
+	 * getSuperColumnメソッド (未完成)
 	 * ---------------------------------------------------
-	 * @param key (String) キーを指定する
+	 *  @param key (String) キーを指定する
+	 *  @return
 	 * --------------------------------------------------*/
 	public void getSuperColumn(String key) {
 		CassandraClient cc = new CassandraClient(_host, _port);
-		cc.getSuperColumn(key);
+		System.out.println(cc.getSuperColumn(key));
+		cc.closeConnection();
+	}
+	
+	/**----------------------------------------------------
+	 * getSuperColumnメソッド(ArrayList版) (未完成)
+	 * ----------------------------------------------------
+	 *  @param keys
+	 *  @return 
+	 * --------------------------------------------------*/
+	public void getSuperColumn(ArrayList<String> keys) {
+		CassandraClient cc = new CassandraClient(_host, _port);
+		System.out.println(cc.getSuperColumn(keys));
 		cc.closeConnection();
 	}
 	
@@ -358,6 +383,13 @@ public class GlobalIDF {
 		return list;
 	}
 	
+	public int termsLength() {
+		CassandraClient cc = new CassandraClient(_host, _port);
+		int length = cc.termsLength();
+		cc.closeConnection();
+		return length;
+	}
+	
 	/**----------------------------------------------------
 	 * deleteメソッド(削除)
 	 * ----------------------------------------------------
@@ -407,9 +439,9 @@ public class GlobalIDF {
 	/**----------------------------------------------------
 	 * deleteSuperColumnメソッド
 	 * --------------------------------------------------*/
-	public void deleteSuperColumn() {
+	public void deleteSuperColumnAll() {
 		CassandraClient cc = new CassandraClient(_host, _port);
-		cc.deleteSuperColumn();
+		cc.deleteSuperColumnAll();
 		cc.closeConnection();
 	}
 	
