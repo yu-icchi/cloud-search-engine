@@ -488,15 +488,22 @@ public class GlobalIDF {
 	/**----------------------------------------------------
 	 * deleteSuperColumnメソッド
 	 * ----------------------------------------------------
-	 * @param key
 	 * @param url
+	 * @throws Exception
 	 * --------------------------------------------------*/
-	public void deleteSuperColumn(String key, String url) {
+	@SuppressWarnings("rawtypes")
+	public void deleteSuperColumn(String url) throws Exception {
 		//URLのチェック
 		if (urlCheck(url)) {
-			CassandraClient cc = new CassandraClient(_host, _port);
-			cc.deleteSuperColumn(key, url);
-			cc.closeConnection();
+			//idf値を取得する
+			List list = docFreq(url + "terms");
+			for (int i = 0; i < list.size(); i+=2) {
+				//Cassandraのデータベースを削除する
+				CassandraClient cc = new CassandraClient(_host, _port);
+				//一致するタームフィールドを削除する
+				cc.deleteSuperColumn(list.get(i).toString(), url);
+				cc.closeConnection();
+			}
 		}
 	}
 	

@@ -540,31 +540,31 @@ public class CassandraClient {
 	}
 	
 	/**----------------------------------------------------
+	 * deleteSuperColumnメソッド
+	 * ----------------------------------------------------
+	 * @param term (String) 削除するスーパーカラム名を指定する
+	 * @param url (String) カラムの一部分を削除する
+	 * --------------------------------------------------*/
+	public void deleteSuperColumn(String term, String url) {
+		try {
+			//ColumnPathの作成
+			ColumnPath deletePath = new ColumnPath(SUPER_COLUMN);
+			deletePath.setSuper_column(term.getBytes("utf-8"));
+			deletePath.setColumn(url.getBytes("utf-8"));
+			//レコードを削除する
+			client.remove(KEYSPACE, TERM, deletePath, System.currentTimeMillis(), ConsistencyLevel.ALL);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**----------------------------------------------------
 	 * deleteSuperColumnメソッド(このメソッドの場合だと、term全て削除する)
 	 * --------------------------------------------------*/
 	public void deleteSuperColumnAll() {
 		try {
 			ColumnPath columnPath = new ColumnPath(SUPER_COLUMN);
 			client.remove(KEYSPACE, TERM, columnPath, System.currentTimeMillis(), ConsistencyLevel.ALL);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * deleteSuperColumnメソッド(未完成)
-	 * 一致するURL部分のものだけを削除する
-	 * @param key
-	 * @param url
-	 */
-	public void deleteSuperColumn(String key, String url) {
-		try {
-			Map<String, Map<String, List<Mutation>>> mutationMap = new HashMap<String, Map<String, List<Mutation>>>();
-			long timestamp = System.currentTimeMillis();
-			Map<String, List<Mutation>> colMap = new HashMap<String, List<Mutation>>();
-			addDeletionSuperColumn(colMap, SUPER_COLUMN, url.getBytes("utf-8"), timestamp);
-			mutationMap.put(key, colMap);
-			client.batch_mutate(KEYSPACE, mutationMap, ConsistencyLevel.ALL);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
