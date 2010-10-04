@@ -355,21 +355,19 @@ public class CassandraClient {
 	 * --------------------------------------------------*/
 	public void getSuperColumn(String key) {
 		try {
-			//ColumnParentにはColumnFamily名またはColumnFamily/SuperColumn名を指定する
-			ColumnParent columnParent = new ColumnParent(SUPER_COLUMN);
+			SlicePredicate slicePredicate = new SlicePredicate();
 			SliceRange sliceRange = new SliceRange();
-			//取得カラムの範囲を指定する。（全部指定のため、空のbyte配列を指定する）
 			sliceRange.setStart(new byte[0]);
 			sliceRange.setFinish(new byte[0]);
-			
-			SlicePredicate slicePredicate = new SlicePredicate();
 			slicePredicate.setSlice_range(sliceRange);
-			
-			List<ColumnOrSuperColumn> list = client.get_slice(KEYSPACE, key, columnParent, slicePredicate, ConsistencyLevel.ONE);
-			
-			for (ColumnOrSuperColumn cs : list) {
-				Column col = cs.getColumn();
-				System.out.println(col);
+			ColumnParent columnParent = new ColumnParent(SUPER_COLUMN);
+			columnParent.setSuper_column(key.getBytes("utf-8"));
+			List<ColumnOrSuperColumn> list = client.get_slice(KEYSPACE, TERM, columnParent, slicePredicate, ConsistencyLevel.ONE);
+			for (ColumnOrSuperColumn cosc : list) {
+				Column column = cosc.getColumn();
+				String name = new String(column.getName(), "utf-8");
+				String value = new String(column.getValue(), "utf-8");
+				System.out.println(name + ":" + value);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
