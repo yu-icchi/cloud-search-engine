@@ -383,6 +383,11 @@ public class GlobalIDF {
 		return list;
 	}
 	
+	/**----------------------------------------------------
+	 * termsLengthメソッド(データベースに登録しているターム数を取得する)
+	 * ----------------------------------------------------
+	 * @return
+	 * --------------------------------------------------*/
 	public int termsLength() {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		int length = cc.termsLength();
