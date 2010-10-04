@@ -3,7 +3,7 @@
 //
 //直接Cassandraにアクセスし、データベースの管理をしる
 //---------------------------------------------------------
-package master;
+package location;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

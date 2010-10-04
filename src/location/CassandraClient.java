@@ -1,7 +1,7 @@
 //---------------------------------------------------------
 //CassandraClientクラス(GlobalIDF用)
 //---------------------------------------------------------
-package master;
+package location;
 
 import java.util.ArrayList;
 import java.util.Arrays;

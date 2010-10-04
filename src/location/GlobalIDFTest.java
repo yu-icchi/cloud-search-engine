@@ -1,4 +1,4 @@
-package master;
+package location;
 
 import java.util.ArrayList;
 import java.util.Map;
