@@ -47,6 +47,8 @@ public class GlobalIDFTest {
 		g_idf.getSuperColumn("solr");
 		Map<String, Object> data = g_idf.getSuperColumn(list);
 		System.out.println(data);
+		
+		
 		//-------------------------------------------------
 		//deleteメソッド
 		//-------------------------------------------------
@@ -58,7 +60,7 @@ public class GlobalIDFTest {
 		//g_idf.deleteMaxDocs("http://localhost:8983/solr/");
 		
 		//g_idf.deleteSuperColumnAll();
-		
+		//g_idf.deleteSuperColumn("http://localhost:8983/solr/");
 		
 		//-------------------------------------------------
 		//otherメソッド
