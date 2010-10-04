@@ -317,12 +317,47 @@ public class GlobalIDF {
 	 * getSuperColumnメソッド(ArrayList版) (未完成)
 	 * ----------------------------------------------------
 	 *  @param keys
+	 * @return 
 	 *  @return 
 	 * --------------------------------------------------*/
-	public void getSuperColumn(ArrayList<String> keys) {
+	public Map<String, Object> getSuperColumn(ArrayList<String> keys) {
+		//結果を返すデータ構造
+		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Integer> term = new HashMap<String, Integer>();
+		ArrayList<String> urlList = new ArrayList<String>();
+		//Cassandraに接続する
 		CassandraClient cc = new CassandraClient(_host, _port);
-		System.out.println(cc.getSuperColumn(keys));
+		//複数クエリの結果を取得する
+		List<Map<String, String>> list = cc.getSuperColumn(keys);
+		//接続を切断する
 		cc.closeConnection();
+		//結果をまとめる
+		for (int i = 0; i < list.size(); i++) {
+			//URL
+			int n = urlList.indexOf(list.get(i).get("url").toString());
+			//未登録の場合
+			if (n == -1) {
+				urlList.add(list.get(i).get("url").toString());
+			}
+			//Term
+			if (term.get(list.get(i).get("key")) == null) {
+				//新規作成
+				term.put(list.get(i).get("key"), Integer.valueOf(list.get(i).get("docFreq").toString()).intValue());
+			} else {
+				//追加作成
+				int a = term.get(list.get(i).get("key").toString());
+				int b = Integer.valueOf(list.get(i).get("docFreq").toString()).intValue();
+				term.put(list.get(i).get("key"), a + b);
+			}
+			
+		}
+		result.put("url", urlList);
+		result.put("docFreq", term);
+		//MaxDocsの値を取得する
+		int maxDocs_number = getMaxDocs();
+		result.put("maxDocs", maxDocs_number);
+		
+		return result;
 	}
 	
 	/**----------------------------------------------------

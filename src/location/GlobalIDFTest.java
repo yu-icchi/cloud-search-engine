@@ -45,8 +45,8 @@ public class GlobalIDFTest {
 		//System.out.println(GlobalIDF.getMaxDocs());
 		
 		g_idf.getSuperColumn("solr");
-		g_idf.getSuperColumn(list);
-		
+		Map<String, Object> data = g_idf.getSuperColumn(list);
+		System.out.println(data);
 		//-------------------------------------------------
 		//deleteメソッド
 		//-------------------------------------------------
