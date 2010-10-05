@@ -1,3 +1,22 @@
-Location Database
+【Location Database】
 
-Cassandraでデータベースを構築する。
+Location Databaseは、Cassandraでデータベースを構築する。
+
+データベースには、下記の2つが格納される
+・Solrの転置索引の単語一覧とその単語が含む文書数
+・Solrの全文書数
+
+SolrのURLを指定してO(1)で検索・更新を行う
+
+スーパーカラムでTERMSを格納する
+terms
+->term1
+-->URL=docFreq
+->term2
+-->URL=docFreq
+-->URL=docFreq
+
+カラムファミリでMaxDocsを格納する
+MaxDocs
+->URL=maxDoc
+->URL=maxDoc
