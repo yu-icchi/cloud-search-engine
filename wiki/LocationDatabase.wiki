@@ -9,6 +9,7 @@ Location Databaseは、Cassandraでデータベースを構築する。
 SolrのURLを指定してO(1)で検索・更新を行う
 
 スーパーカラムでTERMSを格納する
+
 terms
 
 ->term1
