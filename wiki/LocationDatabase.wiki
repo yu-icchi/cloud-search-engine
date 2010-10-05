@@ -21,7 +21,7 @@ terms
 
 -->URL=docFreq
 
-カラムファミリでMaxDocsを格納する
+カラムファミリでMax Docsを格納する
 
 MaxDocs
 
