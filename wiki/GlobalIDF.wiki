@@ -1,0 +1,37 @@
+location.GlobalIDF
+<BR>
+<Font size="5">クラス　GlobalIDF</Font>
+
+
+Cassandraのデータベースを操作するクラスである。
+
+<BR>
+
+<Font size="5">メソッド一覧</Font>
+
+<Font size="3">Setメソッド</Font>
+<BR>
+カラムファミリに登録する
+<BR>
+set(String URL)
+<BR>
+スーパーカラムファミリに登録する
+<BR>
+setSuperColumn(String URL)
+<BR>
+MaxDocs登録（static）
+<BR>
+setMaxDocs(String URL)
+<BR>
+
+
+<Font size="3">getメソッド</Font>
+<BR>
+カラムファミリから取得する
+<BR>
+get(String term)
+<BR>
+get(String[] terms)
+<BR>
+get(ArrayList<String> terms)
+<BR>
