@@ -33,5 +33,5 @@ get(String term)
 <BR>
 get(String[] terms)
 <BR>
-get(ArrayList<String> terms)
+get(ArrayList< String > terms)
 <BR>
