@@ -6,7 +6,7 @@ location.GlobalIDF
 Cassandraのデータベースを操作するクラスである。
 
 <BR>
-
+<HR>
 <Font size="5">メソッド一覧</Font>
 
 <Font size="3">Setメソッド</Font>
