@@ -10,11 +10,12 @@ import org.apache.poi.hwpf.usermodel.Section;
 
 public class WordReader {
 
+	/**
+	 * Wordからテキストを抽出する
+	 *
+	 * @param filePath
+	 */
 	static void extractText(String filePath) {
-		String tmp = System.getProperty("java.io.tmpdir");
-		if (tmp.charAt(tmp.length() - 1) != '/') {
-			tmp = tmp + "/";
-		}
 
 		try {
 			FileInputStream fileStream = new FileInputStream(filePath);
