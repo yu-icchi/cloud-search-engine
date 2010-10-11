@@ -1,3 +1,8 @@
+//---------------------------------------------------------
+//PDFReaderクラス
+//
+//UploadServerでPDFの内容を登録する時に使用する
+//---------------------------------------------------------
 package upload;
 
 import java.io.BufferedWriter;
@@ -23,6 +28,7 @@ public class PDFReader {
 			PDFTextStripper stripper = new PDFTextStripper();
 			out = new ByteArrayOutputStream();
 			stripper.writeText(pdf, new BufferedWriter(new OutputStreamWriter(out)));
+			pdfStream.close();
 		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		} catch(IOException e) {
