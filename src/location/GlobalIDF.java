@@ -29,15 +29,15 @@ public class GlobalIDF {
 	static int _port = 9160;
 	//クエリ
 	static String _query;
-	
-	
+
+
 	/**----------------------------------------------------
 	 * コンストラクタ(デフォルト)
 	 * --------------------------------------------------*/
 	public GlobalIDF() {
-		
+
 	}
-	
+
 	/**----------------------------------------------------
 	 * コンストラクタ
 	 * ----------------------------------------------------
@@ -48,7 +48,7 @@ public class GlobalIDF {
 		_host = host;
 		_port = port;
 	}
-	
+
 	/**----------------------------------------------------
 	 * termFieldメソッド(検索サーバのタームフィールドを指定する)
 	 * ----------------------------------------------------
@@ -57,16 +57,16 @@ public class GlobalIDF {
 	public static void termField(String field) {
 		_termField = field;
 	}
-	
+
 	/**----------------------------------------------------
 	 * queryParserメソッド (未完成)
 	 * ----------------------------------------------------
 	 * @param query
 	 * --------------------------------------------------*/
 	public void queryParser(String query) {
-		
+
 	}
-	
+
 	/**----------------------------------------------------
 	 * setメソッド(格納)
 	 * ----------------------------------------------------
@@ -97,26 +97,26 @@ public class GlobalIDF {
 			cc.closeConnection();
 		}
 	}
-	
+
 	/**----------------------------------------------------
 	 * setMaxDocsメソッド
 	 * ----------------------------------------------------
 	 *  @param  url (String) URLを指定する
-	 *  @throws Exception 
+	 *  @throws Exception
 	 * --------------------------------------------------*/
 	public static void setMaxDocs(String url) throws Exception {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.insertMaxDoc(url, maxDoc(url + "admin/luke"));
 		cc.closeConnection();
 	}
-	
+
 	/**----------------------------------------------------
 	 * setSuperColumnメソッド
 	 * ----------------------------------------------------
 	 *  @param url (String) URLを指定する
 	 *  @throws Exception
 	 * --------------------------------------------------*/
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public void setSuperColumn(String url) throws Exception {
 		//URLのチェック
 		if (urlCheck(url)) {
@@ -140,7 +140,7 @@ public class GlobalIDF {
 			cc.closeConnection();
 		}
 	}
-	
+
 	/**----------------------------------------------------
 	 * getメソッド(取得)
 	 * ----------------------------------------------------
@@ -172,7 +172,7 @@ public class GlobalIDF {
 		cc.closeConnection();
 		return data;
 	}
-	
+
 	/**----------------------------------------------------
 	 * getメソッド(取得)
 	 * ----------------------------------------------------
@@ -213,12 +213,12 @@ public class GlobalIDF {
 		cc.closeConnection();
 		return data;
 	}
-	
+
 	/**----------------------------------------------------
 	 * getメソッド(ArrayList版)
 	 * ----------------------------------------------------
 	 * @param input
-	 * @return 
+	 * @return
 	 * --------------------------------------------------*/
 	public Map<String, Object> get(ArrayList<String> input) {
 		//結果を返すデータ構造
@@ -249,17 +249,17 @@ public class GlobalIDF {
 				int b = Integer.valueOf(list.get(i).get("docFreq").toString()).intValue();
 				term.put(list.get(i).get("key"), a + b);
 			}
-			
+
 		}
 		result.put("url", urlList);
 		result.put("docFreq", term);
 		//MaxDocsの値を取得する
 		int maxDocs_number = getMaxDocs();
 		result.put("maxDocs", maxDocs_number);
-		
+
 		return result;
 	}
-	
+
 	/**----------------------------------------------------
 	 * multiGetメソッド
 	 * ----------------------------------------------------
@@ -300,7 +300,7 @@ public class GlobalIDF {
 		}
 		return result;
 	}
-	
+
 	/**---------------------------------------------------
 	 * getSuperColumnメソッド (未完成)
 	 * ---------------------------------------------------
@@ -312,13 +312,13 @@ public class GlobalIDF {
 		System.out.println(cc.getSuperColumn(key));
 		cc.closeConnection();
 	}
-	
+
 	/**----------------------------------------------------
 	 * getSuperColumnメソッド(ArrayList版) (未完成)
 	 * ----------------------------------------------------
 	 *  @param keys
-	 * @return 
-	 *  @return 
+	 * @return
+	 *  @return
 	 * --------------------------------------------------*/
 	public Map<String, Object> getSuperColumn(ArrayList<String> keys) {
 		//結果を返すデータ構造
@@ -349,17 +349,52 @@ public class GlobalIDF {
 				int b = Integer.valueOf(list.get(i).get("docFreq").toString()).intValue();
 				term.put(list.get(i).get("key"), a + b);
 			}
-			
+
 		}
 		result.put("url", urlList);
 		result.put("docFreq", term);
 		//MaxDocsの値を取得する
 		int maxDocs_number = getMaxDocs();
 		result.put("maxDocs", maxDocs_number);
-		
+
 		return result;
 	}
-	
+
+	/**----------------------------------------------------
+	 * getSuperColumnANDメソッド (AND演算で結果をまとめる) (未完成)
+	 * ----------------------------------------------------
+	 * @param keys
+	 * @return
+	 * --------------------------------------------------*/
+	public Map<String, Object> getSuperColumnAND(ArrayList<String> keys) {
+		//結果を返すデータ構造
+		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Integer> term = new HashMap<String, Integer>();
+		ArrayList<String> urlList = new ArrayList<String>();
+		//Cassandraに接続する
+		CassandraClient cc = new CassandraClient(_host, _port);
+		//複数クエリの結果を取得する
+		List<Map<String, String>> list = cc.getSuperColumn(keys);
+		//接続を切断する
+		cc.closeConnection();
+		//URLが一致するものだけをまとめる
+		//一件先読み
+		String url = list.get(0).get("url");	//URLが複数一致する場合にエラーがある
+		for (int i = 1; i < list.size(); i++) {
+			String data = list.get(i).get("url");
+			if (data.equals(url)) {
+				System.out.println(data);
+			}
+		}
+		result.put("url", urlList);
+		result.put("docFreq", term);
+		//MaxDocsの値を取得する
+		int maxDocs_number = getMaxDocs();
+		result.put("maxDocs", maxDocs_number);
+
+		return result;
+	}
+
 	/**----------------------------------------------------
 	 * getIDFメソッド(IDF値を取得する)
 	 * ----------------------------------------------------
@@ -383,7 +418,7 @@ public class GlobalIDF {
 		cc.closeConnection();
 		return docFreq_number;
 	}
-	
+
 	/**----------------------------------------------------
 	 * getURLメソッド(URLを取得する)
 	 * ----------------------------------------------------
@@ -405,7 +440,7 @@ public class GlobalIDF {
 		cc.closeConnection();
 		return urlList;
 	}
-	
+
 	/**----------------------------------------------------
 	 * termsメソッド(データベースに登録しているターム一覧を取得する)
 	 * ----------------------------------------------------
@@ -417,7 +452,7 @@ public class GlobalIDF {
 		cc.closeConnection();
 		return list;
 	}
-	
+
 	/**----------------------------------------------------
 	 * termsLengthメソッド(データベースに登録しているターム数を取得する)
 	 * ----------------------------------------------------
@@ -429,13 +464,13 @@ public class GlobalIDF {
 		cc.closeConnection();
 		return length;
 	}
-	
+
 	/**----------------------------------------------------
 	 * deleteメソッド(削除)
 	 * ----------------------------------------------------
 	 *  @param (String) URLを指定する
 	 * --------------------------------------------------*/
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public void delete(String url) throws Exception {
 		//URLのチェック
 		if (urlCheck(url)) {
@@ -450,7 +485,7 @@ public class GlobalIDF {
 			}
 		}
 	}
-	
+
 	/**----------------------------------------------------
 	 * deleteTermメソッド(termを指定しそのデータベースを削除する)
 	 * ----------------------------------------------------
@@ -461,7 +496,7 @@ public class GlobalIDF {
 		cc.delete(term);
 		cc.closeConnection();
 	}
-	
+
 	/**----------------------------------------------------
 	 * deleteMaxDocsメソッド
 	 * ----------------------------------------------------
@@ -475,7 +510,7 @@ public class GlobalIDF {
 			cc.closeConnection();
 		}
 	}
-	
+
 	/**----------------------------------------------------
 	 * deleteSuperColumnメソッド
 	 * --------------------------------------------------*/
@@ -484,14 +519,14 @@ public class GlobalIDF {
 		cc.deleteSuperColumnAll();
 		cc.closeConnection();
 	}
-	
+
 	/**----------------------------------------------------
 	 * deleteSuperColumnメソッド
 	 * ----------------------------------------------------
 	 * @param url
 	 * @throws Exception
 	 * --------------------------------------------------*/
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public void deleteSuperColumn(String url) throws Exception {
 		//URLのチェック
 		if (urlCheck(url)) {
@@ -506,7 +541,7 @@ public class GlobalIDF {
 			}
 		}
 	}
-	
+
 	/**
 	 * 未開発
 	 */
@@ -515,7 +550,7 @@ public class GlobalIDF {
 		cc.describe();
 		cc.closeConnection();
 	}
-	
+
 	/**----------------------------------------------------
 	 * searchメソッド(未完成)
 	 * ----------------------------------------------------
@@ -527,7 +562,7 @@ public class GlobalIDF {
 		cc.search(start, end);
 		cc.closeConnection();
 	}
-	
+
 	/**----------------------------------------------------
 	 * maxDocsメソッド
 	 * --------------------------------------------------*/
@@ -548,7 +583,7 @@ public class GlobalIDF {
 		cc.closeConnection();
 		return maxDocs_number;
 	}
-	
+
 	/**----------------------------------------------------
 	 * urlCheckメソッド
 	 * ----------------------------------------------------
@@ -566,7 +601,7 @@ public class GlobalIDF {
 			return false;
 		}
 	}
-	
+
 	/**----------------------------------------------------
 	 * docFreqメソッド(SolrサーバのdocFreqの値を取得する)
 	 * ----------------------------------------------------
@@ -574,7 +609,7 @@ public class GlobalIDF {
 	 *  @return (List) List< Map<String, String, String> >
 	 *  @throws Exception
 	 * --------------------------------------------------*/
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	static List docFreq(String url) throws Exception {
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL(url);
@@ -590,10 +625,10 @@ public class GlobalIDF {
 		Map map = (Map) JSON.decode(line);
 		//System.out.println(map);
 		List list = (List) map.get("terms");
-		//返す		
+		//返す
 		return (List) list.get(1);
 	}
-	
+
 	/**----------------------------------------------------
 	 * maxDocメソッド
 	 * ----------------------------------------------------
@@ -601,7 +636,7 @@ public class GlobalIDF {
 	 *  @return (String) maxDoc値を返す
 	 *  @throws Exception
 	 * --------------------------------------------------*/
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	static String maxDoc(String url) throws Exception {
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL(url);

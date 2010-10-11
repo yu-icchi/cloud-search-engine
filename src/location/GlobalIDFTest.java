@@ -32,10 +32,10 @@ public class GlobalIDFTest {
 		//g_idf.queryParser("(solr AND ipod)");
 		
 		ArrayList<String> list = new ArrayList<String>();
-		list.add("ipod");
+		//list.add("ipod");
 		list.add("solr");
 		list.add("electron");
-		list.add("1");
+		//list.add("1");
 		
 		Map<String, Object> obj = g_idf.get(list);
 		System.out.println(obj);
@@ -47,6 +47,8 @@ public class GlobalIDFTest {
 		g_idf.getSuperColumn("solr");
 		Map<String, Object> data = g_idf.getSuperColumn(list);
 		System.out.println(data);
+		
+		g_idf.getSuperColumnAND(list);
 		
 		
 		//-------------------------------------------------
