@@ -10,15 +10,16 @@ import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Section;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 public class WordReader {
 
 	/**
-	 * Wordからテキストを抽出する
+	 * Word(.doc)からテキストを抽出する
 	 *
 	 * @param filePath
 	 */
-	static void extractText(String filePath) {
+	static void extractDoc(String filePath) {
 
 		try {
 			FileInputStream fileStream = new FileInputStream(filePath);
@@ -46,9 +47,28 @@ public class WordReader {
 
 	}
 
+	/**
+	 * Word(.docx)からテキストを抽出する(未完成)
+	 *
+	 * @param filePath
+	 */
+	static void extractDocx(String filePath) {
+
+		try {
+			FileInputStream fileStream = new FileInputStream(filePath);
+
+			//XWPFがDOCX拡張子に対応している
+			XWPFDocument doc = new XWPFDocument(fileStream);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public static void main(String[] args) {
 		String file = "demo/sample.doc";
-		extractText(file);
+		extractDoc(file);
 	}
 
 }
