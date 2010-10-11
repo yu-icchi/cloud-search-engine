@@ -18,6 +18,11 @@ import org.apache.pdfbox.util.PDFTextStripper;
 
 public class PDFReader {
 
+	/**
+	 *PDFからテキストを抽出する
+	 * @param filePath
+	 * @return
+	 */
 	static String extractText(String filePath) {
 		ByteArrayOutputStream out = null;
 		try {
