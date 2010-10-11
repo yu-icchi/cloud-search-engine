@@ -66,5 +66,11 @@
 	<classpathentry kind="lib" path="lib/poi/poi-examples-3.6-20091214.jar"/>
 	<classpathentry kind="lib" path="lib/poi/poi-ooxml-3.6-20091214.jar"/>
 	<classpathentry kind="lib" path="lib/poi/poi-ooxml-schemas-3.6-20091214.jar"/>
+	<classpathentry kind="lib" path="lib/poi/lib/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/poi/lib/junit-3.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/poi/lib/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="lib/poi/ooxml-lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/poi/ooxml-lib/geronimo-stax-api_1.0_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/poi/ooxml-lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
