@@ -1,5 +1,5 @@
 //---------------------------------------------------------
-//Rankingクラス
+//Rankingクラス (未完成)
 //
 //Solrの検索時にdebugQuery=onにし、ランキング計算の情報を得る
 //その内容からランキングを修正するプログラムである
@@ -7,6 +7,8 @@
 package solr;
 
 public class Ranking {
+
+	static String[] _data;
 
 	/**----------------------------------------------------
 	 * コンストラクタ
@@ -21,8 +23,10 @@ public class Ranking {
 	 * @param data
 	 * --------------------------------------------------*/
 	public void debugData(String data) {
-		String[] split = data.split("\n");
-		System.out.println(split[1]);
+		_data = data.split("\n");
+		for (int i = 1; i < _data.length; i++) {
+			System.out.println(_data[i].trim());
+		}
 	}
 
 	/**----------------------------------------------------
@@ -44,5 +48,14 @@ public class Ranking {
 	 * --------------------------------------------------*/
 	public float tf(int docfreq) {
 		return (float) Math.sqrt((double) docfreq);
+	}
+
+	/**----------------------------------------------------
+	 * scoreメソッド (スコアを返す)
+	 * ----------------------------------------------------
+	 * @return
+	 * --------------------------------------------------*/
+	public float score() {
+		return 0.0f;
 	}
 }
