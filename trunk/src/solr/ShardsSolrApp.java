@@ -9,13 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import net.arnx.jsonic.JSON;
+
 import location.GlobalIDF;
 
 //-----------------------------------------------
 //分散検索するために、トップレベルサーバに問い合わせをするプログラム
 //-----------------------------------------------
 public class ShardsSolrApp {
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL("http://localhost:8983/solr/select");
@@ -44,13 +46,15 @@ public class ShardsSolrApp {
 		System.out.println(gidf.get("maxDocs"));
 		System.out.println(gidf.get("docFreq"));
 		//検索式
-		out.print("shards=" + shards + "&indent=true&q=" + query +"&debugQuery=on");
+		out.print("shards=" + shards + "&q=" + query +"&debugQuery=on&wt=json");
 		out.close();
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		String line;
-		while ((line = in.readLine()) != null) {
-			System.out.println(line);
-		}
-		
+		String line = in.readLine();
+		//System.out.println(line);
+		Map map = (Map) JSON.decode(line);
+		//System.out.println(map.get("debug"));
+		Map map2 = (Map) map.get("debug");
+		System.out.println(map2.get("explain"));
+
 	}
 }
