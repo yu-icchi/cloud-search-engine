@@ -16,4 +16,14 @@ public class Ranking {
 	}
 
 
+	/**----------------------------------------------------
+	 * idfメソッド(グローバルIDFを付けるための計算式)
+	 * ----------------------------------------------------
+	 * @param maxDocs
+	 * @param docFreq
+	 * @return
+	 * --------------------------------------------------*/
+	public float idf(int maxDocs, int docFreq) {
+		return (float) (Math.log(maxDocs / (double) (docFreq + 1)) + 1);
+	}
 }

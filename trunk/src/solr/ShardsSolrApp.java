@@ -26,11 +26,12 @@ public class ShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "ipod solr";
+		String query = "ipod solr electron";
 		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("ipod");
 		list.add("solr");
+		list.add("electron");
 		GlobalIDF g_idf = new GlobalIDF();
 		Map<String, Object> gidf = g_idf.get(list);
 		List urlList = (List) gidf.get("url");
@@ -56,5 +57,13 @@ public class ShardsSolrApp {
 		Map map2 = (Map) map.get("debug");
 		System.out.println(map2.get("explain"));
 
+		//正しいIDF
+		Ranking ranking = new Ranking();
+		System.out.println(ranking.idf(11, 3));
+		int max = Integer.valueOf(gidf.get("maxDocs").toString()).intValue();
+		System.out.println(max);
+		System.out.println((float)(Math.log(max/(double)(3+1))+1));
+		//TF
+		System.out.println((float)Math.sqrt(3.0));
 	}
 }
