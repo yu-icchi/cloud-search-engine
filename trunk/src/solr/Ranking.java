@@ -15,9 +15,18 @@ public class Ranking {
 
 	}
 
+	/**----------------------------------------------------
+	 * debugDataメソッド (データを分割して保存)
+	 * ----------------------------------------------------
+	 * @param data
+	 * --------------------------------------------------*/
+	public void debugData(String data) {
+		String[] split = data.split("\n");
+		System.out.println(split[1]);
+	}
 
 	/**----------------------------------------------------
-	 * idfメソッド(グローバルIDFを付けるための計算式)
+	 * idfメソッド (グローバルIDFを付けるための計算式)
 	 * ----------------------------------------------------
 	 * @param maxDocs
 	 * @param docFreq
@@ -25,5 +34,15 @@ public class Ranking {
 	 * --------------------------------------------------*/
 	public float idf(int maxDocs, int docFreq) {
 		return (float) (Math.log(maxDocs / (double) (docFreq + 1)) + 1);
+	}
+
+	/**----------------------------------------------------
+	 *tfメソッド
+	 *-----------------------------------------------------
+	 * @param docfreq
+	 * @return
+	 * --------------------------------------------------*/
+	public float tf(int docfreq) {
+		return (float) Math.sqrt((double) docfreq);
 	}
 }

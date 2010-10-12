@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,12 +27,12 @@ public class ShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "ipod solr electron";
+		String query = "ipod solr electron 1 100 dell nois noiseguard note nvidia oem one open opengl optic optim other";
 		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("ipod");
 		list.add("solr");
-		list.add("electron");
+		//list.add("electron");
 		GlobalIDF g_idf = new GlobalIDF();
 		Map<String, Object> gidf = g_idf.getSuperColumn(list);
 		List urlList = (List) gidf.get("url");
@@ -45,7 +46,16 @@ public class ShardsSolrApp {
 		}
 		System.out.println(shards);
 		System.out.println(gidf.get("maxDocs"));
-		System.out.println(gidf.get("docFreq"));
+		//docFreqを分割する
+		Map<String, Integer> docFreq = (Map<String, Integer>) gidf.get("docFreq");
+		Iterator<String> it = docFreq.keySet().iterator();
+		while (it.hasNext()) {
+			String str = it.next();
+			System.out.println(str + ":" + docFreq.get(str));
+		}
+
+		Ranking ranking = new Ranking();
+
 		//検索式
 		out.print("shards=" + shards + "&q=" + query +"&debugQuery=on&wt=json");
 		out.close();
@@ -56,12 +66,17 @@ public class ShardsSolrApp {
 		//System.out.println(map.get("debug"));
 		Map map2 = (Map) map.get("debug");
 		System.out.println(map2.get("explain"));
+		Map map3 = (Map) map2.get("explain");
+		Iterator it2 = map3.keySet().iterator();
+		while (it2.hasNext()) {
+			String s = (String) it2.next();
+			ranking.debugData((String) map3.get(s));
+		}
 
 		//正しいIDF
-		Ranking ranking = new Ranking();
 		int max = Integer.valueOf(gidf.get("maxDocs").toString()).intValue();
 		System.out.println(ranking.idf(max, 3));
 		//TF
-		System.out.println((float)Math.sqrt(3.0));
+		System.out.println(ranking.tf(3));
 	}
 }

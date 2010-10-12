@@ -67,7 +67,7 @@ public class GlobalIDFTest {
 		//-------------------------------------------------
 		//otherメソッド
 		//-------------------------------------------------
-		//System.out.println(g_idf.terms());
+		System.out.println(g_idf.terms());
 
 		//System.out.println(g_idf.termsLength());
 
