@@ -10,10 +10,10 @@ import org.apache.solr.common.SolrDocumentList;
 
 public class SolrJTest {
 
-	public static void mian(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 
 		SolrServer server = new CommonsHttpSolrServer("http://localhost:8983/solr/");
-		SolrQuery query = new SolrQuery("solr");
+		SolrQuery query = new SolrQuery("electron");
 		QueryResponse response = server.query(query);
 		SolrDocumentList list = response.getResults();
 		for(SolrDocument doc: list){
