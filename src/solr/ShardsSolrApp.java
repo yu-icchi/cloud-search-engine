@@ -33,7 +33,7 @@ public class ShardsSolrApp {
 		list.add("solr");
 		list.add("electron");
 		GlobalIDF g_idf = new GlobalIDF();
-		Map<String, Object> gidf = g_idf.get(list);
+		Map<String, Object> gidf = g_idf.getSuperColumn(list);
 		List urlList = (List) gidf.get("url");
 		//分散検索先の設定
 		String shards = "";
@@ -59,10 +59,8 @@ public class ShardsSolrApp {
 
 		//正しいIDF
 		Ranking ranking = new Ranking();
-		System.out.println(ranking.idf(11, 3));
 		int max = Integer.valueOf(gidf.get("maxDocs").toString()).intValue();
-		System.out.println(max);
-		System.out.println((float)(Math.log(max/(double)(3+1))+1));
+		System.out.println(ranking.idf(max, 3));
 		//TF
 		System.out.println((float)Math.sqrt(3.0));
 	}
