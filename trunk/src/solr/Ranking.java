@@ -31,14 +31,15 @@ public class Ranking {
 		_data = data.split("\n");
 		for (int i = 1; i < _data.length; i++) {
 			String line = _data[i].trim();
-			//System.out.println(line);
 			String a[] = line.split("=");
-			//System.out.println("score : " + a[0]);
-			if (a[1].indexOf("(MATCH) weight") != -1) {
-				System.out.println(a[1].substring(21));
+			if (a[1].indexOf("queryWeight") != -1) {
+				System.out.println("queryWeight idf : " + _data[i+1].trim());
+				System.out.println("queryWeight queryNorm : " + _data[i+2].trim());
 			}
-			if (a[1].indexOf("idf") != -1) {
-				//System.out.println(line);
+			if (a[1].indexOf("fieldWeight") != -1) {
+				System.out.println("fieldWeight tf : " + _data[i+1].trim());
+				System.out.println("fieldWeight idf : " + _data[i+2].trim());
+				System.out.println("fieldWeight fieldNorm : " + _data[i+3].trim());
 			}
 		}
 	}
