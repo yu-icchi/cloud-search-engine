@@ -7,6 +7,8 @@
 package solr;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Ranking {
 
@@ -71,14 +73,16 @@ public class Ranking {
 			if (a[1].indexOf("queryWeight") != -1) {
 
 				//Keyword判断
-				String[] sp = line.split("text:");
-				System.out.println(sp[1]);
+				String key = extractKeyword(line);
+				System.out.println("queryWeight keyword : " + key);
+				System.out.println(_docFreq.get(key));
 
 				//queryWeight idf
-				String line2 = _data[i+1].trim();
-				String[] a2 = line2.split("=");
+				//String line2 = _data[i+1].trim();
+				//String[] a2 = line2.split("=");
 				//System.out.println("queryWeight idf : " + _data[i+1].trim());
-				_score.queryWeight_idf = Double.valueOf(a2[0]).floatValue();
+				//_score.queryWeight_idf = Double.valueOf(a2[0]).floatValue();
+				_score.queryWeight_idf = idf(_maxDocs, _docFreq.get(key));
 				//System.out.println(a2[0]);
 
 				//queryWeight queryNorm
@@ -92,6 +96,8 @@ public class Ranking {
 			if (a[1].indexOf("fieldWeight") != -1) {
 
 				//Keyword判断
+				String key = extractKeyword(line);
+				System.out.println("fieldWeight keyword : " + key);
 
 				//fieldWeight tf
 				String line4 = _data[i+1].trim();
@@ -101,10 +107,11 @@ public class Ranking {
 				//System.out.println(a4[0]);
 
 				//fieldWeight idf
-				String line5 = _data[i+2].trim();
-				String[] a5 = line5.split("=");
+				//String line5 = _data[i+2].trim();
+				//String[] a5 = line5.split("=");
 				//System.out.println("fieldWeight idf : " + _data[i+2].trim());
-				_score.fieldWeight_idf = Double.valueOf(a5[0]).floatValue();
+				//_score.fieldWeight_idf = Double.valueOf(a5[0]).floatValue();
+				_score.fieldWeight_idf = idf(_maxDocs, _docFreq.get(key));
 				//System.out.println(a5[0]);
 
 				//fieldWeight fieldNorm
@@ -143,8 +150,24 @@ public class Ranking {
 	 * @return
 	 * --------------------------------------------------*/
 	public float score() {
-		System.out.println("queryWeight" + _score.queryWeight());
-		System.out.println("fieldWeight" + _score.fieldWeight());
+		//System.out.println("queryWeight" + _score.queryWeight());
+		//System.out.println("fieldWeight" + _score.fieldWeight());
 		return (_score.fieldWeight() * _score.queryWeight()) * _score.coord;
+	}
+
+	/**----------------------------------------------------
+	 * extractKeywordメソッド
+	 * ----------------------------------------------------
+	 * @param line
+	 * @return
+	 * --------------------------------------------------*/
+	static String extractKeyword(String line) {
+		Pattern p = Pattern.compile("(text:[a-z]+)");
+		Matcher m = p.matcher(line);
+		if (m.find()) {
+			String[] str = m.group(1).split(":");
+			return str[1];
+		}
+		return "";
 	}
 }
