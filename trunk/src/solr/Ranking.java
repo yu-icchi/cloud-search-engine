@@ -15,11 +15,14 @@ public class Ranking {
 	static int _decFreq;
 	static int _maxDocs;
 
+	//スコアオブジェクト
+	Score _score;
+
 	/**----------------------------------------------------
 	 * コンストラクタ
 	 * --------------------------------------------------*/
 	public Ranking() {
-
+		_score = new Score();
 	}
 
 	/**----------------------------------------------------
@@ -31,9 +34,12 @@ public class Ranking {
 		_data = data.split("\n");
 		for (int i = 1; i < _data.length; i++) {
 			String line = _data[i].trim();
-			String a[] = line.split("=");
+			String[] a = line.split("=");
 			if (a[1].indexOf("queryWeight") != -1) {
+				String line2 = _data[i+1].trim();
+				String[] a2 = line2.split("=");
 				System.out.println("queryWeight idf : " + _data[i+1].trim());
+				_score.queryWeight_idf = Double a2[1];
 				System.out.println("queryWeight queryNorm : " + _data[i+2].trim());
 			}
 			if (a[1].indexOf("fieldWeight") != -1) {
