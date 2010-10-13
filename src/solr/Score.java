@@ -17,6 +17,12 @@ public class Score {
 
 	public float fieldWeight_fieldNorm;
 
+	public float coord = 1.0f;
+
+	static float _queryWeight = 0.0f;
+
+	static float _fieldWeight = 0.0f;
+
 	/**----------------------------------------------------
 	 * queryWeightメソッド
 	 * ----------------------------------------------------
@@ -24,9 +30,13 @@ public class Score {
 	 * --------------------------------------------------*/
 	public float queryWeight() {
 		try {
-			return queryWeight_idf * queryWeight_queryNurm;
+			_queryWeight = queryWeight_idf * queryWeight_queryNurm;
+			if (_queryWeight == 0.0f) {
+				return 1.0f;
+			}
+			return _queryWeight;
 		} catch (Exception e) {
-			return 0.0f;
+			return 1.0f;
 		}
 	}
 
@@ -37,9 +47,13 @@ public class Score {
 	 * --------------------------------------------------*/
 	public float fieldWeight() {
 		try {
-			return fieldWeight_tf * fieldWeight_idf * fieldWeight_fieldNorm;
+			_fieldWeight = fieldWeight_tf * fieldWeight_idf * fieldWeight_fieldNorm;
+			if (_fieldWeight == 0.0f) {
+				return 1.0f;
+			}
+			return _fieldWeight;
 		} catch (Exception e) {
-			return 0.0f;
+			return 1.0f;
 		}
 	}
 }
