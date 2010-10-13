@@ -8,7 +8,12 @@ package solr;
 
 public class Ranking {
 
+	//debugQueryの構造データを格納
 	static String[] _data;
+
+	//IDFの値を計算するためのデータ
+	static int _decFreq;
+	static int _maxDocs;
 
 	/**----------------------------------------------------
 	 * コンストラクタ
@@ -25,7 +30,16 @@ public class Ranking {
 	public void debugData(String data) {
 		_data = data.split("\n");
 		for (int i = 1; i < _data.length; i++) {
-			System.out.println(_data[i].trim());
+			String line = _data[i].trim();
+			//System.out.println(line);
+			String a[] = line.split("=");
+			//System.out.println("score : " + a[0]);
+			if (a[1].indexOf("(MATCH) weight") != -1) {
+				System.out.println(a[1].substring(21));
+			}
+			if (a[1].indexOf("idf") != -1) {
+				//System.out.println(line);
+			}
 		}
 	}
 
@@ -36,18 +50,8 @@ public class Ranking {
 	 * @param docFreq
 	 * @return
 	 * --------------------------------------------------*/
-	public float idf(int maxDocs, int docFreq) {
-		return (float) (Math.log(maxDocs / (double) (docFreq + 1)) + 1);
-	}
-
-	/**----------------------------------------------------
-	 *tfメソッド
-	 *-----------------------------------------------------
-	 * @param docfreq
-	 * @return
-	 * --------------------------------------------------*/
-	public float tf(int docfreq) {
-		return (float) Math.sqrt((double) docfreq);
+	public static float idf(int maxDocs, int docFreq) {
+		return (float) (Math.log(maxDocs / (double) (docFreq + 1)) + 1.0);
 	}
 
 	/**----------------------------------------------------

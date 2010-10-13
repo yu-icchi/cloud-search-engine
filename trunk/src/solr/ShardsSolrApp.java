@@ -27,14 +27,14 @@ public class ShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "ipod solr electron 1 100 dell nois noiseguard note nvidia oem one open opengl optic optim other";
+		String query = "ipod electron";
 		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("ipod");
-		list.add("solr");
+		list.add("electron");
 		//list.add("electron");
 		GlobalIDF g_idf = new GlobalIDF();
-		Map<String, Object> gidf = g_idf.getSuperColumn(list);
+		Map<String, Object> gidf = g_idf.get(list);
 		List urlList = (List) gidf.get("url");
 		//分散検索先の設定
 		String shards = "";
@@ -46,6 +46,8 @@ public class ShardsSolrApp {
 		}
 		System.out.println(shards);
 		System.out.println(gidf.get("maxDocs"));
+		System.out.println(gidf.get("docFreq"));
+
 		//docFreqを分割する
 		Map<String, Integer> docFreq = (Map<String, Integer>) gidf.get("docFreq");
 		Iterator<String> it = docFreq.keySet().iterator();
@@ -54,6 +56,7 @@ public class ShardsSolrApp {
 			System.out.println(str + ":" + docFreq.get(str));
 		}
 
+		//ランキングの修正
 		Ranking ranking = new Ranking();
 
 		//検索式
@@ -73,10 +76,5 @@ public class ShardsSolrApp {
 			ranking.debugData((String) map3.get(s));
 		}
 
-		//正しいIDF
-		int max = Integer.valueOf(gidf.get("maxDocs").toString()).intValue();
-		System.out.println(ranking.idf(max, 3));
-		//TF
-		System.out.println(ranking.tf(3));
 	}
 }
