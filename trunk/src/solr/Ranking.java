@@ -59,6 +59,11 @@ public class Ranking {
 		_maxDocs = num;
 	}
 
+	@SuppressWarnings("static-access")
+	public void init() {
+		_score._weight = 0.0f;
+	}
+
 	/**----------------------------------------------------
 	 * debugDataメソッド (データを分割して保存)
 	 * ----------------------------------------------------
@@ -74,8 +79,8 @@ public class Ranking {
 
 				//Keyword判断
 				String key = extractKeyword(line);
-				System.out.println("queryWeight keyword : " + key);
-				System.out.println(_docFreq.get(key));
+				//System.out.println("queryWeight keyword : " + key);
+				//System.out.println(_docFreq.get(key));
 
 				//queryWeight idf
 				//String line2 = _data[i+1].trim();
@@ -97,7 +102,7 @@ public class Ranking {
 
 				//Keyword判断
 				String key = extractKeyword(line);
-				System.out.println("fieldWeight keyword : " + key);
+				//System.out.println("fieldWeight keyword : " + key);
 
 				//fieldWeight tf
 				String line4 = _data[i+1].trim();
@@ -120,6 +125,8 @@ public class Ranking {
 				//System.out.println("fieldWeight fieldNorm : " + _data[i+3].trim());
 				_score.fieldWeight_fieldNorm = Double.valueOf(a6[0]).floatValue();
 				//System.out.println(a6[0]);
+
+				_score.weight(_score.fieldWeight() * _score.queryWeight());
 			}
 
 			if (a[1].indexOf("coord") != -1) {
@@ -140,7 +147,7 @@ public class Ranking {
 	 * @param docFreq
 	 * @return
 	 * --------------------------------------------------*/
-	public static float idf(int maxDocs, int docFreq) {
+	private static float idf(int maxDocs, int docFreq) {
 		return (float) (Math.log(maxDocs / (double) (docFreq + 1)) + 1.0);
 	}
 
@@ -152,7 +159,8 @@ public class Ranking {
 	public float score() {
 		//System.out.println("queryWeight" + _score.queryWeight());
 		//System.out.println("fieldWeight" + _score.fieldWeight());
-		return (_score.fieldWeight() * _score.queryWeight()) * _score.coord;
+		System.out.println("weight : " + _score.weight());
+		return _score.weight() * _score.coord;
 	}
 
 	/**----------------------------------------------------
@@ -161,7 +169,7 @@ public class Ranking {
 	 * @param line
 	 * @return
 	 * --------------------------------------------------*/
-	static String extractKeyword(String line) {
+	private static String extractKeyword(String line) {
 		Pattern p = Pattern.compile("(text:[a-z]+)");
 		Matcher m = p.matcher(line);
 		if (m.find()) {

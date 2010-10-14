@@ -56,14 +56,10 @@ public class ShardsSolrApp {
 			System.out.println(str + ":" + docFreq.get(str));
 		}
 
-		//ランキングの修正
-		Ranking ranking = new Ranking();
-		ranking.docFreq((Map<String, Integer>) gidf.get("docFreq"));
-		ranking.maxDocs(11);
-
 		//検索式
 		out.print("shards=" + shards + "&q=" + query +"&debugQuery=on&wt=json");
 		out.close();
+		//検索
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		String line = in.readLine();
 		//System.out.println(line);
@@ -73,8 +69,15 @@ public class ShardsSolrApp {
 		System.out.println(map2.get("explain"));
 		Map map3 = (Map) map2.get("explain");
 		Iterator it2 = map3.keySet().iterator();
+
+		//ランキングクラス
+		Ranking ranking = new Ranking((Map<String, Integer>) gidf.get("docFreq"), Integer.valueOf(gidf.get("maxDocs").toString()).intValue());
+
 		while (it2.hasNext()) {
 			String s = (String) it2.next();
+			//System.out.println(map3.get(s));
+			//ランキングの修正
+			ranking.init();
 			ranking.debugData((String) map3.get(s));
 			System.out.println("score : " + ranking.score());
 		}
