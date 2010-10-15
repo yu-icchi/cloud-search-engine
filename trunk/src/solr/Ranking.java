@@ -22,39 +22,39 @@ public class Ranking {
 	//スコアオブジェクト
 	Score _score;
 
-	/**----------------------------------------------------
+	/**
 	 * コンストラクタ
-	 * --------------------------------------------------*/
+	 */
 	public Ranking() {
 		_score = new Score();
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * コンストラクタ (引数あり)
-	 * ----------------------------------------------------
+	 *
 	 * @param docFreq
 	 * @param maxDocs
-	 * --------------------------------------------------*/
+	 */
 	public Ranking(Map<String, Integer> docFreq, int maxDocs) {
 		_docFreq = docFreq;
 		_maxDocs = maxDocs;
 		_score = new Score();
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * docFreqメソッド　(setメソッド)
-	 * ----------------------------------------------------
+	 *
 	 * @param num
-	 * --------------------------------------------------*/
+	 */
 	public void docFreq(Map<String, Integer> map) {
 		_docFreq = map;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * maxDocsメソッド　(setメソッド)
-	 * ----------------------------------------------------
+	 *
 	 * @param num
-	 * --------------------------------------------------*/
+	 */
 	public void maxDocs(int num) {
 		_maxDocs = num;
 	}
@@ -64,11 +64,11 @@ public class Ranking {
 		_score._weight = 0.0f;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * debugDataメソッド (データを分割して保存)
-	 * ----------------------------------------------------
+	 *
 	 * @param data
-	 * --------------------------------------------------*/
+	 */
 	public void debugData(String data) {
 		_data = data.split("\n");
 		for (int i = 1; i < _data.length; i++) {
@@ -140,22 +140,22 @@ public class Ranking {
 
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * idfメソッド (グローバルIDFを付けるための計算式)
-	 * ----------------------------------------------------
+	 *
 	 * @param maxDocs
 	 * @param docFreq
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	private static float idf(int maxDocs, int docFreq) {
 		return (float) (Math.log(maxDocs / (double) (docFreq + 1)) + 1.0);
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * scoreメソッド (スコアを返す)
-	 * ----------------------------------------------------
+	 *
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	public float score() {
 		//System.out.println("queryWeight" + _score.queryWeight());
 		//System.out.println("fieldWeight" + _score.fieldWeight());
@@ -163,12 +163,12 @@ public class Ranking {
 		return _score.weight() * _score.coord;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * extractKeywordメソッド
-	 * ----------------------------------------------------
+	 *
 	 * @param line
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	private static String extractKeyword(String line) {
 		Pattern p = Pattern.compile("(text:[a-z]+)");
 		Matcher m = p.matcher(line);
