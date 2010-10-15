@@ -27,7 +27,7 @@ public class ShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "ipod solr electron";
+		String query = "solr electron ipod AND id:IW-02";
 		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("ipod");
@@ -81,5 +81,6 @@ public class ShardsSolrApp {
 			ranking.debugData((String) map3.get(s));
 			System.out.println("score : " + ranking.score());
 		}
+
 	}
 }

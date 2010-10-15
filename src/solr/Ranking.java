@@ -71,6 +71,10 @@ public class Ranking {
 	 */
 	public void debugData(String data) {
 		_data = data.split("\n");
+
+		float queryWeight = 0.0f;
+		float fieldWeight = 0.0f;
+
 		for (int i = 1; i < _data.length; i++) {
 			String line = _data[i].trim();
 			String[] a = line.split("=");
@@ -79,61 +83,73 @@ public class Ranking {
 
 				//Keyword判断
 				String key = extractKeyword(line);
-				//System.out.println("queryWeight keyword : " + key);
+				System.out.println("queryWeight keyword : " + key);
 				//System.out.println(_docFreq.get(key));
 
-				//queryWeight idf
-				//String line2 = _data[i+1].trim();
-				//String[] a2 = line2.split("=");
-				//System.out.println("queryWeight idf : " + _data[i+1].trim());
-				//_score.queryWeight_idf = Double.valueOf(a2[0]).floatValue();
-				_score.queryWeight_idf = idf(_maxDocs, _docFreq.get(key));
-				//System.out.println(a2[0]);
+				if (key != "") {
+					//queryWeight idf
+					String line2 = _data[i+1].trim();
+					String[] a2 = line2.split("=");
+					System.out.println("queryWeight idf : " + _data[i+1].trim());
+					float idf = Double.valueOf(a2[0]).floatValue();
+					//float idf = idf(_maxDocs, _docFreq.get(key));
+					//System.out.println(a2[0]);
 
-				//queryWeight queryNorm
-				String line3 = _data[i+2].trim();
-				String[] a3 = line3.split("=");
-				//System.out.println("queryWeight queryNorm : " + _data[i+2].trim());
-				_score.queryWeight_queryNurm = Double.valueOf(a3[0]).floatValue();
-				//System.out.println(a3[0]);
+					//queryWeight queryNorm
+					String line3 = _data[i+2].trim();
+					String[] a3 = line3.split("=");
+					System.out.println("queryWeight queryNorm : " + _data[i+2].trim());
+					float norm = Double.valueOf(a3[0]).floatValue();
+					//System.out.println(a3[0]);
+
+					queryWeight = idf * norm;
+				}
 			}
 
 			if (a[1].indexOf("fieldWeight") != -1) {
 
 				//Keyword判断
 				String key = extractKeyword(line);
-				//System.out.println("fieldWeight keyword : " + key);
+				System.out.println("fieldWeight keyword : " + key);
 
-				//fieldWeight tf
-				String line4 = _data[i+1].trim();
-				String[] a4 = line4.split("=");
-				//System.out.println("fieldWeight tf : " + _data[i+1].trim());
-				_score.fieldWeight_tf = Double.valueOf(a4[0]).floatValue();
-				//System.out.println(a4[0]);
+				if (key != "") {
+					//fieldWeight tf
+					String line4 = _data[i+1].trim();
+					String[] a4 = line4.split("=");
+					System.out.println("fieldWeight tf : " + _data[i+1].trim());
+					float tf = Double.valueOf(a4[0]).floatValue();
+					//System.out.println(a4[0]);
 
-				//fieldWeight idf
-				//String line5 = _data[i+2].trim();
-				//String[] a5 = line5.split("=");
-				//System.out.println("fieldWeight idf : " + _data[i+2].trim());
-				//_score.fieldWeight_idf = Double.valueOf(a5[0]).floatValue();
-				_score.fieldWeight_idf = idf(_maxDocs, _docFreq.get(key));
-				//System.out.println(a5[0]);
+					//fieldWeight idf
+					String line5 = _data[i+2].trim();
+					String[] a5 = line5.split("=");
+					System.out.println("fieldWeight idf : " + _data[i+2].trim());
+					float idf = Double.valueOf(a5[0]).floatValue();
+					//_score.fieldWeight_idf = idf(_maxDocs, _docFreq.get(key));
+					//System.out.println(a5[0]);
 
-				//fieldWeight fieldNorm
-				String line6 = _data[i+3].trim();
-				String[] a6 = line6.split("=");
-				//System.out.println("fieldWeight fieldNorm : " + _data[i+3].trim());
-				_score.fieldWeight_fieldNorm = Double.valueOf(a6[0]).floatValue();
-				//System.out.println(a6[0]);
+					//fieldWeight fieldNorm
+					String line6 = _data[i+3].trim();
+					String[] a6 = line6.split("=");
+					System.out.println("fieldWeight fieldNorm : " + _data[i+3].trim());
+					float norm = Double.valueOf(a6[0]).floatValue();
+					//System.out.println(a6[0]);
 
-				_score.weight(_score.fieldWeight() * _score.queryWeight());
+					fieldWeight = tf * idf * norm;
+
+					_score.weight(fieldWeight * queryWeight);
+
+					System.out.println(queryWeight);
+					System.out.println(fieldWeight);
+					System.out.println("end");
+				}
 			}
 
 			if (a[1].indexOf("coord") != -1) {
 				//coordを取得する
 				String coordStr = _data[_data.length-1].trim();
 				String[] coordStrArr = coordStr.split("=");
-				//System.out.println("coord : " + coordStrArr[0]);
+				System.out.println("coord : " + _data[i].trim());
 				_score.coord = Double.valueOf(coordStrArr[0]).floatValue();
 			}
 		}
