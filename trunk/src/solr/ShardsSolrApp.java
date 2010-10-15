@@ -66,8 +66,9 @@ public class ShardsSolrApp {
 		Map map = (Map) JSON.decode(line);
 		//System.out.println(map.get("debug"));
 		Map map2 = (Map) map.get("debug");
-		System.out.println(map2.get("explain"));
+		//System.out.println(map2.get("explain"));
 		Map map3 = (Map) map2.get("explain");
+		System.out.println(map3);
 		Iterator it2 = map3.keySet().iterator();
 
 		//ランキングクラス
