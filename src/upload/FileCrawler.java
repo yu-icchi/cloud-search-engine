@@ -22,13 +22,12 @@ public class FileCrawler {
 		System.out.println("インデックス登録完了");
 	}
 
-	/**----------------------------------------------------
-	 * インデックス作成・更新
-	 * ----------------------------------------------------
+	/**
+	 *
 	 * @param file_dir
 	 * @param url
 	 * @throws Exception
-	 * --------------------------------------------------*/
+	 */
 	public static void fileIndex(String file_dir, String url) throws Exception {
 		//探索対象のrootを決める
 		File dir = new File(file_dir);
@@ -51,12 +50,11 @@ public class FileCrawler {
 		server.commit();
 	}
 
-	/**----------------------------------------------------
-	 * ローカルのデータを再帰的に探索する
-	 * ----------------------------------------------------
+	/**
+	 *
 	 * @param file
 	 * @param array
-	 * --------------------------------------------------*/
+	 */
 	private static void listPath(File file, ArrayList<String> array) {
 		File[] infiles = file.listFiles();
 		for (File inf : infiles) {
@@ -73,13 +71,12 @@ public class FileCrawler {
 		}
 	}
 
-	/**----------------------------------------------------
-	 * ファイルデータを読み込み、内容を一列のStringにして返す
-	 * ----------------------------------------------------
+	/**
+	 *
 	 * @param dir
 	 * @return
 	 * @throws Exception
-	 * --------------------------------------------------*/
+	 */
 	private static String readTextFile(String dir) throws Exception {
 		CharCodeDet charDet = new CharCodeDet(dir);
 		String enc = charDet.encodeType();
@@ -98,12 +95,11 @@ public class FileCrawler {
 		return str;
 	}
 
-	/**----------------------------------------------------
-	 * getSuffixメソッド (ファイル拡張子を返す)
-	 * ----------------------------------------------------
+	/**
+	 *
 	 * @param fileName
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	public static String getSuffix(String fileName) {
 		if (fileName == null) {
 			return null;

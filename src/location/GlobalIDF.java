@@ -31,48 +31,48 @@ public class GlobalIDF {
 	static String _query;
 
 
-	/**----------------------------------------------------
+	/**
 	 * コンストラクタ(デフォルト)
-	 * --------------------------------------------------*/
+	 */
 	public GlobalIDF() {
 
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * コンストラクタ
-	 * ----------------------------------------------------
+	 *
 	 * @param host (String) ホストを指定する
 	 * @param port (int) ポート番号を指定する
-	 * --------------------------------------------------*/
+	 */
 	public GlobalIDF(String host, int port) {
 		_host = host;
 		_port = port;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * termFieldメソッド(検索サーバのタームフィールドを指定する)
-	 * ----------------------------------------------------
-	 *  @param (String) fieldを指定する
-	 * --------------------------------------------------*/
+	 *
+	 *  @param field (String) fieldを指定する
+	 */
 	public static void termField(String field) {
 		_termField = field;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * queryParserメソッド (未完成)
-	 * ----------------------------------------------------
+	 *
 	 * @param query
-	 * --------------------------------------------------*/
+	 */
 	public void queryParser(String query) {
 
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * setメソッド(格納)
-	 * ----------------------------------------------------
+	 *
 	 *  @param url (String) URLを指定する
 	 *  @throws Exception
-	 * --------------------------------------------------*/
+	 */
 	@SuppressWarnings("unchecked")
 	public void set(String url) throws Exception {
 		//URLのチェック
@@ -98,24 +98,24 @@ public class GlobalIDF {
 		}
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * setMaxDocsメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param  url (String) URLを指定する
 	 *  @throws Exception
-	 * --------------------------------------------------*/
+	 */
 	public static void setMaxDocs(String url) throws Exception {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.insertMaxDoc(url, maxDoc(url + "admin/luke"));
 		cc.closeConnection();
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * setSuperColumnメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param url (String) URLを指定する
 	 *  @throws Exception
-	 * --------------------------------------------------*/
+	 */
 	@SuppressWarnings("unchecked")
 	public void setSuperColumn(String url) throws Exception {
 		//URLのチェック
@@ -141,12 +141,12 @@ public class GlobalIDF {
 		}
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * getメソッド(取得)
-	 * ----------------------------------------------------
-	 *  @param (String) Termを指定する
+	 *
+	 *  @param term (String) Termを指定する
 	 *   @return (Map) IDFの値とURLをListでまとめたMapオブジェクトを返す
-	 * --------------------------------------------------*/
+	 */
 	public Map<String, Object> get(String term) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		List<String> urlList = new ArrayList<String>();
@@ -173,12 +173,12 @@ public class GlobalIDF {
 		return data;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * getメソッド(取得)
-	 * ----------------------------------------------------
+	 *
 	 *  @param terms Termを指定する
 	 *   @return Map<String, Object> IDFの値とURLをListでまとめたMapオブジェクトを返す
-	 * --------------------------------------------------*/
+	 */
 	public Map<String, Object> get(String... terms) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		List<String> urlList = new ArrayList<String>();
@@ -214,12 +214,12 @@ public class GlobalIDF {
 		return data;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * getメソッド(ArrayList版)
-	 * ----------------------------------------------------
+	 *
 	 * @param input
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	public Map<String, Object> get(ArrayList<String> input) {
 		//結果を返すデータ構造
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -260,11 +260,11 @@ public class GlobalIDF {
 		return result;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * multiGetメソッド
-	 * ----------------------------------------------------
+	 *
 	 * @param arr (ArrayList)
-	 * --------------------------------------------------*/
+	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Map<String, Object>> multiGet(ArrayList<String> arr) {
 		//結果を返すデータ構造
@@ -301,25 +301,24 @@ public class GlobalIDF {
 		return result;
 	}
 
-	/**---------------------------------------------------
+	/**
 	 * getSuperColumnメソッド (未完成)
-	 * ---------------------------------------------------
+	 *
 	 *  @param key (String) キーを指定する
 	 *  @return
-	 * --------------------------------------------------*/
+	 */
 	public void getSuperColumn(String key) {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		System.out.println(cc.getSuperColumn(key));
 		cc.closeConnection();
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * getSuperColumnメソッド(ArrayList版) (未完成)
-	 * ----------------------------------------------------
+	 *
 	 *  @param keys
-	 * @return
 	 *  @return
-	 * --------------------------------------------------*/
+	 */
 	public Map<String, Object> getSuperColumn(ArrayList<String> keys) {
 		//結果を返すデータ構造
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -360,12 +359,12 @@ public class GlobalIDF {
 		return result;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * getSuperColumnANDメソッド (AND演算で結果をまとめる) (未完成)
-	 * ----------------------------------------------------
+	 *
 	 * @param keys
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	public Map<String, Object> getSuperColumnAND(ArrayList<String> keys) {
 		//結果を返すデータ構造
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -395,12 +394,12 @@ public class GlobalIDF {
 		return result;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * getIDFメソッド(IDF値を取得する)
-	 * ----------------------------------------------------
-	 *  @param (String) Termを指定する
+	 *
+	 *  @param term (String) Termを指定する
 	 *   @return (int) IDF値を返す
-	 * --------------------------------------------------*/
+	 */
 	public int getDocFreq(String term) {
 		int docFreq_number = 0;
 		//Cassandra接続する
@@ -419,12 +418,12 @@ public class GlobalIDF {
 		return docFreq_number;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * getURLメソッド(URLを取得する)
-	 * ----------------------------------------------------
-	 *  @param (String) Termを指定する
+	 *
+	 *  @param term (String) Termを指定する
 	 *   @return (List) URLをまとめたリストを返す
-	 * --------------------------------------------------*/
+	 */
 	public List<String> getURL(String term) {
 		List<String> urlList = new ArrayList<String>();
 		CassandraClient cc = new CassandraClient(_host, _port);
@@ -441,11 +440,11 @@ public class GlobalIDF {
 		return urlList;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * termsメソッド(データベースに登録しているターム一覧を取得する)
-	 * ----------------------------------------------------
+	 *
 	 *  @return
-	 * --------------------------------------------------*/
+	 */
 	public ArrayList<String> terms() {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		ArrayList<String> list = cc.terms();
@@ -453,11 +452,11 @@ public class GlobalIDF {
 		return list;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * termsLengthメソッド(データベースに登録しているターム数を取得する)
-	 * ----------------------------------------------------
+	 *
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	public int termsLength() {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		int length = cc.termsLength();
@@ -465,11 +464,11 @@ public class GlobalIDF {
 		return length;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * deleteメソッド(削除)
-	 * ----------------------------------------------------
-	 *  @param (String) URLを指定する
-	 * --------------------------------------------------*/
+	 *
+	 *  @param url (String) URLを指定する
+	 */
 	@SuppressWarnings("unchecked")
 	public void delete(String url) throws Exception {
 		//URLのチェック
@@ -486,22 +485,22 @@ public class GlobalIDF {
 		}
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * deleteTermメソッド(termを指定しそのデータベースを削除する)
-	 * ----------------------------------------------------
-	 *  @param (String) Termを指定する
-	 * --------------------------------------------------*/
+	 *
+	 *  @param term (String) Termを指定する
+	 */
 	public void deleteTerm(String term) {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.delete(term);
 		cc.closeConnection();
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * deleteMaxDocsメソッド
-	 * ----------------------------------------------------
+	 *
 	 * @param url (String)MaxDocsの中から指定したURLを削除する
-	 * --------------------------------------------------*/
+	 */
 	public void deleteMaxDocs(String url) {
 		//URLのチェック
 		if (urlCheck(url)) {
@@ -511,21 +510,21 @@ public class GlobalIDF {
 		}
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * deleteSuperColumnメソッド
-	 * --------------------------------------------------*/
+	 */
 	public void deleteSuperColumnAll() {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.deleteSuperColumnAll();
 		cc.closeConnection();
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * deleteSuperColumnメソッド
-	 * ----------------------------------------------------
+	 *
 	 * @param url
 	 * @throws Exception
-	 * --------------------------------------------------*/
+	 */
 	@SuppressWarnings("unchecked")
 	public void deleteSuperColumn(String url) throws Exception {
 		//URLのチェック
@@ -551,21 +550,21 @@ public class GlobalIDF {
 		cc.closeConnection();
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * searchメソッド(未完成)
-	 * ----------------------------------------------------
+	 *
 	 * @param start
 	 * @param end
-	 * --------------------------------------------------*/
+	 */
 	public void search(String start, String end) {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		cc.search(start, end);
 		cc.closeConnection();
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * maxDocsメソッド
-	 * --------------------------------------------------*/
+	 */
 	public static int getMaxDocs() {
 		int maxDocs_number = 0;
 		CassandraClient cc = new CassandraClient(_host, _port);
@@ -584,12 +583,12 @@ public class GlobalIDF {
 		return maxDocs_number;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * urlCheckメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param url (String) URLを指定する
 	 *   @return (boolean) True or False
-	 * --------------------------------------------------*/
+	 */
 	static boolean urlCheck(String url) {
 		//「http://localhost:8983/solr/」or「http://localhost:8983/core0/solr/」のような形にマッチするようになっている
 		final String MATCH_URL = "^https?:\\/\\/[-_.a-zA-Z0-9]+(:[0-9]+)*(\\/[-_a-zA-Z0-9]+)*(\\/solr\\/)$";
@@ -602,13 +601,13 @@ public class GlobalIDF {
 		}
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * docFreqメソッド(SolrサーバのdocFreqの値を取得する)
-	 * ----------------------------------------------------
-	 *  @param (String) URLを指定する
+	 *
+	 *  @param url (String) URLを指定する
 	 *  @return (List) List< Map<String, String, String> >
 	 *  @throws Exception
-	 * --------------------------------------------------*/
+	 */
 	@SuppressWarnings("unchecked")
 	static List docFreq(String url) throws Exception {
 		//POST送信でトップサーバにアクセス
@@ -629,13 +628,13 @@ public class GlobalIDF {
 		return (List) list.get(1);
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * maxDocメソッド
-	 * ----------------------------------------------------
-	 *  @param (String) URLを指定する
+	 *
+	 *  @param url (String) URLを指定する
 	 *  @return (String) maxDoc値を返す
 	 *  @throws Exception
-	 * --------------------------------------------------*/
+	 */
 	@SuppressWarnings("unchecked")
 	static String maxDoc(String url) throws Exception {
 		//POST送信でトップサーバにアクセス

@@ -6,25 +6,22 @@ import java.io.IOException;
 import org.mozilla.universalchardet.UniversalDetector;
 
 public class CharCodeDet {
-	
+
 	static String _path;
-	
-	//-------------------------------------------
-	//コンストラクタ
-	//-------------------------------------------
-	// @param String
-	// @return
-	//-------------------------------------------
+
+	/**
+	 *
+	 * @param path
+	 */
 	public CharCodeDet(String path) {
 		_path = path;
 	}
-	
-	//-------------------------------------------
-	//自動文字コード判定
-	//-------------------------------------------
-	// @param
-	// @return String
-	//-------------------------------------------
+
+	/**
+	 *
+	 * @return
+	 * @throws IOException
+	 */
 	public String encodeType() throws IOException {
 		//サンプルとしてデータを読み込む
 		byte[] buf = new byte[4096];

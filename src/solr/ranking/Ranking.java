@@ -16,129 +16,134 @@ public class Ranking {
 	 * プロパティ
 	 */
 	//検索指定フィール
-	private static String field = "text";
+	static String field = "text";
+
+	//debugQueryの構造データを格納
+	static String[] _data;
 
 	//IDFの値を計算するためのデータ
-	private static int maxDocs;
-	private static Map<String, Integer> docFreq;
+	private int maxDocs;
+	private Map<String, Integer> docFreq;
 
-	/**----------------------------------------------------
+	/**
 	 * コンストラクタ
-	 * --------------------------------------------------*/
+	 */
 	public Ranking() {
 
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * コンストラクタ (引数あり)
-	 * ----------------------------------------------------
+	 *
 	 * @param docFreq
 	 * @param maxDocs
-	 * --------------------------------------------------*/
+	 */
 	public Ranking(Map<String, Integer> docFreq, int maxDocs) {
-		Ranking.docFreq = docFreq;
-		Ranking.maxDocs = maxDocs;
+		this.docFreq = docFreq;
+		this.maxDocs = maxDocs;
 	}
 
-	/**----------------------------------------------------
-	 * set_maxDocsメソッド
-	 * ----------------------------------------------------
+	/**
+	 * setMaxDocsメソッド
+	 *
 	 * @param maxDocs
-	 * --------------------------------------------------*/
-	public static void set_maxDocs(int maxDocs) {
-		Ranking.maxDocs = maxDocs;
+	 */
+	public void setMaxDocs(int maxDocs) {
+		this.maxDocs = maxDocs;
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * getmaxDocsメソッド
-	 * ----------------------------------------------------
+	 *
 	 * @return
-	 * --------------------------------------------------*/
-	public static int getmaxDocs() {
+	 */
+	public int getmaxDocs() {
 		return maxDocs;
 	}
 
-	/**----------------------------------------------------
-	 * setdocFreqメソッド
-	 * ----------------------------------------------------
+	/**
+	 * setDocFreqメソッド
+	 *
 	 * @param docFreq
-	 * --------------------------------------------------*/
-	public static void set_docFreq(Map<String, Integer> docFreq) {
-		Ranking.docFreq = docFreq;
+	 */
+	public void setDocFreq(Map<String, Integer> docFreq) {
+		this.docFreq = docFreq;
 	}
 
-	/**----------------------------------------------------
-	 * getdocFreqメソッド
-	 * ----------------------------------------------------
+	/**
+	 * getDocFreqメソッド
+	 *
 	 * @return
-	 * --------------------------------------------------*/
-	public static Map<String, Integer> getdocFreq() {
+	 */
+	public Map<String, Integer> getDocFreq() {
 		return docFreq;
 	}
 
-	/**----------------------------------------------------
-	 * setfieldメソッド
-	 * ----------------------------------------------------
+	/**
+	 * setFieldメソッド
+	 *
 	 * @param field
-	 * --------------------------------------------------*/
-	public static void setfield(String field) {
+	 */
+	public static void setField(String field) {
 		Ranking.field = field;
 	}
 
-	/**----------------------------------------------------
-	 * getfieldメソッド
-	 * ----------------------------------------------------
+	/**
+	 * getFieldメソッド
+	 *
 	 * @return
-	 * --------------------------------------------------*/
-	public static String getfield() {
+	 */
+	public static String getField() {
 		return field;
 	}
 
-	/**----------------------------------------------------
-	 * solrScoreメソッド
-	 * --------------------------------------------------*/
-	public void solrScore() {
+	/**
+	 * solrScoreメソッド (solrのスコアデータを格納する)
+	 *
+	 * @param data
+	 */
+	public void solrScore(String data) {
 
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * scoreメソッド
-	 * --------------------------------------------------*/
+	 */
 	public void score() {
 
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * rankingメソッド
-	 * --------------------------------------------------*/
+	 */
 	public void ranking() {
 
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * idfメソッド (グローバルIDFを付けるための計算式)
-	 * ----------------------------------------------------
+	 *
 	 * @param maxDocs
 	 * @param docFreq
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	static float idf(int maxDocs, int docFreq) {
 		return (float) (Math.log(maxDocs / (double) (docFreq + 1)) + 1.0);
 	}
 
-	/**----------------------------------------------------
+	/**
 	 * extractKeywordメソッド
-	 * ----------------------------------------------------
+	 *
 	 * @param line
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	static String extractKeyword(String line) {
-		Pattern p = Pattern.compile("(" + Ranking.field + ":[a-z]+)");
+		Pattern p = Pattern.compile("(" + Ranking.field +":[a-z]+)");
 		Matcher m = p.matcher(line);
 		if (m.find()) {
 			String[] str = m.group(1).split(":");
 			return str[1];
 		}
 		return "";
- 	}
+	}
 }
