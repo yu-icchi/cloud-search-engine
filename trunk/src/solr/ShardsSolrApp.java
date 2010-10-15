@@ -6,13 +6,14 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import net.arnx.jsonic.JSON;
 
 import location.GlobalIDF;
+
+import solr.ranking.Ranking;
 
 //-----------------------------------------------
 //分散検索するために、トップレベルサーバに問い合わせをするプログラム
@@ -27,12 +28,13 @@ public class ShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "solr electron ipod AND id:IW-02";
+		String query = "solr electron ipod 100";
 		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("ipod");
 		list.add("solr");
 		list.add("electron");
+		list.add("100");
 		GlobalIDF g_idf = new GlobalIDF();
 		Map<String, Object> gidf = g_idf.get(list);
 		List urlList = (List) gidf.get("url");
@@ -48,14 +50,6 @@ public class ShardsSolrApp {
 		System.out.println(gidf.get("maxDocs"));
 		System.out.println(gidf.get("docFreq"));
 
-		//docFreqを分割する
-		Map<String, Integer> docFreq = (Map<String, Integer>) gidf.get("docFreq");
-		Iterator<String> it = docFreq.keySet().iterator();
-		while (it.hasNext()) {
-			String str = it.next();
-			System.out.println(str + ":" + docFreq.get(str));
-		}
-
 		//検索式
 		out.print("shards=" + shards + "&q=" + query +"&debugQuery=on&wt=json");
 		out.close();
@@ -69,19 +63,17 @@ public class ShardsSolrApp {
 		//System.out.println(map2.get("explain"));
 		Map map3 = (Map) map2.get("explain");
 		System.out.println(map3);
-		Iterator it2 = map3.keySet().iterator();
 
-		//ランキングクラス
-		Ranking ranking = new Ranking((Map<String, Integer>) gidf.get("docFreq"), Integer.valueOf(gidf.get("maxDocs").toString()).intValue());
-
-		while (it2.hasNext()) {
-			String s = (String) it2.next();
-			//System.out.println(map3.get(s));
-			//ランキングの修正
-			ranking.init();
-			ranking.debugData((String) map3.get(s));
-			System.out.println("score : " + ranking.score());
-		}
+		//グローバルIDFに必要なdocFreqの値を取り出す
+		Map<String, Integer> docFreq = (Map<String, Integer>) gidf.get("docFreq");
+		//グローバルIDFに必要なmaxDocsの値を取り出す
+		int maxDocs = Integer.valueOf(gidf.get("maxDocs").toString()).intValue();
+		//ランキング修正をする
+		Ranking ranking = new Ranking(docFreq, maxDocs);
+		//Solrのスコアデータを格納する
+		ranking.solrScore(map3);
+		//ランキング修正結果を返す
+		System.out.println(ranking.ranking());
 
 	}
 }

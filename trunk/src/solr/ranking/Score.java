@@ -9,7 +9,7 @@ public class Score {
 	 * プロパティ
 	 */
 	//
-	private float coord;
+	private float coord = 0.0f;
 	//
 	private float weight = 0.0f;
 
