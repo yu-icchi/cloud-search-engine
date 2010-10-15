@@ -6,6 +6,8 @@
 //---------------------------------------------------------
 package solr.ranking;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -123,13 +125,24 @@ public class Ranking {
 	@SuppressWarnings("unchecked")
 	public void solrScore(Map data) {
 
+		//スコアリスト
+		scoreList = new ArrayList<Map<String, Float>>();
+
 		//インデックスIDを取得する
 		Iterator it = data.keySet().iterator();
 
 		//複数のDocumentに対して処理する
 		while (it.hasNext()) {
-			String s = (String) it.next();
-			System.out.println(data.get(s));
+			String id = (String) it.next();
+			//System.out.println(data.get(id));
+			//スコアMap
+			Map<String, Float> map = new HashMap<String, Float>();
+			//解析し、修正したスコアを返す
+			float score = scoreAnalyze((String) data.get(id));
+			//Mapに格納
+			map.put(id, score);
+			//スコアリストに追加する
+			scoreList.add(map);
 		}
 
 	}
@@ -151,7 +164,7 @@ public class Ranking {
 	 * @return MapをListでまとめたモノ
 	 */
 	public List<Map<String, Float>> ranking() {
-		return null;
+		return scoreList;
 	}
 
 	//-----------------------------------------------------
@@ -173,14 +186,21 @@ public class Ranking {
 		//fieldの重み変数
 		float fieldWeight = 0.0f;
 
+		//coord計算用のoverlap
+		int overlap = 0;
+		//coord計算用のmaxOverlap
+		int maxOverlap = docFreq.size();
+
 		//改行で分割する
 		_data = data.split("\n");
 
-		for (int i = 0; i < _data.length; i++) {
+		for (int i = 1; i < _data.length; i++) {
 
 			//一行毎に処理をする
 			String line = _data[i].trim();
 			String[] str = line.split("=");
+
+			//System.out.println(str[1]);
 
 			//queryWeightの部分を探す
 			if (str[1].indexOf("queryWeight") != -1) {
@@ -189,11 +209,14 @@ public class Ranking {
 				//keyの値が空文字で無ければ、値を格納する (アカウント判断部分を削除するためにif文を使う)
 				if (key != "") {
 					//IDFを計算し、格納する
-					float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
+					//float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
+					float idf = extractWeight(i+1);
 					//Normを取得し、格納する
 					float norm = extractWeight(i+2);
 					//queryの重み計算
 					queryWeight = idf * norm;
+					//System.out.println(queryWeight);
+					overlap++;
 				}
 			}
 
@@ -206,11 +229,13 @@ public class Ranking {
 					//TFを取得し、格納する
 					float tf = extractWeight(i+1);
 					//IDFを計算し、格納する
-					float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
+					//float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
+					float idf = extractWeight(i+2);
 					//Normを取得し、格納する
 					float norm = extractWeight(i+3);
 					//fieldの重み計算
 					fieldWeight = tf * idf * norm;
+					//System.out.println(fieldWeight);
 					//スコアクラスに総合スコアの重みを格納
 					score.setWeight(queryWeight * fieldWeight);
 				}
@@ -219,13 +244,14 @@ public class Ranking {
 			//coordの部分を探す
 			if (str[1].indexOf("coord") != -1) {
 				//coordを取得し、格納する
-				score.setCoord(extractWeight(i));
+				System.out.println((float) overlap / maxOverlap + " = coord(" + overlap + "/" + maxOverlap + ")");
+				score.setCoord((float) overlap / maxOverlap);
 			}
 
 		}
 
 		//ひとつのDocumentのスコア
-		System.out.println(score.score());
+		//System.out.println(score.score());
 		return score.score();
 	}
 
