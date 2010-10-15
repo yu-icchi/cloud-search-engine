@@ -24,34 +24,34 @@ public class CassandraClient {
 	static Cassandra.Client client = null;
 	static String host;
 	static int port;
-	
-	/**----------------------------------------------------
+
+	/**
 	 * コンストラクタ(HOSTとPORTを指定する)
-	 * ----------------------------------------------------
+	 *
 	 *  @param _host (String)ホストの指定
 	 *  @param _port (int)ポート番号の指定
-	 * --------------------------------------------------*/
+	 */
 	public CassandraClient(String _host, int _port) {
 		host = _host;
 		port = _port;
 		//接続する
 		client = openConnection();
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * connectメソッド(接続先を指定する)
-	 * ----------------------------------------------------
+
 	 *  @param (String) hostの指定す
 	 *  @param (int) portの指定する
-	 * --------------------------------------------------*/
+	 */
 	public void connect(String _host, int _port) {
 		host = _host;
 		port = _port;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * openConnectionメソッド(Cassandraに接続する)
-	 * --------------------------------------------------*/
+	 */
 	static Cassandra.Client openConnection() {
 		try {
 			transport = new TSocket(host, port);
@@ -64,10 +64,10 @@ public class CassandraClient {
 		}
 		return null;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * closeConnectionメソッド(Cassandraの接続を切る)
-	 * --------------------------------------------------*/
+	 */
 	public void closeConnection() {
 		try {
 			transport.flush();
@@ -76,13 +76,13 @@ public class CassandraClient {
 			e.printStackTrace();
 		}
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * insertMaxDocメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param id (String) IDを指定する
 	 *  @param pass (String) PASSを指定する
-	 * --------------------------------------------------*/
+	 */
 	public void insert(String id, String pass) {
 		try {
 			//ColumnPathの作成
@@ -93,15 +93,15 @@ public class CassandraClient {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * getメソッド(タームに対して全ての内容を取得)
-	 * ----------------------------------------------------
+	 *
 	 *  @param (String) keyであるタームを指定する
 	 *  @return (List<Map<String, String>>) Listを返す
-	 * --------------------------------------------------*/
+	 */
 	public boolean get(String id, String pass) {
 		try {
 			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
@@ -119,12 +119,12 @@ public class CassandraClient {
 		}
 		return false;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * deleteメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param (String) keyを指定する
-	 * --------------------------------------------------*/
+	 */
 	public void delete(String key) {
 		try {
 			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
@@ -132,15 +132,15 @@ public class CassandraClient {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * deleteメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param (String) keyを指定する
 	 *  @param (String) urlを指定する
-	 * --------------------------------------------------*/
+	 */
 	public void delete(String key, String url) {
 		try {
 			//ColumnPathの作成
@@ -151,7 +151,7 @@ public class CassandraClient {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 }

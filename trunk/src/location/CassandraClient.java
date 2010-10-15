@@ -39,13 +39,13 @@ public class CassandraClient {
 	static Cassandra.Client client = null;
 	static String host;
 	static int port;
-	
-	/**----------------------------------------------------
+
+	/**
 	 * コンストラクタ(引数あり)
-	 * ----------------------------------------------------
+	 *
 	 * @param _host
 	 * @param _port
-	 * --------------------------------------------------*/
+	 */
 	public CassandraClient(String _host, int _port) {
 		//ホスト名の指定
 		host = _host;
@@ -54,21 +54,21 @@ public class CassandraClient {
 		//接続する
 		client = openConnection();
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * connectメソッド(接続先を指定する)
-	 * ----------------------------------------------------
+	 *
 	 *  @param (String) hostの指定す
 	 *  @param (int) portの指定する
-	 * --------------------------------------------------*/
+	 */
 	public void connect(String _host, int _port) {
 		host = _host;
 		port = _port;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * openConnectionメソッド(Cassandraに接続する)
-	 * --------------------------------------------------*/
+	 */
 	static Cassandra.Client openConnection() {
 		try {
 			transport = new TSocket(host, port);
@@ -81,10 +81,10 @@ public class CassandraClient {
 		}
 		return null;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * closeConnectionメソッド(Cassandraの接続を切る)
-	 * --------------------------------------------------*/
+	 */
 	public void closeConnection() {
 		try {
 			transport.flush();
@@ -93,13 +93,13 @@ public class CassandraClient {
 			e.printStackTrace();
 		}
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * insertMaxDocメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param (String) urlを指定する
 	 *  @param (String) dataを指定する
-	 * --------------------------------------------------*/
+	 */
 	public void insertMaxDoc(String url, String data) {
 		try {
 			//ColumnPathの作成
@@ -110,15 +110,15 @@ public class CassandraClient {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * insertMapメソッド(Map<String, String>をデータベースに格納する)
-	 * ----------------------------------------------------
+	 *
 	 *  @param (String) keyを指定する
 	 *  @param (Map<(String)カラム名 , (String)値>) Map型のデータを指定する
-	 * --------------------------------------------------*/
+	 */
 	public void insertMap(String key, Map<String, String> data) {
 		try {
 			Map<String, List<ColumnOrSuperColumn>> cfmap = new HashMap<String, List<ColumnOrSuperColumn>>();
@@ -139,12 +139,12 @@ public class CassandraClient {
 			e.printStackTrace();
 		}
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * insertIDFメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param (List<Map<String, String>>) dataを入れる
-	 * --------------------------------------------------*/
+	 */
 	public void insertDocFreq(List<Map<String, String>> data) {
 		try {
 			Map<String, Map<String, List<Mutation>>> map = new HashMap<String, Map<String, List<Mutation>>>();
@@ -168,12 +168,12 @@ public class CassandraClient {
 			e.printStackTrace();
 		}
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * insertSuperColumnメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param data
-	 * --------------------------------------------------*/
+	 */
 	public void insertSuperColumn(List<Map<String, String>> data) {
 		try {
 			//格納用のデータ構造
@@ -194,17 +194,17 @@ public class CassandraClient {
 			e.printStackTrace();
 		}
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * addMutationSuperColumn関数
-	 * ----------------------------------------------------
+	 *
 	 * @param map
 	 * @param columnFamily
 	 * @param superName
 	 * @param name
 	 * @param value
 	 * @param timestamp
-	 * --------------------------------------------------*/
+	 */
 	static void addMutationSuperColumn(Map<String, List<Mutation>> map, String columnFamily, byte[] superName, byte[] name, byte[] value, long timestamp) {
 		Column column = new Column(name, value, timestamp);
 		SuperColumn superColumn = new SuperColumn().setName(superName);
@@ -218,15 +218,15 @@ public class CassandraClient {
 		}
 		list.add(mutation);
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * toMutationメソッド(カラム名、値、タイムスタンプからMutationオブジェクトを生成する)
-	 * ----------------------------------------------------
+	 *
 	 *  @param (String) nameを指定する
 	 *  @param (String) valueを指定する
 	 *  @param (long) timestampを指定する
 	 *  @return (Mutation) Mutationオブジェクトを返す
-	 * --------------------------------------------------*/
+	 */
 	static Mutation toMutation(final String name, final String value, final long timestamp) {
 		try {
 			Mutation mutation = new Mutation();
@@ -239,13 +239,13 @@ public class CassandraClient {
 		}
 		return null;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * getメソッド(複数カラムを取得する)
-	 * ----------------------------------------------------
+	 *
 	 *   @param (String) keyであるタームを指定する
 	 *   @return (List<Map<String, String>>) ListでまとめたMapオブジェクトを返す
-	 * --------------------------------------------------*/
+	 */
 	public List<Map<String, String>> getMap(String key) {
 		try {
 			ColumnParent parent = new ColumnParent(COLUMN_FAMILY);
@@ -269,13 +269,13 @@ public class CassandraClient {
 		}
 		return null;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * getメソッド(タームに対して全ての内容を取得)
-	 * ----------------------------------------------------
+	 *
 	 *  @param (String) keyであるタームを指定する
 	 *  @return (List<Map<String, String>>) Listを返す
-	 * --------------------------------------------------*/
+	 */
 	public List<Map<String, String>> get(String key) {
 		try {
 			SlicePredicate slicePredicate = new SlicePredicate();
@@ -303,13 +303,13 @@ public class CassandraClient {
 		}
 		return null;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * getメソッド(入力Termが複数の場合)
-	 * ----------------------------------------------------
+	 *
 	 *  @param keys 複数のTerm入力
 	 *  @return
-	 * --------------------------------------------------*/
+	 */
 	public List<Map<String, String>> get(ArrayList<String> keys) {
 		try {
 			//ColumnParentにはColumnFamily名またはColumnFamily/SuperColumn名を指定する
@@ -318,11 +318,11 @@ public class CassandraClient {
 			//取得カラムの範囲を指定する。（全部指定のため、空のbyte配列を指定する）
 			sliceRange.setStart(new byte[0]);
 			sliceRange.setFinish(new byte[0]);
-			
+
 			SlicePredicate slicePredicate = new SlicePredicate();
 			slicePredicate.setSlice_range(sliceRange);
 			//multigetメソッドを使う
-			Map<String, List<ColumnOrSuperColumn>> results = client.multiget_slice(KEYSPACE, 
+			Map<String, List<ColumnOrSuperColumn>> results = client.multiget_slice(KEYSPACE,
 					keys, columnParent, slicePredicate, ConsistencyLevel.ONE);
 			//出力する
 			//結果を出力する変数
@@ -348,13 +348,13 @@ public class CassandraClient {
 		}
 		return null;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * getSuperColumnメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param key 複数のTerm入力
 	 *  @return (List<Map<String, String>>) Listを返す
-	 * --------------------------------------------------*/
+	 */
 	public List<Map<String, String>> getSuperColumn(String key) {
 		try {
 			//カラムの取得範囲を全部にする
@@ -386,13 +386,13 @@ public class CassandraClient {
 		}
 		return null;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * getSuperColumnメソッド(入力Termが複数の場合)
-	 * ----------------------------------------------------
+	 *
 	 *  @param keys 複数のTerm入力
-	 *  @return 
-	 * --------------------------------------------------*/
+	 *  @return
+	 */
 	public List<Map<String, String>> getSuperColumn(ArrayList<String> keys) {
 		try {
 			ColumnParent columnParent = new ColumnParent(SUPER_COLUMN);
@@ -423,12 +423,12 @@ public class CassandraClient {
 		}
 		return null;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * getMaxDocsメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @return (List<Map<String, String>>) Listを返す
-	 * --------------------------------------------------*/
+	 */
 	public List<Map<String, String>> getMaxDocs() {
 		try {
 			SlicePredicate slicePredicate = new SlicePredicate();
@@ -456,12 +456,12 @@ public class CassandraClient {
 		}
 		return null;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * termsメソッド(登録しているタームリストを返す)
-	 * ----------------------------------------------------
+	 *
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	public ArrayList<String> terms() {
 		ArrayList<String> list = new ArrayList<String>();
 		try {
@@ -486,12 +486,12 @@ public class CassandraClient {
 		}
 		return null;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * termsLengthメソッド
-	 * ----------------------------------------------------
+	 *
 	 * @return
-	 * --------------------------------------------------*/
+	 */
 	public int termsLength() {
 		try {
 			//スーパーカラムを指定する
@@ -504,12 +504,12 @@ public class CassandraClient {
 		}
 		return 0;
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * deleteメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param (String) keyを指定する
-	 * --------------------------------------------------*/
+	 */
 	public void delete(String key) {
 		try {
 			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
@@ -517,15 +517,15 @@ public class CassandraClient {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * deleteメソッド
-	 * ----------------------------------------------------
+	 *
 	 *  @param (String) keyを指定する
 	 *  @param (String) urlを指定する
-	 * --------------------------------------------------*/
+	 */
 	public void delete(String key, String url) {
 		try {
 			//ColumnPathの作成
@@ -536,15 +536,15 @@ public class CassandraClient {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * deleteSuperColumnメソッド
-	 * ----------------------------------------------------
+	 *
 	 * @param term (String) 削除するスーパーカラム名を指定する
 	 * @param url (String) カラムの一部分を削除する
-	 * --------------------------------------------------*/
+	 */
 	public void deleteSuperColumn(String term, String url) {
 		try {
 			//ColumnPathの作成
@@ -557,10 +557,10 @@ public class CassandraClient {
 			e.printStackTrace();
 		}
 	}
-	
-	/**----------------------------------------------------
+
+	/**
 	 * deleteSuperColumnメソッド(このメソッドの場合だと、term全て削除する)
-	 * --------------------------------------------------*/
+	 */
 	public void deleteSuperColumnAll() {
 		try {
 			ColumnPath columnPath = new ColumnPath(SUPER_COLUMN);
@@ -569,9 +569,9 @@ public class CassandraClient {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param map
 	 * @param columnFamily
 	 * @param superName
@@ -587,9 +587,9 @@ public class CassandraClient {
 		}
 		list.add(mutation);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public void describe() {
 		try {
@@ -599,10 +599,10 @@ public class CassandraClient {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * searchメソッド(精度はまだ良くない)
-	 * 
+	 *
 	 * @param start
 	 * @param end
 	 */
@@ -612,17 +612,17 @@ public class CassandraClient {
 			keyRange.setStart_key(start);
 			keyRange.setEnd_key(end);
 			keyRange.setCount(100);
-			
+
 			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
-			
+
 			SlicePredicate slicePredicate = new SlicePredicate();
 			SliceRange sliceRange = new SliceRange();
 			sliceRange.setStart(new byte[] {});
 			sliceRange.setFinish(new byte[] {});
 			slicePredicate.setSlice_range(sliceRange);
-			
+
 			List<KeySlice> list = client.get_range_slices(KEYSPACE, columnParent, slicePredicate, keyRange, ConsistencyLevel.ONE);
-			
+
 			for (KeySlice slice : list) {
 				String key = slice.getKey();
 				List<ColumnOrSuperColumn> columns = slice.getColumns();
@@ -634,7 +634,7 @@ public class CassandraClient {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 }
