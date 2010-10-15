@@ -154,6 +154,7 @@ public class Ranking {
 			}
 		}
 
+		System.out.println("end of the end" + _score.coord * _score.weight());
 	}
 
 	/**

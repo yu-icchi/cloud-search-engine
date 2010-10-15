@@ -6,10 +6,12 @@
 //---------------------------------------------------------
 package solr.ranking;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class Ranking {
 
@@ -23,11 +25,11 @@ public class Ranking {
 	static String[] _data;
 
 	//IDFの値を計算するためのデータ
-	private int maxDocs;
-	private Map<String, Integer> docFreq;
+	private static int maxDocs;
+	private static Map<String, Integer> docFreq;
 
-	//スコア計算用クラス
-	static Score _score;
+	//スコアリスト
+	static List<Map<String, Float>> scoreList;
 
 	//-----------------------------------------------------
 	//コンストラクタの定義
@@ -37,7 +39,7 @@ public class Ranking {
 	 * コンストラクタ (デフォルト)
 	 */
 	public Ranking() {
-		_score = new Score();
+
 	}
 
 	/**
@@ -47,9 +49,8 @@ public class Ranking {
 	 * @param maxDocs (int)
 	 */
 	public Ranking(Map<String, Integer> docFreq, int maxDocs) {
-		this.docFreq = docFreq;
-		this.maxDocs = maxDocs;
-		_score = new Score();
+		Ranking.docFreq = docFreq;
+		Ranking.maxDocs = maxDocs;
 	}
 
 	//-----------------------------------------------------
@@ -62,7 +63,7 @@ public class Ranking {
 	 * @param maxDocs
 	 */
 	public void setMaxDocs(int maxDocs) {
-		this.maxDocs = maxDocs;
+		Ranking.maxDocs = maxDocs;
 	}
 
 	/**
@@ -80,7 +81,7 @@ public class Ranking {
 	 * @param docFreq
 	 */
 	public void setDocFreq(Map<String, Integer> docFreq) {
-		this.docFreq = docFreq;
+		Ranking.docFreq = docFreq;
 	}
 
 	/**
@@ -115,67 +116,22 @@ public class Ranking {
 	//-----------------------------------------------------
 
 	/**
-	 * solrScoreメソッド (solrのスコアデータを修正し、格納する)
+	 * solrScoreメソッド (SolrからScoreデータを持ってくる)
 	 *
 	 * @param data
 	 */
-	public void solrScore(String data) {
+	@SuppressWarnings("unchecked")
+	public void solrScore(Map data) {
 
-		//queryの重み変数
-		float queryWeight = 0.0f;
-		//fieldの重み変数
-		float fieldWeight = 0.0f;
+		//インデックスIDを取得する
+		Iterator it = data.keySet().iterator();
 
-		//改行で分割する
-		_data = data.split("\n");
-
-		for (int i = 0; i < _data.length; i++) {
-
-			//一行毎に処理をする
-			String line = _data[i].trim();
-			String[] str = line.split("=");
-
-			//queryWeightの部分を探す
-			if (str[1].indexOf("queryWeight") != -1) {
-				//Keyword判定
-				String key = extractKeyword(line);
-				//keyの値が空文字で無ければ、値を格納する (アカウント判断部分を削除するためにif文を使う)
-				if (key != "") {
-					//IDFを計算し、格納する
-					float idf = idf(this.maxDocs, this.docFreq.get(key));
-					//Normを取得し、格納する
-					float norm = extractWeight(i+2);
-					//queryの重み計算
-					queryWeight = idf * norm;
-				}
-			}
-
-			//fieldWeightの部分を探す
-			if (str[1].indexOf("fieldWeight") != -1) {
-				//Keyword判定
-				String key = extractKeyword(line);
-				//keyの値が空文字で無ければ、値を格納する (アカウント判断部分を削除するためにif文を使う)
-				if (key != "") {
-					//TFを取得し、格納する
-					float tf = extractWeight(i+1);
-					//IDFを計算し、格納する
-					float idf = idf(this.maxDocs, this.docFreq.get(key));
-					//Normを取得し、格納する
-					float norm = extractWeight(i+3);
-					//fieldの重み計算
-					fieldWeight = tf * idf * norm;
-					//スコアクラスに総合スコアの重みを格納
-					_score.setWeight(queryWeight * fieldWeight);
-				}
-			}
-
-			//coordの部分を探す
-			if (str[1].indexOf("coord") != -1) {
-				//coordを取得し、格納する
-				_score.setCoord(extractWeight(i));
-			}
-
+		//複数のDocumentに対して処理する
+		while (it.hasNext()) {
+			String s = (String) it.next();
+			System.out.println(data.get(s));
 		}
+
 	}
 
 	/**
@@ -201,6 +157,77 @@ public class Ranking {
 	//-----------------------------------------------------
 	//staticメソッドの定義
 	//-----------------------------------------------------
+
+	/**
+	 * scoreAnalyzeメソッド (solrのスコアデータを解析する)
+	 *
+	 * @param data
+	 */
+	static float scoreAnalyze(String data) {
+
+		//スコアクラス
+		Score score = new Score();
+
+		//queryの重み変数
+		float queryWeight = 0.0f;
+		//fieldの重み変数
+		float fieldWeight = 0.0f;
+
+		//改行で分割する
+		_data = data.split("\n");
+
+		for (int i = 0; i < _data.length; i++) {
+
+			//一行毎に処理をする
+			String line = _data[i].trim();
+			String[] str = line.split("=");
+
+			//queryWeightの部分を探す
+			if (str[1].indexOf("queryWeight") != -1) {
+				//Keyword判定
+				String key = extractKeyword(line);
+				//keyの値が空文字で無ければ、値を格納する (アカウント判断部分を削除するためにif文を使う)
+				if (key != "") {
+					//IDFを計算し、格納する
+					float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
+					//Normを取得し、格納する
+					float norm = extractWeight(i+2);
+					//queryの重み計算
+					queryWeight = idf * norm;
+				}
+			}
+
+			//fieldWeightの部分を探す
+			if (str[1].indexOf("fieldWeight") != -1) {
+				//Keyword判定
+				String key = extractKeyword(line);
+				//keyの値が空文字で無ければ、値を格納する (アカウント判断部分を削除するためにif文を使う)
+				if (key != "") {
+					//TFを取得し、格納する
+					float tf = extractWeight(i+1);
+					//IDFを計算し、格納する
+					float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
+					//Normを取得し、格納する
+					float norm = extractWeight(i+3);
+					//fieldの重み計算
+					fieldWeight = tf * idf * norm;
+					//スコアクラスに総合スコアの重みを格納
+					score.setWeight(queryWeight * fieldWeight);
+				}
+			}
+
+			//coordの部分を探す
+			if (str[1].indexOf("coord") != -1) {
+				//coordを取得し、格納する
+				score.setCoord(extractWeight(i));
+			}
+
+		}
+
+		//ひとつのDocumentのスコア
+		System.out.println(score.score());
+		return score.score();
+	}
 
 	/**
 	 * idfメソッド (グローバルIDFを付けるための計算式)
