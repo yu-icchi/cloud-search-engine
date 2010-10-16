@@ -21,7 +21,7 @@ public class Ranking {
 	 * プロパティ
 	 */
 	//検索指定フィール
-	static String field = "text";
+	private static String field = "text";
 
 	//debugQueryの構造データを格納
 	static String[] _data;
@@ -153,8 +153,8 @@ public class Ranking {
 	 * @param num
 	 * @return
 	 */
-	public float score(int num) {
-		return 0.0f;
+	public Map<String, Float> score(int num) {
+		return scoreList.get(num);
 	}
 
 	/**
@@ -241,14 +241,18 @@ public class Ranking {
 				}
 			}
 
+			/*
 			//coordの部分を探す
 			if (str[1].indexOf("coord") != -1) {
 				//coordを取得し、格納する
-				System.out.println((float) overlap / maxOverlap + " = coord(" + overlap + "/" + maxOverlap + ")");
-				score.setCoord((float) overlap / maxOverlap);
+				score.setCoord(extractWeight(i));
 			}
-
+			*/
 		}
+
+		//coordを計算し、格納する
+		System.out.println((float) overlap / maxOverlap + " = coord(" + overlap + "/" + maxOverlap + ")");
+		score.setCoord((float) overlap / maxOverlap);
 
 		//ひとつのDocumentのスコア
 		//System.out.println(score.score());
@@ -274,12 +278,15 @@ public class Ranking {
 	 * @return
 	 */
 	static String extractKeyword(String line) {
+		//検索対象のフィールドを指定する
 		Pattern p = Pattern.compile("(" + Ranking.field +":[a-z]+)");
 		Matcher m = p.matcher(line);
 		if (m.find()) {
 			String[] str = m.group(1).split(":");
+			//Keywordだけを取り出す
 			return str[1];
 		}
+		//無ければ空文字を返す
 		return "";
 	}
 
