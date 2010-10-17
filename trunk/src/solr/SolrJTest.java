@@ -16,8 +16,8 @@ public class SolrJTest {
 		SolrQuery query = new SolrQuery();
 		query.set("debugQuery", "on");
 		query.set("shards", "localhost:8983/solr", "localhost:7574/solr");
-		query.set("debugQuery", "on");
 		query.setQuery("solr ipod");
+		System.out.println(query);
 		QueryResponse response = server.query(query);
 		SolrDocumentList list = response.getResults();
 		for(SolrDocument doc: list){

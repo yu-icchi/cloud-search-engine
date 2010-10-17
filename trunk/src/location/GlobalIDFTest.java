@@ -16,7 +16,7 @@ public class GlobalIDFTest {
 		//-------------------------------------------------
 		//setメソッド
 		//-------------------------------------------------
-		//g_idf.set("http://localhost:8983/solr/");
+		//g_idf.set("http://localhost:6365/solr/");
 		//g_idf.set("http://localhost:7574/solr/");
 
 		//g_idf.setSuperColumn("http://localhost:8983/solr/");
@@ -54,7 +54,7 @@ public class GlobalIDFTest {
 		//-------------------------------------------------
 		//deleteメソッド
 		//-------------------------------------------------
-		//g_idf.delete("http://localhost:8983/solr/");
+		//g_idf.delete("http://localhost:6365/solr/");
 		//g_idf.delete("http://localhost:7574/solr/");
 
 		//g_idf.deleteTerm("MaxDocs");
@@ -67,7 +67,7 @@ public class GlobalIDFTest {
 		//-------------------------------------------------
 		//otherメソッド
 		//-------------------------------------------------
-		System.out.println(g_idf.terms());
+		//System.out.println(g_idf.terms());
 
 		//System.out.println(g_idf.termsLength());
 
