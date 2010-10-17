@@ -1,0 +1,13 @@
+<add>
+	<doc>
+		<field name="id">003</field>
+		<field name="account">test2</field>
+		<field name="text">apache lucene apache cassandra</field>
+	</doc>
+
+	<doc>
+		<field name="id">004</field>
+		<field name="account">test1 test2</field>
+		<field name="text">大島優子は女優としてドラマでも出でいる</field>
+	</doc>
+</add>

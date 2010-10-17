@@ -467,6 +467,7 @@ public class GlobalIDF {
 	/**
 	 * deleteメソッド(削除)
 	 *
+	 *　Solrサーバにアクセスし、内容を消す⇒改善が必要
 	 *  @param url (String) URLを指定する
 	 */
 	@SuppressWarnings("unchecked")
@@ -482,6 +483,20 @@ public class GlobalIDF {
 				cc.delete(list.get(i).toString(), url);
 				cc.closeConnection();
 			}
+		}
+	}
+
+	/**
+	 * deleteURLメソッド
+	 *
+	 * @param url
+	 * @throws Exception
+	 */
+	public void deleteURL(String url) throws Exception {
+		//URLのチェック
+		if (urlCheck(url)) {
+			//Cassandraにアクセスする
+			CassandraClient cc = new CassandraClient(_host, _port);
 		}
 	}
 
