@@ -28,10 +28,14 @@ public class ShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "前田";
+		String query = "前田 48 メンバー さん AKB";
 		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("前田");
+		list.add("48");
+		list.add("メンバー");
+		list.add("さん");
+		list.add("AKB");
 		//list.add("solr");
 		//list.add("electron");
 		GlobalIDF g_idf = new GlobalIDF();
