@@ -22,18 +22,18 @@ public class ShardsSolrApp {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 		//POST送信でトップサーバにアクセス
-		URL solrURL = new URL("http://localhost:8983/solr/select");
+		URL solrURL = new URL("http://localhost:6365/solr/select");
 		URLConnection con = solrURL.openConnection();
 		con.setDoOutput(true);
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "solr electron ipod";
+		String query = "前田";
 		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
 		ArrayList<String> list = new ArrayList<String>();
-		list.add("ipod");
-		list.add("solr");
-		list.add("electron");
+		list.add("前田");
+		//list.add("solr");
+		//list.add("electron");
 		GlobalIDF g_idf = new GlobalIDF();
 		Map<String, Object> gidf = g_idf.get(list);
 		List urlList = (List) gidf.get("url");

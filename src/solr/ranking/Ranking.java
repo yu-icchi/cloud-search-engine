@@ -138,6 +138,7 @@ public class Ranking {
 			//スコアMap
 			Map<String, Float> map = new HashMap<String, Float>();
 			//解析し、修正したスコアを返す
+			//System.out.println(data.get(id));
 			float score = scoreAnalyze((String) data.get(id));
 			//Mapに格納
 			map.put(id, score);
@@ -182,9 +183,9 @@ public class Ranking {
 		Score score = new Score();
 
 		//queryの重み変数
-		float queryWeight = 0.0f;
+		float queryWeight = 1.0f;
 		//fieldの重み変数
-		float fieldWeight = 0.0f;
+		float fieldWeight = 1.0f;
 
 		//coord計算用のoverlap
 		int overlap = 0;
@@ -216,7 +217,6 @@ public class Ranking {
 					//queryの重み計算
 					queryWeight = idf * norm;
 					//System.out.println(queryWeight);
-					overlap++;
 				}
 			}
 
@@ -224,6 +224,8 @@ public class Ranking {
 			if (str[1].indexOf("fieldWeight") != -1) {
 				//Keyword判定
 				String key = extractKeyword(line);
+				//System.out.println(line);
+				//System.out.println(key);
 				//keyの値が空文字で無ければ、値を格納する (アカウント判断部分を削除するためにif文を使う)
 				if (key != "") {
 					//TFを取得し、格納する
@@ -238,6 +240,8 @@ public class Ranking {
 					//System.out.println(fieldWeight);
 					//スコアクラスに総合スコアの重みを格納
 					score.setWeight(queryWeight * fieldWeight);
+					//オーバーラップ変数
+					overlap++;
 				}
 			}
 
@@ -251,7 +255,7 @@ public class Ranking {
 		}
 
 		//coordを計算し、格納する
-		System.out.println((float) overlap / maxOverlap + " = coord(" + overlap + "/" + maxOverlap + ")");
+		//System.out.println((float) overlap / maxOverlap + " = coord(" + overlap + "/" + maxOverlap + ")");
 		score.setCoord((float) overlap / maxOverlap);
 
 		//ひとつのDocumentのスコア
@@ -279,7 +283,8 @@ public class Ranking {
 	 */
 	static String extractKeyword(String line) {
 		//検索対象のフィールドを指定する
-		Pattern p = Pattern.compile("(" + Ranking.field +":[a-z]+)");
+		//英数字・数字・ラテン文字・ひらがな・カタカナ・漢字
+		Pattern p = Pattern.compile("(" + Ranking.field +":[\\w]*[\\d]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)");
 		Matcher m = p.matcher(line);
 		if (m.find()) {
 			String[] str = m.group(1).split(":");
