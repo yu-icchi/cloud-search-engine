@@ -17,7 +17,7 @@ public class GlobalIDFTest {
 		//setメソッド
 		//-------------------------------------------------
 		//g_idf.set("http://localhost:6365/solr/");
-		//g_idf.set("http://localhost:7574/solr/");
+		//g_idf.set("http://localhost:6366/solr/");
 
 		//g_idf.setSuperColumn("http://localhost:8983/solr/");
 		//g_idf.setSuperColumn("http://localhost:7574/solr/");
@@ -33,8 +33,7 @@ public class GlobalIDFTest {
 
 		ArrayList<String> list = new ArrayList<String>();
 		//list.add("ipod");
-		list.add("solr");
-		list.add("electron");
+		list.add("前田");
 		//list.add("1");
 
 		Map<String, Object> obj = g_idf.get(list);
@@ -45,9 +44,10 @@ public class GlobalIDFTest {
 		//System.out.println(GlobalIDF.getMaxDocs());
 
 		//g_idf.getSuperColumn("solr");
+		/*
 		Map<String, Object> data = g_idf.getSuperColumn(list);
 		System.out.println(data);
-
+		*/
 		//g_idf.getSuperColumnAND(list);
 
 
