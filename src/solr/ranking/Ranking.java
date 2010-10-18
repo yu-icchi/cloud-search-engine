@@ -27,8 +27,8 @@ public class Ranking {
 	static String[] _data;
 
 	//IDFの値を計算するためのデータ
-	private static int maxDocs;
-	private static Map<String, Integer> docFreq;
+	static int maxDocs;
+	static Map<String, Integer> docFreq;
 
 	//スコアリスト
 	static List<Map<String, Float>> scoreList;
@@ -210,8 +210,8 @@ public class Ranking {
 				//keyの値が空文字で無ければ、値を格納する (アカウント判断部分を削除するためにif文を使う)
 				if (key != "") {
 					//IDFを計算し、格納する
-					//float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
-					float idf = extractWeight(i+1);
+					float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
+					//float idf = extractWeight(i+1);
 					//Normを取得し、格納する
 					float norm = extractWeight(i+2);
 					//queryの重み計算
@@ -231,8 +231,8 @@ public class Ranking {
 					//TFを取得し、格納する
 					float tf = extractWeight(i+1);
 					//IDFを計算し、格納する
-					//float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
-					float idf = extractWeight(i+2);
+					float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
+					//float idf = extractWeight(i+2);
 					//Normを取得し、格納する
 					float norm = extractWeight(i+3);
 					//fieldの重み計算
@@ -282,12 +282,13 @@ public class Ranking {
 	 * @return
 	 */
 	static String extractKeyword(String line) {
-		//検索対象のフィールドを指定する
+		//検索対象のフィールドを指定する 【queryWeight(text:◯◯◯)】【fieldWeight(text:◯◯◯ in ◯)】
 		//英数字・数字・ラテン文字・ひらがな・カタカナ・漢字
-		Pattern p = Pattern.compile("(" + Ranking.field +":[\\w]*[\\d]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)");
+		Pattern p = Pattern.compile("\\((" + Ranking.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)\\)");
 		Matcher m = p.matcher(line);
 		if (m.find()) {
-			String[] str = m.group(1).split(":");
+			//コロンかスペースで区切る
+			String[] str = m.group(1).split(":|\\s");
 			//Keywordだけを取り出す
 			return str[1];
 		}
