@@ -57,7 +57,7 @@ public class DistributedScore {
 	 * @param queryNormSum
 	 */
 	public void setQueryNormSum(float queryNormSum) {
-		this.queryNormSum += queryNormSum;
+		this.queryNormSum = queryNormSum;
 	}
 
 	/**

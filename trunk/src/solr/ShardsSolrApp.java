@@ -78,6 +78,6 @@ public class ShardsSolrApp {
 		//Solrのスコアデータを格納する
 		ranking.solrScoreImport(map3);
 		//ランキング修正結果を返す
-		System.out.println(ranking.score("SOLR1000"));
+		ranking.ranking();
 	}
 }
