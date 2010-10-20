@@ -1,5 +1,5 @@
 //---------------------------------------------------------
-//Rankingクラス (未完成)
+//DistributedSimilarityクラス (未完成)
 //
 //Solrの検索時にdebugQuery=onにし、スコア計算の情報を取得する
 //その内容からランキングを修正する
@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class Ranking {
+public class DistributedSimilarity {
 
 	/**
 	 * プロパティ
@@ -43,7 +43,7 @@ public class Ranking {
 	/**
 	 * コンストラクタ (デフォルト)
 	 */
-	public Ranking() {
+	public DistributedSimilarity() {
 
 	}
 
@@ -53,9 +53,9 @@ public class Ranking {
 	 * @param docFreq (Map)
 	 * @param maxDocs (int)
 	 */
-	public Ranking(Map<String, Integer> docFreq, int maxDocs) {
-		Ranking.docFreq = docFreq;
-		Ranking.maxDocs = maxDocs;
+	public DistributedSimilarity(Map<String, Integer> docFreq, int maxDocs) {
+		DistributedSimilarity.docFreq = docFreq;
+		DistributedSimilarity.maxDocs = maxDocs;
 	}
 
 	//-----------------------------------------------------
@@ -68,7 +68,7 @@ public class Ranking {
 	 * @param maxDocs
 	 */
 	public void setMaxDocs(int maxDocs) {
-		Ranking.maxDocs = maxDocs;
+		DistributedSimilarity.maxDocs = maxDocs;
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class Ranking {
 	 * @param docFreq
 	 */
 	public void setDocFreq(Map<String, Integer> docFreq) {
-		Ranking.docFreq = docFreq;
+		DistributedSimilarity.docFreq = docFreq;
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class Ranking {
 	 * @param field
 	 */
 	public static void setField(String field) {
-		Ranking.field = field;
+		DistributedSimilarity.field = field;
 	}
 
 	/**
@@ -126,10 +126,7 @@ public class Ranking {
 	 * @param data
 	 */
 	@SuppressWarnings("unchecked")
-	public void solrScore(Map data) {
-
-		//queryNormの計算の一部を先に処理しておく
-		sumOfSqueredWeightsValue = sumOfSqueredWeights();
+	public void solrScoreImport(Map data) {
 
 		//スコアリスト
 		scoreList = new ArrayList<Map<String, Float>>();
@@ -151,8 +148,6 @@ public class Ranking {
 			//スコアリストに追加する
 			scoreList.add(map);
 		}
-
-		System.out.println("queryNorm:" + queryNorm(1));
 
 	}
 
@@ -188,12 +183,14 @@ public class Ranking {
 	static float scoreAnalyze(String data) {
 
 		//スコアクラス
-		Score score = new Score();
+		DistributedScore score = new DistributedScore();
 
-		//queryの重み変数
-		float queryWeight = 1.0f;
-		//fieldの重み変数
-		float fieldWeight = 1.0f;
+		//スコア計算に必要な変数
+		float tf = 0.0f;
+		float idf = 0.0f;
+		//デフォルトで"1.0"にしておく
+		float boost = 1.0f;
+		float norm = 0.0f;
 
 		//coord計算用のoverlap
 		int overlap = 0;
@@ -215,75 +212,51 @@ public class Ranking {
 			if (str[1].indexOf("queryWeight") != -1) {
 				//Keyword判定
 				String key = extractKeyword(line);
-				System.out.println(key);
 				//keyの値が空文字で無ければ、値を格納する (アカウント判断部分を削除するためにif文を使う)
 				if (key != "") {
-					//IDFを計算し、格納する
-					float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
 					String tmp = _data[i+1].trim();
-					//boostが指定されているか？
+					//boost値が存在するか調べる
 					if (tmp.indexOf("boost") != -1) {
-						//System.out.println("boost:" + extractWeight(i+1));
-						//boost値を取得する
-						float boost = extractWeight(i+1);
-						sumOfSqueredWeightsValue *= boost * boost;
-						//Normを取得し、格納する
-						float norm = extractWeight(i+3);
-						//System.out.println(extractWeight(i+3));
-						queryWeight = idf * norm;
-						//System.out.println(queryWeight);
-					} else {
-						//float idf = extractWeight(i+1);
-						//Normを取得し、格納する
-						float norm = extractWeight(i+2);
-						//System.out.println(extractWeight(i+2));
-						//queryの重み計算
-						queryWeight = idf * norm;
-						//System.out.println(queryWeight);
+						boost = extractWeight(i+1);
+						//System.out.println("boost:" + boost);
 					}
 				}
+
 			}
 
 			//fieldWeightの部分を探す
 			if (str[1].indexOf("fieldWeight") != -1) {
 				//Keyword判定
 				String key = extractKeyword(line);
-				//System.out.println(line);
-				//System.out.println(key);
 				//keyの値が空文字で無ければ、値を格納する (アカウント判断部分を削除するためにif文を使う)
 				if (key != "") {
 					//TFを取得し、格納する
-					float tf = extractWeight(i+1);
+					tf = extractWeight(i+1);
+					//System.out.println("tf:" + tf);
 					//IDFを計算し、格納する
-					float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
-					//float idf = extractWeight(i+2);
+					idf = idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(key));
+					//System.out.println("idf:" + idf);
 					//Normを取得し、格納する
-					float norm = extractWeight(i+3);
-					//fieldの重み計算
-					fieldWeight = tf * idf * norm;
-					//System.out.println(fieldWeight);
+					norm = extractWeight(i+3);
+					//System.out.println("norm:" + norm);
 					//スコアクラスに総合スコアの重みを格納
-					score.setWeight(queryWeight * fieldWeight);
+					score.setWeight(tf * (idf * idf) * boost * norm);
+					//System.out.println("Weight:" + score.getWeight());
+					//sumOfSqueredWeightsの計算をする
+					score.setQueryNormSum((idf * boost) * (idf * boost));
+					//System.out.println("QueryNormSum:" + (float) (1.0 / Math.sqrt(score.getQueryNormSum())));
 					//オーバーラップ変数
 					overlap++;
 				}
 			}
 
-			/*
-			//coordの部分を探す
-			if (str[1].indexOf("coord") != -1) {
-				//coordを取得し、格納する
-				score.setCoord(extractWeight(i));
-			}
-			*/
 		}
 
 		//coordを計算し、格納する
-		//System.out.println((float) overlap / maxOverlap + " = coord(" + overlap + "/" + maxOverlap + ")");
 		score.setCoord((float) overlap / maxOverlap);
+		//System.out.println("Coord:" + score.getCoord());
 
 		//ひとつのDocumentのスコア
-		//System.out.println(score.score());
 		return score.score();
 	}
 
@@ -342,8 +315,8 @@ public class Ranking {
 	static String extractKeyword(String line) {
 		//検索対象のフィールドを指定する 【queryWeight(text:◯◯◯) or queryWeight(text:◯◯◯^◯.◯)】【fieldWeight(text:◯◯◯ in ◯)】
 		//正規表現で調べる、英数字・数字・ラテン文字・ひらがな・カタカナ・漢字
-		Pattern p = Pattern.compile("\\((" + Ranking.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)" +
-									"|(" + Ranking.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)^[0-9]\\.[0-9]\\)");
+		Pattern p = Pattern.compile("\\((" + DistributedSimilarity.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)" +
+									"|(" + DistributedSimilarity.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)^[0-9]\\.[0-9]\\)");
 		Matcher m = p.matcher(line);
 		if (m.find()) {
 			//コロンかスペースかハットで区切る
