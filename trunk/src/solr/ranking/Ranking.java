@@ -219,13 +219,24 @@ public class Ranking {
 				if (key != "") {
 					//IDFを計算し、格納する
 					float idf = idf(Ranking.maxDocs, Ranking.docFreq.get(key));
-					//float idf = extractWeight(i+1);
-					//Normを取得し、格納する
-					float norm = extractWeight(i+2);
-					//System.out.println(extractWeight(i+1));
-					//queryの重み計算
-					queryWeight = idf * norm;
-					//System.out.println(queryWeight);
+					String tmp = _data[i+1].trim();
+					//boostが指定されているか？
+					if (tmp.indexOf("boost") != -1) {
+						System.out.println("boost:" + tmp);
+						//Normを取得し、格納する
+						float norm = extractWeight(i+3);
+						//System.out.println(extractWeight(i+3));
+						queryWeight = idf * norm;
+						//System.out.println(queryWeight);
+					} else {
+						//float idf = extractWeight(i+1);
+						//Normを取得し、格納する
+						float norm = extractWeight(i+2);
+						//System.out.println(extractWeight(i+2));
+						//queryの重み計算
+						queryWeight = idf * norm;
+						//System.out.println(queryWeight);
+					}
 				}
 			}
 
