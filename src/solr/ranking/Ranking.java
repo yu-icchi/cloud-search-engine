@@ -207,6 +207,7 @@ public class Ranking {
 			if (str[1].indexOf("queryWeight") != -1) {
 				//Keyword判定
 				String key = extractKeyword(line);
+				System.out.println(key);
 				//keyの値が空文字で無ければ、値を格納する (アカウント判断部分を削除するためにif文を使う)
 				if (key != "") {
 					//IDFを計算し、格納する
@@ -214,6 +215,7 @@ public class Ranking {
 					//float idf = extractWeight(i+1);
 					//Normを取得し、格納する
 					float norm = extractWeight(i+2);
+					//System.out.println(extractWeight(i+1));
 					//queryの重み計算
 					queryWeight = idf * norm;
 					//System.out.println(queryWeight);
@@ -275,6 +277,16 @@ public class Ranking {
 	}
 
 	/**
+	 * queryNormメソッド (クエリーノームを計算し直すメソッド)
+	 *
+	 * @param getBoost
+	 * @return
+	 */
+	static float queryNorm(float getBoost) {
+		return getBoost;
+	}
+
+	/**
 	 * extractKeywordメソッド
 	 * Ranking.fieldでしていした、Solrのインデックスフィールドの部分だけ調べる
 	 *
@@ -282,13 +294,14 @@ public class Ranking {
 	 * @return
 	 */
 	static String extractKeyword(String line) {
-		//検索対象のフィールドを指定する 【queryWeight(text:◯◯◯)】【fieldWeight(text:◯◯◯ in ◯)】
+		//検索対象のフィールドを指定する 【queryWeight(text:◯◯◯) or queryWeight(text:◯◯◯^◯.◯)】【fieldWeight(text:◯◯◯ in ◯)】
 		//英数字・数字・ラテン文字・ひらがな・カタカナ・漢字
-		Pattern p = Pattern.compile("\\((" + Ranking.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)\\)");
+		Pattern p = Pattern.compile("\\((" + Ranking.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)" +
+									"|(" + Ranking.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)^[0-9]\\.[0-9]\\)");
 		Matcher m = p.matcher(line);
 		if (m.find()) {
-			//コロンかスペースで区切る
-			String[] str = m.group(1).split(":|\\s");
+			//コロンかスペースかハットで区切る
+			String[] str = m.group(1).split(":|\\s|\\^|\\)");
 			//Keywordだけを取り出す
 			return str[1];
 		}
