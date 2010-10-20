@@ -28,7 +28,7 @@ public class ShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "前田 48 メンバー さん AKB AND account:test1";
+		String query = "前田^3.0 48 メンバー さん AKB AND account:test1";
 		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("前田");
