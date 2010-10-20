@@ -13,7 +13,8 @@ import net.arnx.jsonic.JSON;
 
 import location.GlobalIDF;
 
-import solr.ranking.Ranking;
+import solr.ranking.DistributedSimilarity;
+//import solr.ranking.Ranking;
 
 //-----------------------------------------------
 //分散検索するために、トップレベルサーバに問い合わせをするプログラム
@@ -28,16 +29,16 @@ public class ShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "前田^3.0 48 メンバー さん AKB";
+		String query = "solr^3.0 ipod";
 		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
 		ArrayList<String> list = new ArrayList<String>();
-		list.add("前田");
-		list.add("48");
-		list.add("メンバー");
-		list.add("さん");
-		list.add("AKB");
-		//list.add("solr");
-		//list.add("electron");
+		//list.add("前田");
+		//list.add("48");
+		//list.add("メンバー");
+		//list.add("さん");
+		//list.add("AKB");
+		list.add("solr");
+		list.add("ipod");
 		GlobalIDF g_idf = new GlobalIDF();
 		Map<String, Object> gidf = g_idf.get(list);
 		List urlList = (List) gidf.get("url");
@@ -72,11 +73,10 @@ public class ShardsSolrApp {
 		//グローバルIDFに必要なmaxDocsの値を取り出す
 		int maxDocs = Integer.valueOf(gidf.get("maxDocs").toString()).intValue();
 		//ランキング修正をする
-		Ranking ranking = new Ranking(docFreq, maxDocs);
+		DistributedSimilarity ranking = new DistributedSimilarity(docFreq, maxDocs);
 		//Solrのスコアデータを格納する
-		ranking.solrScore(map3);
+		ranking.solrScoreImport(map3);
 		//ランキング修正結果を返す
 		System.out.println(ranking.ranking());
-		System.out.println(ranking.score(0));
 	}
 }
