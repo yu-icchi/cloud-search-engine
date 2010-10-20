@@ -30,6 +30,9 @@ public class Ranking {
 	static int maxDocs;
 	static Map<String, Integer> docFreq;
 
+	//queryNormを計算する時に使用する変数 (呼び出しを1回にし計算コストを抑える)
+	static float sumOfSqueredWeightValue;
+
 	//スコアリスト
 	static List<Map<String, Float>> scoreList;
 
@@ -124,6 +127,10 @@ public class Ranking {
 	 */
 	@SuppressWarnings("unchecked")
 	public void solrScore(Map data) {
+
+		//queryNormの計算の一部を先に処理しておく
+		sumOfSqueredWeightValue = sumOfSqueredWeights();
+		System.out.println("queryNorm:" + queryNorm(1));
 
 		//スコアリスト
 		scoreList = new ArrayList<Map<String, Float>>();
@@ -279,11 +286,35 @@ public class Ranking {
 	/**
 	 * queryNormメソッド (クエリーノームを計算し直すメソッド)
 	 *
-	 * @param getBoost
+	 * @param getBoost (クエリーに指定した重みを与える)
 	 * @return
 	 */
 	static float queryNorm(float getBoost) {
-		return getBoost;
+		float queryNormValue = (float) (1.0 / Math.sqrt(sumOfSqueredWeightValue * (getBoost * getBoost)));
+		return queryNormValue;
+	}
+
+	/**
+	 * sumOfSqueredWeightsメソッド (queryNormでの計算で使用する)
+	 *
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	static float sumOfSqueredWeights() {
+
+		float sum = 0.0f;
+
+		//インデックスIDを取得する
+		Iterator it = docFreq.keySet().iterator();
+
+		//複数のDocumentに対して処理する
+		while (it.hasNext()) {
+			String id = (String) it.next();
+			//System.out.println(idf(maxDocs, docFreq.get(id)));
+			float idf = idf(maxDocs, docFreq.get(id));
+			sum += idf * idf;
+		}
+		return sum;
 	}
 
 	/**
@@ -295,7 +326,7 @@ public class Ranking {
 	 */
 	static String extractKeyword(String line) {
 		//検索対象のフィールドを指定する 【queryWeight(text:◯◯◯) or queryWeight(text:◯◯◯^◯.◯)】【fieldWeight(text:◯◯◯ in ◯)】
-		//英数字・数字・ラテン文字・ひらがな・カタカナ・漢字
+		//正規表現で調べる、英数字・数字・ラテン文字・ひらがな・カタカナ・漢字
 		Pattern p = Pattern.compile("\\((" + Ranking.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)" +
 									"|(" + Ranking.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)^[0-9]\\.[0-9]\\)");
 		Matcher m = p.matcher(line);
