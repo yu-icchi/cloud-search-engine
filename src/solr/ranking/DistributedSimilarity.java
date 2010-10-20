@@ -31,10 +31,10 @@ public class DistributedSimilarity {
 	static Map<String, Integer> docFreq;
 
 	//queryNormを計算する時に使用する変数 (呼び出しを1回にし計算コストを抑える)
-	static float sumOfSqueredWeightsValue;
+	static float sumOfSqueredWeightsValue = 0.0f;
 
 	//スコアリスト
-	static List<Map<String, Float>> scoreList;
+	static List<Map<String, DistributedScore>> scoreList;
 
 	//-----------------------------------------------------
 	//コンストラクタの定義
@@ -129,7 +129,7 @@ public class DistributedSimilarity {
 	public void solrScoreImport(Map data) {
 
 		//スコアリスト
-		scoreList = new ArrayList<Map<String, Float>>();
+		scoreList = new ArrayList<Map<String, DistributedScore>>();
 
 		//インデックスIDを取得する
 		Iterator it = data.keySet().iterator();
@@ -139,10 +139,10 @@ public class DistributedSimilarity {
 			String id = (String) it.next();
 			//System.out.println(data.get(id));
 			//スコアMap
-			Map<String, Float> map = new HashMap<String, Float>();
+			Map<String, DistributedScore> map = new HashMap<String, DistributedScore>();
 			//解析し、修正したスコアを返す
 			//System.out.println(data.get(id));
-			float score = scoreAnalyze((String) data.get(id));
+			DistributedScore score = scoreAnalyze((String) data.get(id));
 			//Mapに格納
 			map.put(id, score);
 			//スコアリストに追加する
@@ -157,18 +157,22 @@ public class DistributedSimilarity {
 	 * @param num
 	 * @return
 	 */
-	public Map<String, Float> score(int num) {
+	public Map<String, DistributedScore> score(int num) {
 		return scoreList.get(num);
 	}
 
 	/**
-	 * rankingメソッド
+	 * scoreメソッド (付焼刃)
 	 * ランキングの高い順から格納される
 	 *
 	 * @return MapをListでまとめたモノ
 	 */
-	public List<Map<String, Float>> ranking() {
-		return scoreList;
+	public float score(String key) {
+		Map<String, DistributedScore> map = scoreList.get(0);
+		DistributedScore score = map.get(key);
+		score.setQueryNormSum(sumOfSqueredWeightsValue);
+		System.out.println("QueryNormSum:" + score.getQueryNormSum());
+		return score.score();
 	}
 
 	//-----------------------------------------------------
@@ -179,8 +183,9 @@ public class DistributedSimilarity {
 	 * scoreAnalyzeメソッド (solrのスコアデータを解析する)
 	 *
 	 * @param data
+	 * @return DistributedScore
 	 */
-	static float scoreAnalyze(String data) {
+	static DistributedScore scoreAnalyze(String data) {
 
 		//スコアクラス
 		DistributedScore score = new DistributedScore();
@@ -241,9 +246,9 @@ public class DistributedSimilarity {
 					//System.out.println("norm:" + norm);
 					//スコアクラスに総合スコアの重みを格納
 					score.setWeight(tf * (idf * idf) * boost * norm);
-					//System.out.println("Weight:" + score.getWeight());
+					//System.out.println("Weight1:" + score.getWeight());
 					//sumOfSqueredWeightsの計算をする
-					score.setQueryNormSum((idf * boost) * (idf * boost));
+					sumOfSqueredWeightsValue += (idf * boost) * (idf * boost);
 					//System.out.println("QueryNormSum:" + (float) (1.0 / Math.sqrt(score.getQueryNormSum())));
 					//オーバーラップ変数
 					overlap++;
@@ -256,8 +261,10 @@ public class DistributedSimilarity {
 		score.setCoord((float) overlap / maxOverlap);
 		//System.out.println("Coord:" + score.getCoord());
 
+		//System.out.println("Weight2:" + score.getWeight());
+
 		//ひとつのDocumentのスコア
-		return score.score();
+		return score;
 	}
 
 	/**
@@ -269,40 +276,6 @@ public class DistributedSimilarity {
 	 */
 	static float idf(int maxDocs, int docFreq) {
 		return (float) (Math.log(maxDocs / (double) (docFreq + 1)) + 1.0);
-	}
-
-	/**
-	 * queryNormメソッド (クエリーノームを計算し直すメソッド)
-	 *
-	 * @param getBoost (クエリーに指定した重みを与える)
-	 * @return
-	 */
-	static float queryNorm(float getBoost) {
-		float queryNormValue = (float) (1.0 / Math.sqrt(sumOfSqueredWeightsValue * (getBoost * getBoost)));
-		return queryNormValue;
-	}
-
-	/**
-	 * sumOfSqueredWeightsメソッド (queryNormでの計算で使用する)
-	 *
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	static float sumOfSqueredWeights() {
-
-		float sum = 0.0f;
-
-		//インデックスIDを取得する
-		Iterator it = docFreq.keySet().iterator();
-
-		//複数のDocumentに対して処理する
-		while (it.hasNext()) {
-			String id = (String) it.next();
-			//System.out.println(idf(maxDocs, docFreq.get(id)));
-			float idf = idf(maxDocs, docFreq.get(id));
-			sum += idf * idf;
-		}
-		return sum;
 	}
 
 	/**

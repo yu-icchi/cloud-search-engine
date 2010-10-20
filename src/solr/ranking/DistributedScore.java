@@ -78,7 +78,7 @@ public class DistributedScore {
 	 * @return
 	 */
 	public float score() {
-		return (float) (this.coord * (1.0 / Math.sqrt(queryNormSum)) * this.weight);
+		return (float) (this.coord * (1.0 / Math.sqrt(this.queryNormSum)) * this.weight);
 	}
 
 }

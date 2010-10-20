@@ -29,7 +29,7 @@ public class ShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "solr^3.0 ipod";
+		String query = "solr^3.0 ipod electron";
 		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
 		ArrayList<String> list = new ArrayList<String>();
 		//list.add("前田");
@@ -39,6 +39,7 @@ public class ShardsSolrApp {
 		//list.add("AKB");
 		list.add("solr");
 		list.add("ipod");
+		list.add("electron");
 		GlobalIDF g_idf = new GlobalIDF();
 		Map<String, Object> gidf = g_idf.get(list);
 		List urlList = (List) gidf.get("url");
@@ -77,6 +78,6 @@ public class ShardsSolrApp {
 		//Solrのスコアデータを格納する
 		ranking.solrScoreImport(map3);
 		//ランキング修正結果を返す
-		System.out.println(ranking.ranking());
+		System.out.println(ranking.score("SOLR1000"));
 	}
 }
