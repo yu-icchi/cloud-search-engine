@@ -162,17 +162,24 @@ public class DistributedSimilarity {
 	}
 
 	/**
-	 * scoreメソッド (付焼刃)
+	 * rankingメソッド (付焼刃)
 	 * ランキングの高い順から格納される
 	 *
 	 * @return MapをListでまとめたモノ
 	 */
-	public float score(String key) {
-		Map<String, DistributedScore> map = scoreList.get(0);
-		DistributedScore score = map.get(key);
-		score.setQueryNormSum(sumOfSqueredWeightsValue);
-		System.out.println("QueryNormSum:" + score.getQueryNormSum());
-		return score.score();
+	@SuppressWarnings("unchecked")
+	public void ranking() {
+		for (int i = 0; i < scoreList.size(); i++) {
+			Map<String, DistributedScore> map = scoreList.get(i);
+			Iterator it = map.keySet().iterator();
+			while (it.hasNext()) {
+				String id = (String) it.next();
+				DistributedScore score = map.get(id);
+				score.setQueryNormSum(sumOfSqueredWeightsValue);
+				//System.out.println("QueryNormSum:" + score.getQueryNormSum());
+				System.out.println(id + " : " + score.score());
+			}
+		}
 	}
 
 	//-----------------------------------------------------
