@@ -5,13 +5,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.arnx.jsonic.JSON;
-
-import location.GlobalIDF;
 
 import solr.ranking.DistributedSimilarity;
 //import solr.ranking.Ranking;
@@ -19,7 +16,7 @@ import solr.ranking.DistributedSimilarity;
 //-----------------------------------------------
 //分散検索するために、トップレベルサーバに問い合わせをするプログラム
 //-----------------------------------------------
-public class ShardsSolrApp {
+public class CopyOfShardsSolrApp {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 		//POST送信でトップサーバにアクセス
@@ -29,35 +26,10 @@ public class ShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "solr ipod electron";
-		//String query = "前田^1.5 48 メンバー さん AKB AND account:test1";
-		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
-		ArrayList<String> list = new ArrayList<String>();
-		//list.add("前田");
-		//list.add("48");
-		//list.add("メンバー");
-		//list.add("さん");
-		//list.add("AKB");
-		list.add("solr");
-		list.add("ipod");
-		list.add("electron");
-		GlobalIDF g_idf = new GlobalIDF();
-		Map<String, Object> gidf = g_idf.get(list);
-		List urlList = (List) gidf.get("url");
-		//分散検索先の設定
-		String shards = "";
-		for (int i = 0; i < urlList.size(); i++) {
-			//URLを取り出す
-			String url = urlList.get(i).toString();
-			//「http://」を切り取る
-			shards += url.substring(7, url.length()) + ",";
-		}
-		System.out.println(shards);
-		System.out.println(gidf.get("maxDocs"));
-		System.out.println(gidf.get("docFreq"));
+		String query = "solr^3.0 ipod";
 
 		//検索式
-		out.print("shards=" + shards + "&q=" + query +"&debugQuery=on&wt=json");
+		out.print("shards=" + "localhost:8081/solr,localhost:8082/solr" + "&q=" + query +"&debugQuery=on&wt=json");
 		out.close();
 		//検索
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -71,9 +43,11 @@ public class ShardsSolrApp {
 		System.out.println(map3);
 
 		//グローバルIDFに必要なdocFreqの値を取り出す
-		Map<String, Integer> docFreq = (Map<String, Integer>) gidf.get("docFreq");
+		Map<String, Integer> docFreq = new HashMap<String, Integer>();
+		docFreq.put("solr", 1);
+		docFreq.put("ipod", 3);
 		//グローバルIDFに必要なmaxDocsの値を取り出す
-		int maxDocs = Integer.valueOf(gidf.get("maxDocs").toString()).intValue();
+		int maxDocs = 19;
 		//ランキング修正をする
 		DistributedSimilarity ranking = new DistributedSimilarity(docFreq, maxDocs);
 		//Solrのスコアデータを格納する
