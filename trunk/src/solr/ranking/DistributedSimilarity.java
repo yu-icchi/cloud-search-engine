@@ -150,6 +150,7 @@ public class DistributedSimilarity {
 			scoreList.add(map);
 		}
 
+		//sumOfSqueredWeightsの計算
 		sumOfSqueredWeightsValue = sumOfSqueredWeights();
 		//System.out.println(sumOfSqueredWeights());
 
@@ -171,7 +172,10 @@ public class DistributedSimilarity {
 	 *
 	 * @return MapをListでまとめたモノ
 	 */
-	public void ranking() {
+	public List<Map<String, Float>> ranking() {
+		//出力結果を返す変数
+		List<Map<String, Float>> resultList = new  ArrayList<Map<String, Float>>();
+
 		for (int i = 0; i < scoreList.size(); i++) {
 			Map<String, DistributedScore> map = scoreList.get(i);
 			Iterator<String> it = map.keySet().iterator();
@@ -182,9 +186,14 @@ public class DistributedSimilarity {
 				DistributedScore score = map.get(id);
 				score.setQueryNormSum(sumOfSqueredWeightsValue);
 				//System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
-				System.out.println(id + " : " + score.score());
+				//System.out.println(id + " : " + score.score());
+				Map<String, Float> resultMap = new HashMap<String, Float>();
+				resultMap.put(id, score.score());
+				resultList.add(resultMap);
 			}
 		}
+
+		return resultList;
 	}
 
 	//-----------------------------------------------------
@@ -299,7 +308,9 @@ public class DistributedSimilarity {
 	 */
 	static float sumOfSqueredWeights() {
 
+		//初期値
 		float sum = 0.0f;
+		//boostの初期値
 		float boost = 1.0f;
 
 		//インデックスIDを取得する
@@ -307,12 +318,15 @@ public class DistributedSimilarity {
 
 		//複数のDocumentに対して処理する
 		while (it.hasNext()) {
+			//クエリーのキーワードを取り出す
 			String id = it.next();
+			//idf計算
 			float idf = idf(maxDocs, docFreq.get(id));
 			//クエリー時に含まれるboost値を与える
 			if (boostMap.get(id) != null) {
 				boost = boostMap.get(id);
 			}
+			//Σ(idf(t)*t.getBoost)^2の計算
 			sum += (idf * boost) * (idf * boost);
 		}
 

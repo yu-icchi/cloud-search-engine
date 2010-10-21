@@ -26,7 +26,7 @@ public class CopyOfShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "solr^3.0 ipod";
+		String query = "(solr ipod) AND account:user1";
 
 		//検索式
 		out.print("shards=" + "localhost:8081/solr,localhost:8082/solr" + "&q=" + query +"&debugQuery=on&wt=json");
@@ -40,7 +40,7 @@ public class CopyOfShardsSolrApp {
 		Map map2 = (Map) map.get("debug");
 		//System.out.println(map2.get("explain"));
 		Map map3 = (Map) map2.get("explain");
-		System.out.println(map3);
+		//System.out.println(map3);
 
 		//グローバルIDFに必要なdocFreqの値を取り出す
 		Map<String, Integer> docFreq = new HashMap<String, Integer>();
@@ -53,6 +53,6 @@ public class CopyOfShardsSolrApp {
 		//Solrのスコアデータを格納する
 		ranking.solrScoreImport(map3);
 		//ランキング修正結果を返す
-		ranking.ranking();
+		System.out.println(ranking.ranking());
 	}
 }
