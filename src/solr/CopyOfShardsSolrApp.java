@@ -26,7 +26,7 @@ public class CopyOfShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "(solr ipod) AND account:user1";
+		String query = "solr AND account:user1";
 
 		//検索式
 		out.print("shards=" + "localhost:8081/solr,localhost:8082/solr" + "&q=" + query +"&debugQuery=on&wt=json");

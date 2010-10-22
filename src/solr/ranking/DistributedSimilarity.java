@@ -31,7 +31,7 @@ public class DistributedSimilarity {
 	static Map<String, Integer> docFreq;
 
 	//queryNormを計算する時に使用する変数 (呼び出しを1回にし計算コストを抑える)
-	static float sumOfSqueredWeightsValue = 0.0f;
+	static float sumOfSquaredWeightsValue = 0.0f;
 	static Map<String, Float> boostMap = new HashMap<String, Float>();
 
 	//スコアリスト
@@ -151,8 +151,8 @@ public class DistributedSimilarity {
 		}
 
 		//sumOfSqueredWeightsの計算
-		sumOfSqueredWeightsValue = sumOfSqueredWeights();
-		//System.out.println(sumOfSqueredWeights());
+		sumOfSquaredWeightsValue = sumOfSquaredWeights();
+		//System.out.println(sumOfSquaredWeights());
 
 	}
 
@@ -184,7 +184,7 @@ public class DistributedSimilarity {
 				//idを取り出す
 				String id = it.next();
 				DistributedScore score = map.get(id);
-				score.setQueryNormSum(sumOfSqueredWeightsValue);
+				score.setQueryNormSum(sumOfSquaredWeightsValue);
 				//System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
 				//System.out.println(id + " : " + score.score());
 				Map<String, Float> resultMap = new HashMap<String, Float>();
@@ -306,7 +306,7 @@ public class DistributedSimilarity {
 	 *
 	 * @return
 	 */
-	static float sumOfSqueredWeights() {
+	static float sumOfSquaredWeights() {
 
 		//初期値
 		float sum = 0.0f;
