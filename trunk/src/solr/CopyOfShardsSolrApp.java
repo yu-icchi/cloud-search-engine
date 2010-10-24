@@ -16,17 +16,20 @@ import solr.ranking.DistributedSimilarity;
 //-----------------------------------------------
 //分散検索するために、トップレベルサーバに問い合わせをするプログラム
 //-----------------------------------------------
+/**
+ * @test
+ */
 public class CopyOfShardsSolrApp {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 		//POST送信でトップサーバにアクセス
-		URL solrURL = new URL("http://localhost:6365/solr/select");
+		URL solrURL = new URL("http://localhost:8081/solr/select");
 		URLConnection con = solrURL.openConnection();
 		con.setDoOutput(true);
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "solr AND account:user1";
+		String query = "solr OR ipod";
 
 		//検索式
 		out.print("shards=" + "localhost:8081/solr,localhost:8082/solr" + "&q=" + query +"&debugQuery=on&wt=json");
