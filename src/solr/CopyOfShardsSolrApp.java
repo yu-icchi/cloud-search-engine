@@ -23,7 +23,7 @@ public class CopyOfShardsSolrApp {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 		//POST送信でトップサーバにアクセス
-		URL solrURL = new URL("http://localhost:8081/solr/select");
+		URL solrURL = new URL("http://localhost:8080/solr/select");
 		URLConnection con = solrURL.openConnection();
 		con.setDoOutput(true);
 		PrintWriter out = new PrintWriter(con.getOutputStream());
