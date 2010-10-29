@@ -1,0 +1,48 @@
+//オプション定義
+options{
+    STATIC=false;
+    MULTI=true;
+    VISITOR=true;
+    NODE_EXTENDS="javacc.expr.BaseNode";
+}
+
+//パーサークラスの定義
+PARSER_BEGIN(ExprParser)
+package javacc.expr.parser;
+public class ExprParser{
+
+}
+PARSER_END(ExprParser)
+
+//トークンの定義
+SKIP:
+{
+    " " | "\r" | "\t" | "\n"
+}
+TOKEN:
+{
+        <PLUS : "+">
+    |   <MINUS: "-">
+    |   <INTEGER: (["0" - "9"])+>
+}
+
+//文法の定義
+ASTStart Start():
+{}
+{
+    AddExpr() { return jjtThis;}
+}
+
+void AddExpr() #void:
+{}
+{
+    Integer() (
+           <PLUS>  Integer() #Add(2)
+        |  <MINUS> Integer() #Sub(2) ) *
+}
+
+void Integer():
+{ Token t;}
+{
+    t = <INTEGER> { jjtThis.nodeValue = t.image;}
+}
