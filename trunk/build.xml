@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<project name="parser" default="sent">
+	<target name="sent">
+		<javacc target="Sent.jj" outputdirectory="./src/javacc" javacchome="./lib/javacc-5.0"/>
+	</target>
+</project>

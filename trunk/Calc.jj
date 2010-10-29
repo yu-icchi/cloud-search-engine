@@ -1,0 +1,66 @@
+/**
+ *	Simple Calculator
+ */
+
+ PARSER_BEGIN(Calc)
+ public class Calc {
+ 	public static void main(String args[]) throws ParseException {
+ 		Calc parser = new Calc(System.in);
+ 		while (parser.CalcUnit() == 0)
+ 			;
+ 	}
+ }
+ PARSER_END(Calc)
+ SKIP :
+ {
+ 	" "|"\r"
+ }
+ TOKEN :
+ {
+		< ADDOP: "+" >
+	|	< SUBOP: "-" >
+	|	< MULOP: "*" >
+	|	< DIVOP: "/" >
+	|	< LP:	 "(" >
+	|	< RP:	 ")" >
+	|	< LITERAL:	(["0"-"9"])+ >
+	|	< NL:	 "\n" >
+}
+int CalcUnit() :
+{ int rslt; }
+{
+	rslt = AddExpr() <NL>
+		{	System.out.println("result= " + rslt + "."); return 0; }
+	|	<NL>
+		{	return 0; }
+	|	<EOF>
+		{	return -1; }
+}
+int AddExpr() :
+{	int l = 0, r = 0;
+	Token t = null;
+}
+{
+	l = MulExpr() {
+		(t=<ADDOP> | t=<SUBOP>) r=MulExpr()
+			{ l = (t.kind == ADDOP) ? l+r : l-r; }
+	)*		{ return l; }
+}
+int MulExpr() :
+{	int l = 0, r = 0;
+	Token t = null;
+}
+{
+	l=PrmExpr() (
+		(t=<MULOP> | t=<DIVOP>) r=PrmExpr()
+			{ l = (t.kind == MULOP) ? l*r : l/r; }
+	)*		{ return l; }
+}
+int PrmExpr() :
+{	int l = 0;
+	Token t = null;
+}
+{
+		t=<LITERAL>		{ return Integer.parseInt(t.image); }
+	|	<LP>	l=AddExpr() <RP>	{ return l; }
+}

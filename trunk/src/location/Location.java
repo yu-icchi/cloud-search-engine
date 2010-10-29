@@ -265,6 +265,36 @@ public class Location {
 	}
 
 	/**
+	 * getANDメソッド
+	 *
+	 * @param input
+	 */
+	public void getAND(ArrayList<String> input) {
+		//結果を返すデータ構造
+		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Integer> term = new HashMap<String, Integer>();
+		ArrayList<String> urlList = new ArrayList<String>();
+		//Cassandraに接続する
+		CassandraClient cc = new CassandraClient(_host, _port);
+		//複数クエリの結果を取得する
+		List<Map<String, String>> list = cc.get(input);
+		//接続を切断する
+		cc.closeConnection();
+		//結果をまとめる
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i));
+
+			String tmp = list.get(i).get("url").toString();
+			System.out.println(tmp);
+		}
+		result.put("url", urlList);
+		result.put("docFreq", term);
+		//MaxDocsの値を取得する
+		int maxDocs_number = getMaxDocs();
+		result.put("maxDocs", maxDocs_number);
+	}
+
+	/**
 	 * multiGetメソッド
 	 *
 	 * @param arr (ArrayList)
