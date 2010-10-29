@@ -7,7 +7,9 @@ public interface ExprParserTreeConstants
   public int JJTVOID = 1;
   public int JJTADD = 2;
   public int JJTSUB = 3;
-  public int JJTINTEGER = 4;
+  public int JJTMULTI = 4;
+  public int JJTDIVISION = 5;
+  public int JJTINTEGER = 6;
 
 
   public String[] jjtNodeName = {
@@ -15,7 +17,9 @@ public interface ExprParserTreeConstants
     "void",
     "Add",
     "Sub",
+    "Multi",
+    "Division",
     "Integer",
   };
 }
-/* JavaCC - OriginalChecksum=628e152350f4bfdd24d5c59fdd757570 (do not edit this line) */
+/* JavaCC - OriginalChecksum=dd6a87dbf3684e5abb0e96373793ecea (do not edit this line) */
