@@ -27,6 +27,10 @@ TOKEN:
 {
         <PLUS : "+">
     |   <MINUS: "-">
+    |	<MUL  : "*">
+    |	<DIV  : "/">
+    |	<LPAREN : "(">
+    |	<RPAREN : ")">
     |   <INTEGER: (["0" - "9"])+>
 }
 
@@ -71,7 +75,7 @@ ASTStart Start():
 void AddExpr()      :
 {}
 {
-    Integer() (
+    MulExpr() (
            <PLUS>/*@bgen(jjtree) #Add( 2) */
                    {
                      ASTAdd jjtn001 = new ASTAdd(JJTADD);
@@ -79,7 +83,7 @@ void AddExpr()      :
                      jjtree.openNodeScope(jjtn001);
                    }
                    try {
-/*@egen*/  Integer()/*@bgen(jjtree)*/
+/*@egen*/  MulExpr()/*@bgen(jjtree)*/
                    } catch (Throwable jjte001) {
                      if (jjtc001) {
                        jjtree.clearNodeScope(jjtn001);
@@ -107,7 +111,7 @@ void AddExpr()      :
                      jjtree.openNodeScope(jjtn002);
                    }
                    try {
-/*@egen*/ Integer()/*@bgen(jjtree)*/
+/*@egen*/ MulExpr()/*@bgen(jjtree)*/
                    } catch (Throwable jjte002) {
                      if (jjtc002) {
                        jjtree.clearNodeScope(jjtn002);
@@ -128,6 +132,75 @@ void AddExpr()      :
                      }
                    }
 /*@egen*/         ) *
+}
+
+void MulExpr()      :
+{}
+{
+	Value() (
+			<MUL>/*@bgen(jjtree) #Multi( 2) */
+                              {
+                                ASTMulti jjtn001 = new ASTMulti(JJTMULTI);
+                                boolean jjtc001 = true;
+                                jjtree.openNodeScope(jjtn001);
+                              }
+                              try {
+/*@egen*/ Value()/*@bgen(jjtree)*/
+                              } catch (Throwable jjte001) {
+                                if (jjtc001) {
+                                  jjtree.clearNodeScope(jjtn001);
+                                  jjtc001 = false;
+                                } else {
+                                  jjtree.popNode();
+                                }
+                                if (jjte001 instanceof RuntimeException) {
+                                  throw (RuntimeException)jjte001;
+                                }
+                                if (jjte001 instanceof ParseException) {
+                                  throw (ParseException)jjte001;
+                                }
+                                throw (Error)jjte001;
+                              } finally {
+                                if (jjtc001) {
+                                  jjtree.closeNodeScope(jjtn001,  2);
+                                }
+                              }
+/*@egen*/          
+		|	<DIV>/*@bgen(jjtree) #Division( 2) */
+                              {
+                                ASTDivision jjtn002 = new ASTDivision(JJTDIVISION);
+                                boolean jjtc002 = true;
+                                jjtree.openNodeScope(jjtn002);
+                              }
+                              try {
+/*@egen*/ Value()/*@bgen(jjtree)*/
+                              } catch (Throwable jjte002) {
+                                if (jjtc002) {
+                                  jjtree.clearNodeScope(jjtn002);
+                                  jjtc002 = false;
+                                } else {
+                                  jjtree.popNode();
+                                }
+                                if (jjte002 instanceof RuntimeException) {
+                                  throw (RuntimeException)jjte002;
+                                }
+                                if (jjte002 instanceof ParseException) {
+                                  throw (ParseException)jjte002;
+                                }
+                                throw (Error)jjte002;
+                              } finally {
+                                if (jjtc002) {
+                                  jjtree.closeNodeScope(jjtn002,  2);
+                                }
+                              }
+/*@egen*/              )*
+}
+
+void Value()      :
+{}
+{
+		Integer()
+	|	<LPAREN> AddExpr() <RPAREN>
 }
 
 void Integer():

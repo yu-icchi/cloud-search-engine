@@ -23,6 +23,10 @@ TOKEN:
 {
         <PLUS : "+">
     |   <MINUS: "-">
+    |	<MUL  : "*">
+    |	<DIV  : "/">
+    |	<LPAREN : "(">
+    |	<RPAREN : ")">
     |   <INTEGER: (["0" - "9"])+>
 }
 
@@ -36,9 +40,24 @@ ASTStart Start():
 void AddExpr() #void:
 {}
 {
-    Integer() (
-           <PLUS>  Integer() #Add(2)
-        |  <MINUS> Integer() #Sub(2) ) *
+    MulExpr() (
+           <PLUS>  MulExpr() #Add(2)
+        |  <MINUS> MulExpr() #Sub(2) ) *
+}
+
+void MulExpr() #void:
+{}
+{
+	Value() (
+			<MUL> Value() #Multi(2)
+		|	<DIV> Value() #Division(2) )*
+}
+
+void Value() #void:
+{}
+{
+		Integer()
+	|	<LPAREN> AddExpr() <RPAREN>
 }
 
 void Integer():

@@ -15,7 +15,15 @@ public interface ExprParserConstants {
   /** RegularExpression Id. */
   int MINUS = 6;
   /** RegularExpression Id. */
-  int INTEGER = 7;
+  int MUL = 7;
+  /** RegularExpression Id. */
+  int DIV = 8;
+  /** RegularExpression Id. */
+  int LPAREN = 9;
+  /** RegularExpression Id. */
+  int RPAREN = 10;
+  /** RegularExpression Id. */
+  int INTEGER = 11;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -29,6 +37,10 @@ public interface ExprParserConstants {
     "\"\\n\"",
     "\"+\"",
     "\"-\"",
+    "\"*\"",
+    "\"/\"",
+    "\"(\"",
+    "\")\"",
     "<INTEGER>",
   };
 
