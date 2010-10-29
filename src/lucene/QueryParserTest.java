@@ -12,7 +12,7 @@ public class QueryParserTest {
 	public static void main(String[] args) throws Exception {
 		QueryParser qp = new QueryParser("id", new WhitespaceAnalyzer());
 		//QueryParser qp = new QueryParser("id", new CJKAnalyzer());
-		Query query = qp.parse("(あいうえお AND ipod) AND account:user1");
+		Query query = qp.parse("(あいうえお AND ipod^1.5) AND account:user1");
 		query.setBoost(4.0f);
 		System.out.println(query.toString());
 		System.out.println(query.getBoost());

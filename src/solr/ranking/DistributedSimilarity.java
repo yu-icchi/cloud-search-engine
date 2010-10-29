@@ -1,5 +1,5 @@
 //---------------------------------------------------------
-//DistributedSimilarityクラス (未完成)
+//DistributedSimilarityクラス
 //
 //Solrの検索時にdebugQuery=onにし、スコア計算の情報を取得する
 //その内容からランキングを修正する
@@ -185,7 +185,7 @@ public class DistributedSimilarity {
 				String id = it.next();
 				DistributedScore score = map.get(id);
 				score.setQueryNormSum(sumOfSquaredWeightsValue);
-				//System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
+				System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
 				//System.out.println(id + " : " + score.score());
 				Map<String, Float> resultMap = new HashMap<String, Float>();
 				resultMap.put(id, score.score());
