@@ -16,8 +16,8 @@ public class QbSSTest {
 	public static void main(String[] args) throws Exception {
 
 		//クエリーの設定
-		String query = "aaa AND ddd OR bbb NOT ccc";
-		//Cassandraの結果
+		String query = "ddd AND ccc OR bbb NOT aaa";
+		//Cassandraの結果集合
 		Map<String, List<String>> map = new HashMap<String, List<String>>();
 		List<String> list1 = new ArrayList<String>();
 		list1.add("http://localhost:8983/solr/");

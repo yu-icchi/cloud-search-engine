@@ -5,8 +5,6 @@
 //---------------------------------------------------------
 package location.qbss;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,24 +13,6 @@ import java.util.Map;
 import location.qbss.parser.*;
 
 public class QbSS implements QbSSParserVisitor {
-
-	/**
-	 * mainメソッド
-	 *
-	 * @param ags
-	 * @throws Exception
-	 */
-	public static void main(String[] ags) throws Exception {
-		InputStreamReader in = new InputStreamReader(System.in);
-		BufferedReader reader = new BufferedReader(in);
-		String line;
-		while ((line = reader.readLine()) != null) {
-			QbSSParser parser = new QbSSParser(new StringReader(line));
-			QbSS visitor = new QbSS();
-			ASTStart start = parser.Start();
-			start.jjtAccept(visitor, null);
-		}
-	}
 
 	//-----------------------------------------------------
 	//プロパティ設定
