@@ -41,9 +41,9 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case AND:
-      case OR:
-      case NOT:
+      case OP_AND:
+      case OP_OR:
+      case OP_NOT:
         ;
         break;
       default:
@@ -51,85 +51,85 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
         break label_1;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case AND:
-        jj_consume_token(AND);
-                                ASTAnd jjtn001 = new ASTAnd(JJTAND);
-                                boolean jjtc001 = true;
-                                jjtree.openNodeScope(jjtn001);
+      case OP_AND:
+        jj_consume_token(OP_AND);
+                                   ASTAnd jjtn001 = new ASTAnd(JJTAND);
+                                   boolean jjtc001 = true;
+                                   jjtree.openNodeScope(jjtn001);
         try {
           Word();
         } catch (Throwable jjte001) {
-                                if (jjtc001) {
-                                  jjtree.clearNodeScope(jjtn001);
-                                  jjtc001 = false;
-                                } else {
-                                  jjtree.popNode();
-                                }
-                                if (jjte001 instanceof RuntimeException) {
-                                  {if (true) throw (RuntimeException)jjte001;}
-                                }
-                                if (jjte001 instanceof ParseException) {
-                                  {if (true) throw (ParseException)jjte001;}
-                                }
-                                {if (true) throw (Error)jjte001;}
+                                   if (jjtc001) {
+                                     jjtree.clearNodeScope(jjtn001);
+                                     jjtc001 = false;
+                                   } else {
+                                     jjtree.popNode();
+                                   }
+                                   if (jjte001 instanceof RuntimeException) {
+                                     {if (true) throw (RuntimeException)jjte001;}
+                                   }
+                                   if (jjte001 instanceof ParseException) {
+                                     {if (true) throw (ParseException)jjte001;}
+                                   }
+                                   {if (true) throw (Error)jjte001;}
         } finally {
-                                if (jjtc001) {
-                                  jjtree.closeNodeScope(jjtn001,  2);
-                                }
+                                   if (jjtc001) {
+                                     jjtree.closeNodeScope(jjtn001,  2);
+                                   }
         }
         break;
-      case OR:
-        jj_consume_token(OR);
-                               ASTOr jjtn002 = new ASTOr(JJTOR);
-                               boolean jjtc002 = true;
-                               jjtree.openNodeScope(jjtn002);
+      case OP_OR:
+        jj_consume_token(OP_OR);
+                                  ASTOr jjtn002 = new ASTOr(JJTOR);
+                                  boolean jjtc002 = true;
+                                  jjtree.openNodeScope(jjtn002);
         try {
           Word();
         } catch (Throwable jjte002) {
-                               if (jjtc002) {
-                                 jjtree.clearNodeScope(jjtn002);
-                                 jjtc002 = false;
-                               } else {
-                                 jjtree.popNode();
-                               }
-                               if (jjte002 instanceof RuntimeException) {
-                                 {if (true) throw (RuntimeException)jjte002;}
-                               }
-                               if (jjte002 instanceof ParseException) {
-                                 {if (true) throw (ParseException)jjte002;}
-                               }
-                               {if (true) throw (Error)jjte002;}
+                                  if (jjtc002) {
+                                    jjtree.clearNodeScope(jjtn002);
+                                    jjtc002 = false;
+                                  } else {
+                                    jjtree.popNode();
+                                  }
+                                  if (jjte002 instanceof RuntimeException) {
+                                    {if (true) throw (RuntimeException)jjte002;}
+                                  }
+                                  if (jjte002 instanceof ParseException) {
+                                    {if (true) throw (ParseException)jjte002;}
+                                  }
+                                  {if (true) throw (Error)jjte002;}
         } finally {
-                               if (jjtc002) {
-                                 jjtree.closeNodeScope(jjtn002,  2);
-                               }
+                                  if (jjtc002) {
+                                    jjtree.closeNodeScope(jjtn002,  2);
+                                  }
         }
         break;
-      case NOT:
-        jj_consume_token(NOT);
-                                ASTNot jjtn003 = new ASTNot(JJTNOT);
-                                boolean jjtc003 = true;
-                                jjtree.openNodeScope(jjtn003);
+      case OP_NOT:
+        jj_consume_token(OP_NOT);
+                                   ASTNot jjtn003 = new ASTNot(JJTNOT);
+                                   boolean jjtc003 = true;
+                                   jjtree.openNodeScope(jjtn003);
         try {
           Word();
         } catch (Throwable jjte003) {
-                                if (jjtc003) {
-                                  jjtree.clearNodeScope(jjtn003);
-                                  jjtc003 = false;
-                                } else {
-                                  jjtree.popNode();
-                                }
-                                if (jjte003 instanceof RuntimeException) {
-                                  {if (true) throw (RuntimeException)jjte003;}
-                                }
-                                if (jjte003 instanceof ParseException) {
-                                  {if (true) throw (ParseException)jjte003;}
-                                }
-                                {if (true) throw (Error)jjte003;}
+                                   if (jjtc003) {
+                                     jjtree.clearNodeScope(jjtn003);
+                                     jjtc003 = false;
+                                   } else {
+                                     jjtree.popNode();
+                                   }
+                                   if (jjte003 instanceof RuntimeException) {
+                                     {if (true) throw (RuntimeException)jjte003;}
+                                   }
+                                   if (jjte003 instanceof ParseException) {
+                                     {if (true) throw (ParseException)jjte003;}
+                                   }
+                                   {if (true) throw (Error)jjte003;}
         } finally {
-                                if (jjtc003) {
-                                  jjtree.closeNodeScope(jjtn003,  2);
-                                }
+                                   if (jjtc003) {
+                                     jjtree.closeNodeScope(jjtn003,  2);
+                                   }
         }
         break;
       default:
@@ -172,7 +172,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x70,0x70,};
+      jj_la1_0 = new int[] {0xe0,0xe0,};
    }
 
   /** Constructor with InputStream. */
@@ -292,7 +292,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[8];
+    boolean[] la1tokens = new boolean[9];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -306,7 +306,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
         }
       }
     }
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

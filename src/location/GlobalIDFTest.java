@@ -32,9 +32,9 @@ public class GlobalIDFTest {
 		//g_idf.queryParser("(solr AND ipod)");
 
 		ArrayList<String> list = new ArrayList<String>();
-		//list.add("ipod");
+		list.add("ipod");
 		list.add("前田");
-		//list.add("1");
+		list.add("1");
 
 		Map<String, Object> obj = g_idf.get(list);
 		System.out.println(obj);

@@ -23,19 +23,19 @@ PARSER_END(QbSSParser)
 //トークンの定義
 SKIP:
 {
-	"\r" | "\t" | "\n"
+	" " | "\r" | "\t" | "\n"
 }
 
 TOKEN [IGNORE_CASE]:
 {
-		< AND: " AND " >
-	|	< OR: " OR " >
-	|	< NOT: " NOT " >
+		< OP_AND: "AND" >
+	|	< OP_OR: "OR" >
+	|	< OP_NOT: "NOT" >
 }
 
 TOKEN:
 {
-		< WORD: (["a"-"z", "A"-"Z"])+ >
+		< WORD: (~[" ", "\r", "\t", "\n", "\"", "(", ")"])+ >
 }
 
 //文法の定義
@@ -49,9 +49,9 @@ void Query() #void:
 {}
 {
 	Word() (
-			<AND> Word() #And(2)
-		|	<OR> Word() #Or(2)
-		|	<NOT> Word() #Not(2) )*
+			<OP_AND> Word() #And(2)
+		|	<OP_OR> Word() #Or(2)
+		|	<OP_NOT> Word() #Not(2) )*
 }
 
 void Word():
