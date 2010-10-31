@@ -23,7 +23,7 @@ PARSER_END(QbSSParser)
 //トークンの定義
 SKIP:
 {
-	" " | "\r" | "\t" | "\n"
+	" " | "\u3000" | "\r" | "\t" | "\n"
 }
 
 TOKEN [IGNORE_CASE]:
@@ -35,7 +35,10 @@ TOKEN [IGNORE_CASE]:
 
 TOKEN:
 {
-		< WORD: (~[" ", "\r", "\t", "\n", "\"", "(", ")"])+ >
+		< WORD: (~[" ", "\u3000" , "\r", "\t", "\n", "\"", "(", ")"])+ >
+	|	< LP: "(" >
+	|	< RP: ")" >
+	|	< QUOTE: "\"" >
 }
 
 //文法の定義
@@ -48,10 +51,17 @@ ASTStart Start():
 void Query() #void:
 {}
 {
-	Word() (
-			<OP_AND> Word() #And(2)
-		|	<OP_OR> Word() #Or(2)
-		|	<OP_NOT> Word() #Not(2) )*
+	Value() (
+			<OP_AND> Value() #And(2)
+		|	<OP_OR> Value() #Or(2)
+		|	<OP_NOT> Value() #Not(2) )*
+}
+
+void Value() #void:
+{}
+{
+		Word()
+	|	<LP> Query() <RP>
 }
 
 void Word():
