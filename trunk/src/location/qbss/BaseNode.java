@@ -1,4 +1,4 @@
-package javacc.expr;
+package location.qbss;
 
 public class BaseNode {
 	public String nodeValue;

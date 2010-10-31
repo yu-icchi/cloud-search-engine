@@ -1,0 +1,55 @@
+//---------------------------------------------------------
+//QbSS (Query based Server Selection)
+//---------------------------------------------------------
+
+//オプション定義
+options {
+	STATIC=false;
+	MULTI=true;
+	VISITOR=true;
+	NODE_EXTENDS="location.qbss.BaseNode";
+}
+
+//パーサークラスの定義
+PARSER_BEGIN(QbSSParser)
+package location.qbss.parser;
+public class QbSSParser {
+
+}
+PARSER_END(QbSSParser)
+
+//トークンの定義
+SKIP:
+{
+	"\r" | "\t" | "\n"
+}
+
+TOKEN:
+{
+		< WORD: (["a"-"z", "A"-"Z"])+ >
+	|	< AND: " AND " >
+	|	< OR: " OR ">
+	|	< NOT: " NOT ">
+}
+
+//文法の定義
+ASTStart Start():
+{}
+{
+	Query() { return jjtThis; }
+}
+
+void Query() #void:
+{}
+{
+	Word() (
+			<AND> Word() #And(2)
+		|	<OR> Word() #Or(2)
+		|	<NOT> Word() #Not(2) )*
+}
+
+void Word():
+{ Token t; }
+{
+	t = <WORD> { jjtThis.nodeValue = t.image; }
+}
