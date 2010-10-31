@@ -229,6 +229,7 @@ public class GlobalIDF {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		//複数クエリの結果を取得する
 		List<Map<String, String>> list = cc.get(input);
+		System.out.println("GlobalIDF: "+ list);
 		//接続を切断する
 		cc.closeConnection();
 		//結果をまとめる

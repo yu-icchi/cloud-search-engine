@@ -11,13 +11,13 @@ public interface QbSSParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int AND = 4;
+  int OP_AND = 5;
   /** RegularExpression Id. */
-  int OR = 5;
+  int OP_OR = 6;
   /** RegularExpression Id. */
-  int NOT = 6;
+  int OP_NOT = 7;
   /** RegularExpression Id. */
-  int WORD = 7;
+  int WORD = 8;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -25,12 +25,13 @@ public interface QbSSParserConstants {
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
+    "\" \"",
     "\"\\r\"",
     "\"\\t\"",
     "\"\\n\"",
-    "\" AND \"",
-    "\" OR \"",
-    "\" NOT \"",
+    "\"AND\"",
+    "\"OR\"",
+    "\"NOT\"",
     "<WORD>",
   };
 

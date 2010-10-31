@@ -59,16 +59,12 @@ public class Location {
 	}
 
 	/**
-	 * queryParserメソッド (未完成)
+	 * setQueryメソッド
 	 *
 	 * @param query
 	 */
-	public void queryParser(String query) {
-		//パーサーされた結果をまとめる
-		//構造としては、Mapで「OR」、「AND」、「NOT」
-		List<Map<String, String>> parser = new ArrayList<Map<String, String>>();
-
-
+	public void setQuery(String query) {
+		_query = query;
 	}
 
 	/**

@@ -349,6 +349,44 @@ public class CassandraClient {
 		return null;
 	}
 
+	public Map<String, Object> getMap(ArrayList<String> keys) {
+		try {
+			//ColumnParentにはColumnFamily名またはColumnFamily/SuperColumn名を指定する
+			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
+			SliceRange sliceRange = new SliceRange();
+			//取得カラムの範囲を指定する。（全部指定のため、空のbyte配列を指定する）
+			sliceRange.setStart(new byte[0]);
+			sliceRange.setFinish(new byte[0]);
+
+			SlicePredicate slicePredicate = new SlicePredicate();
+			slicePredicate.setSlice_range(sliceRange);
+			//multigetメソッドを使う
+			Map<String, List<ColumnOrSuperColumn>> results = client.multiget_slice(KEYSPACE,
+					keys, columnParent, slicePredicate, ConsistencyLevel.ONE);
+			//出力する
+			//結果を出力する変数
+			List<Map<String, String>> lists = new ArrayList<Map<String, String>>();
+			for (Map.Entry<String, List<ColumnOrSuperColumn>> entry : results.entrySet()) {
+				String key = entry.getKey();
+				List<ColumnOrSuperColumn> list = entry.getValue();
+				for (int i = 0; i < list.size(); i++) {
+					ColumnOrSuperColumn result = list.get(i);
+					Column col = result.column;
+					String name = new String(col.name, "utf-8");
+					String value = new String(col.value, "utf-8");
+					Map<String, String> map = new HashMap<String, String>();
+					map.put("url", name);
+					map.put("docFreq", value);
+					map.put("key", key);
+					lists.add(map);
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	/**
 	 * getSuperColumnメソッド
 	 *
