@@ -35,6 +35,7 @@ public class QbSSTest {
 		list4.add("http://localhost:6564/solr/");
 		map.put("ddd", list4);
 
+		//QbSS
 		QbSS qbss = new QbSS(query, map);
 		System.out.println("QbSSTest: " + qbss.parser());
 
