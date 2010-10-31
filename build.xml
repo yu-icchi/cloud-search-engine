@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="ParserLexer" default="cc" basedir=".">
-    <target name="cc">
-        <javacc target="$/src/solr/search/parser/SearchParser.jj" outputdirectory="src/solr/search/parser" javacchome="/lib/javacc-5.0" />
-    </target>
-</project>
