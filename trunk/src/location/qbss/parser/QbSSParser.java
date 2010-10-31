@@ -37,7 +37,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
   }
 
   final public void Query() throws ParseException {
-    Word();
+    Value();
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -57,7 +57,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
                                    boolean jjtc001 = true;
                                    jjtree.openNodeScope(jjtn001);
         try {
-          Word();
+          Value();
         } catch (Throwable jjte001) {
                                    if (jjtc001) {
                                      jjtree.clearNodeScope(jjtn001);
@@ -84,7 +84,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
                                   boolean jjtc002 = true;
                                   jjtree.openNodeScope(jjtn002);
         try {
-          Word();
+          Value();
         } catch (Throwable jjte002) {
                                   if (jjtc002) {
                                     jjtree.clearNodeScope(jjtn002);
@@ -111,7 +111,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
                                    boolean jjtc003 = true;
                                    jjtree.openNodeScope(jjtn003);
         try {
-          Word();
+          Value();
         } catch (Throwable jjte003) {
                                    if (jjtc003) {
                                      jjtree.clearNodeScope(jjtn003);
@@ -137,6 +137,23 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
         jj_consume_token(-1);
         throw new ParseException();
       }
+    }
+  }
+
+  final public void Value() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case WORD:
+      Word();
+      break;
+    case LP:
+      jj_consume_token(LP);
+      Query();
+      jj_consume_token(RP);
+      break;
+    default:
+      jj_la1[2] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
     }
   }
 
@@ -166,13 +183,13 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[2];
+  final private int[] jj_la1 = new int[3];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xe0,0xe0,};
+      jj_la1_0 = new int[] {0x1c0,0x1c0,0x600,};
    }
 
   /** Constructor with InputStream. */
@@ -186,7 +203,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -201,7 +218,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -211,7 +228,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -222,7 +239,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -231,7 +248,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -241,7 +258,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -292,12 +309,12 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[9];
+    boolean[] la1tokens = new boolean[13];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 3; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -306,7 +323,7 @@ public class QbSSParser/*@bgen(jjtree)*/implements QbSSParserTreeConstants, QbSS
         }
       }
     }
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 13; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

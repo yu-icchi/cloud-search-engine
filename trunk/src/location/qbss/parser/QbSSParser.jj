@@ -27,7 +27,7 @@ PARSER_END(QbSSParser)
 //\u7e5d\u533b\ufffd\u7e67\uff6f\u7e5d\uff73\u7e3a\uff6e\u87b3\u5902\uff7e\uff69
 SKIP:
 {
-	" " | "\r" | "\t" | "\n"
+	" " | "\u3000" | "\r" | "\t" | "\n"
 }
 
 TOKEN [IGNORE_CASE]:
@@ -39,7 +39,10 @@ TOKEN [IGNORE_CASE]:
 
 TOKEN:
 {
-		< WORD: (~[" ", "\r", "\t", "\n", "\"", "(", ")"])+ >
+		< WORD: (~[" ", "\u3000" , "\r", "\t", "\n", "\"", "(", ")"])+ >
+	|	< LP: "(" >
+	|	< RP: ")" >
+	|	< QUOTE: "\"" >
 }
 
 //\u8b41\ufffd\uff73\u8f14\ufffd\u87b3\u5902\uff7e\uff69
@@ -83,7 +86,7 @@ ASTStart Start():
 void Query()      :
 {}
 {
-	Word() (
+	Value() (
 			<OP_AND>/*@bgen(jjtree) #And( 2) */
                                  {
                                    ASTAnd jjtn001 = new ASTAnd(JJTAND);
@@ -91,7 +94,7 @@ void Query()      :
                                    jjtree.openNodeScope(jjtn001);
                                  }
                                  try {
-/*@egen*/ Word()/*@bgen(jjtree)*/
+/*@egen*/ Value()/*@bgen(jjtree)*/
                                  } catch (Throwable jjte001) {
                                    if (jjtc001) {
                                      jjtree.clearNodeScope(jjtn001);
@@ -119,7 +122,7 @@ void Query()      :
                                   jjtree.openNodeScope(jjtn002);
                                 }
                                 try {
-/*@egen*/ Word()/*@bgen(jjtree)*/
+/*@egen*/ Value()/*@bgen(jjtree)*/
                                 } catch (Throwable jjte002) {
                                   if (jjtc002) {
                                     jjtree.clearNodeScope(jjtn002);
@@ -147,7 +150,7 @@ void Query()      :
                                    jjtree.openNodeScope(jjtn003);
                                  }
                                  try {
-/*@egen*/ Word()/*@bgen(jjtree)*/
+/*@egen*/ Value()/*@bgen(jjtree)*/
                                  } catch (Throwable jjte003) {
                                    if (jjtc003) {
                                      jjtree.clearNodeScope(jjtn003);
@@ -168,6 +171,13 @@ void Query()      :
                                    }
                                  }
 /*@egen*/         )*
+}
+
+void Value()      :
+{}
+{
+		Word()
+	|	<LP> Query() <RP>
 }
 
 void Word():

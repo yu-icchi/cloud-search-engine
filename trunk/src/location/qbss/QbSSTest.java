@@ -16,7 +16,7 @@ public class QbSSTest {
 	public static void main(String[] args) throws Exception {
 
 		//クエリーの設定
-		String query = "ddd AND ccc OR bbb NOT aaa";
+		String query = "(ddd AND ccc) OR (bbb NOT aaa)";
 		//Cassandraの結果集合
 		Map<String, List<String>> map = new HashMap<String, List<String>>();
 		List<String> list1 = new ArrayList<String>();
