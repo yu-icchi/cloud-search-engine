@@ -16,24 +16,25 @@ public class QbSSTest {
 	public static void main(String[] args) throws Exception {
 
 		//クエリーの設定
-		String query = "(ddd AND ccc) OR (bbb NOT aaa)";
+		String query = "(456 AND 大島) OR (*** NOT dDd)";
+		//String query = "\"aaa bbb\"";
 		//Cassandraの結果集合
 		Map<String, List<String>> map = new HashMap<String, List<String>>();
 		List<String> list1 = new ArrayList<String>();
 		list1.add("http://localhost:8983/solr/");
 		list1.add("http://localhost:7574/solr/");
-		map.put("aaa", list1);
+		map.put("456", list1);
 		List<String> list2 = new ArrayList<String>();
 		list2.add("http://localhost:8983/solr/");
-		map.put("bbb", list2);
+		map.put("大島", list2);
 		List<String> list3 = new ArrayList<String>();
 		list3.add("http://localhost:6564/solr/");
 		list3.add("http://localhost:9684/solr/");
 		list3.add("http://localhost:8983/solr/");
-		map.put("ccc", list3);
+		map.put("***", list3);
 		List<String> list4 = new ArrayList<String>();
 		list4.add("http://localhost:6564/solr/");
-		map.put("ddd", list4);
+		map.put("dDd", list4);
 
 		System.out.println(map);
 

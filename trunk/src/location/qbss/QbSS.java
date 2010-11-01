@@ -186,4 +186,16 @@ public class QbSS implements QbSSParserVisitor {
 		return value;
 	}
 
+	/**
+	 * Quote
+	 */
+	@Override
+	public Object visit(ASTQuote node, Object data) {
+		int n = node.jjtGetNumChildren();
+		System.out.println("Quote: " + n);
+		return "";
+	}
+
+
+
 }

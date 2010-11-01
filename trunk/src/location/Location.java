@@ -17,9 +17,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import location.qbss.QbSS;
+
 import net.arnx.jsonic.JSON;
 
 public class Location {
+
+	//-----------------------------------------------------
+	//プロパティ
+	//-----------------------------------------------------
 
 	//Solrサーバのタームフィールドの指定
 	static String _termField = "text";
@@ -30,6 +36,9 @@ public class Location {
 	//クエリ
 	static String _query;
 
+	//-----------------------------------------------------
+	//コンストラクタ
+	//-----------------------------------------------------
 
 	/**
 	 * コンストラクタ(デフォルト)
@@ -49,6 +58,10 @@ public class Location {
 		_port = port;
 	}
 
+	//-----------------------------------------------------
+	//get・setメソッド
+	//-----------------------------------------------------
+
 	/**
 	 * termFieldメソッド(検索サーバのタームフィールドを指定する)
 	 *
@@ -63,9 +76,13 @@ public class Location {
 	 *
 	 * @param query
 	 */
-	public void setQuery(String query) {
+	public void query(String query) {
 		_query = query;
 	}
+
+	//-----------------------------------------------------
+	//Cassandraにデータを格納する
+	//-----------------------------------------------------
 
 	/**
 	 * setメソッド(格納)
@@ -110,36 +127,9 @@ public class Location {
 		cc.closeConnection();
 	}
 
-	/**
-	 * setSuperColumnメソッド
-	 *
-	 *  @param url (String) URLを指定する
-	 *  @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	public void setSuperColumn(String url) throws Exception {
-		//URLのチェック
-		if (urlCheck(url)) {
-			//MaxDocsデータを格納する
-			setMaxDocs(url);
-			//idf値を取得する
-			List list = docFreq(url + "terms");
-			//List → List<Map<String, String>>
-			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-			Map<String, String> map;
-			for (int i = 0; i < list.size(); i+=2) {
-				map = new HashMap<String, String>();
-				map.put("term", list.get(i).toString());
-				map.put("docFreq", list.get(i + 1).toString());
-				map.put("url", url);
-				data.add(map);
-			}
-			//Cassandraに接続する
-			CassandraClient cc = new CassandraClient(_host, _port);
-			cc.insertSuperColumn(data);
-			cc.closeConnection();
-		}
-	}
+	//-----------------------------------------------------
+	//Cassandraからデータを取得する
+	//-----------------------------------------------------
 
 	/**
 	 * getメソッド(取得)
@@ -174,47 +164,6 @@ public class Location {
 	}
 
 	/**
-	 * getメソッド(取得)
-	 *
-	 *  @param terms Termを指定する
-	 *   @return Map<String, Object> IDFの値とURLをListでまとめたMapオブジェクトを返す
-	 */
-	public Map<String, Object> get(String... terms) {
-		Map<String, Object> data = new HashMap<String, Object>();
-		List<String> urlList = new ArrayList<String>();
-		//MaxDocsの値を取得する
-		int maxDocs_number = getMaxDocs();
-		int docFreq_number = 0;
-		CassandraClient cc = new CassandraClient(_host, _port);
-		for (String str : terms) {
-			List<Map<String, String>> list = cc.get(str);
-			for (int i = 0; i < list.size(); i++) {
-				for (Map.Entry<String, String> e : list.get(i).entrySet()) {
-					//docFreqの処理
-					if (e.getKey().equals("docFreq")) {
-						int n = Integer.valueOf(e.getValue()).intValue();
-						docFreq_number += n;
-					}
-					//URLの処理
-					if (e.getKey().equals("url")) {
-						//既に存在するかを調べる
-						int n = urlList.indexOf(e.getValue().toString());
-						//未登録の場合
-						if (n == -1) {
-							urlList.add(e.getValue().toString());
-						}
-					}
-				}
-			}
-		}
-		data.put("maxDocs", maxDocs_number);
-		data.put("docFreq", docFreq_number);
-		data.put("url", urlList);
-		cc.closeConnection();
-		return data;
-	}
-
-	/**
 	 * getメソッド(ArrayList版)
 	 *
 	 * @param input
@@ -224,7 +173,9 @@ public class Location {
 		//結果を返すデータ構造
 		Map<String, Object> result = new HashMap<String, Object>();
 		Map<String, Integer> term = new HashMap<String, Integer>();
-		ArrayList<String> urlList = new ArrayList<String>();
+		Map<String, List<String>> urls = new HashMap<String, List<String>>();
+		Object data;
+		List<String> urlList;
 		//Cassandraに接続する
 		CassandraClient cc = new CassandraClient(_host, _port);
 		//複数クエリの結果を取得する
@@ -232,191 +183,42 @@ public class Location {
 		//接続を切断する
 		cc.closeConnection();
 		//結果をまとめる
-		for (int i = 0; i < list.size(); i++) {
-			//URL
-			int n = urlList.indexOf(list.get(i).get("url").toString());
-			//未登録の場合
-			if (n == -1) {
-				urlList.add(list.get(i).get("url").toString());
-			}
+		for (Map<String, String> map : list) {
 			//Term
-			if (term.get(list.get(i).get("key")) == null) {
-				//新規作成
-				term.put(list.get(i).get("key"), Integer.valueOf(list.get(i).get("docFreq").toString()).intValue());
-			} else {
-				//追加作成
-				int a = term.get(list.get(i).get("key").toString());
-				int b = Integer.valueOf(list.get(i).get("docFreq").toString()).intValue();
-				term.put(list.get(i).get("key"), a + b);
-			}
-
-		}
-		result.put("url", urlList);
-		result.put("docFreq", term);
-		//MaxDocsの値を取得する
-		int maxDocs_number = getMaxDocs();
-		result.put("maxDocs", maxDocs_number);
-
-		return result;
-	}
-
-	/**
-	 * getANDメソッド
-	 *
-	 * @param input
-	 */
-	public void getAND(ArrayList<String> input) {
-		//結果を返すデータ構造
-		Map<String, Object> result = new HashMap<String, Object>();
-		Map<String, Integer> term = new HashMap<String, Integer>();
-		ArrayList<String> urlList = new ArrayList<String>();
-		//Cassandraに接続する
-		CassandraClient cc = new CassandraClient(_host, _port);
-		//複数クエリの結果を取得する
-		List<Map<String, String>> list = cc.get(input);
-		//接続を切断する
-		cc.closeConnection();
-		//結果をまとめる
-		for (int i = 0; i < list.size(); i++) {
-			System.out.println(list.get(i));
-
-			String tmp = list.get(i).get("url").toString();
-			System.out.println(tmp);
-		}
-		result.put("url", urlList);
-		result.put("docFreq", term);
-		//MaxDocsの値を取得する
-		int maxDocs_number = getMaxDocs();
-		result.put("maxDocs", maxDocs_number);
-	}
-
-	/**
-	 * multiGetメソッド
-	 *
-	 * @param arr (ArrayList)
-	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, Map<String, Object>> multiGet(ArrayList<String> arr) {
-		//結果を返すデータ構造
-		Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
-		Map<String, Object> map;
-		ArrayList<String> urlList;
-		//Cassandraに接続
-		CassandraClient cc =new CassandraClient(_host, _port);
-		//複数クエリの結果を取得する
-		List<Map<String, String>> list = cc.get(arr);
-		//接続を切断する
-		cc.closeConnection();
-		//結果をまとめる
-		for (int i = 0; i < list.size(); i++) {
-			if (result.get(list.get(i).get("key")) == null) {
-				//新規作成
-				map = new HashMap<String, Object>();
+			if (term.get(map.get("key")) == null) {
+				//docFreq新規作成
+				term.put(map.get("key"), Integer.valueOf(map.get("docFreq").toString()).intValue());
+				//url新規作成
 				urlList = new ArrayList<String>();
-				urlList.add(list.get(i).get("url").toString());
-				map.put("url", urlList);
-				map.put("docFreq", Integer.valueOf(list.get(i).get("docFreq").toString()).intValue());
-				result.put(list.get(i).get("key"), map);
+				urlList.add(map.get("url"));
+				urls.put(map.get("key"), urlList);
 			} else {
-				//追加作成
-				map = result.get(list.get(i).get("key"));
-				urlList = (ArrayList<String>) map.get("url");
-				urlList.add(list.get(i).get("url").toString());
-				int n = Integer.valueOf(map.get("docFreq").toString()).intValue();
-				int m = Integer.valueOf(list.get(i).get("docFreq").toString()).intValue();
-				map.put("url", urlList);
-				map.put("docFreq", n + m);
+				//docFreq追加作成
+				int a = term.get(map.get("key").toString());
+				int b = Integer.valueOf(map.get("docFreq").toString()).intValue();
+				term.put(map.get("key"), a + b);
+				//url追加作成
+				List<String> leftList = urls.get(map.get("key"));
+				List<String> rightList = new ArrayList<String>();
+				rightList.add(map.get("url"));
+				for (int i = 0; i < leftList.size(); i++) {
+					if (!rightList.contains(leftList.get(i))) {
+						rightList.add(leftList.get(i));
+					}
+				}
+				urls.put(map.get("key"), rightList);
 			}
 		}
-		return result;
-	}
-
-	/**
-	 * getSuperColumnメソッド (未完成)
-	 *
-	 *  @param key (String) キーを指定する
-	 *  @return
-	 */
-	public void getSuperColumn(String key) {
-		CassandraClient cc = new CassandraClient(_host, _port);
-		System.out.println(cc.getSuperColumn(key));
-		cc.closeConnection();
-	}
-
-	/**
-	 * getSuperColumnメソッド(ArrayList版) (未完成)
-	 *
-	 *  @param keys
-	 *  @return
-	 */
-	public Map<String, Object> getSuperColumn(ArrayList<String> keys) {
-		//結果を返すデータ構造
-		Map<String, Object> result = new HashMap<String, Object>();
-		Map<String, Integer> term = new HashMap<String, Integer>();
-		ArrayList<String> urlList = new ArrayList<String>();
-		//Cassandraに接続する
-		CassandraClient cc = new CassandraClient(_host, _port);
-		//複数クエリの結果を取得する
-		List<Map<String, String>> list = cc.getSuperColumn(keys);
-		//接続を切断する
-		cc.closeConnection();
-		//結果をまとめる
-		for (int i = 0; i < list.size(); i++) {
-			//URL
-			int n = urlList.indexOf(list.get(i).get("url").toString());
-			//未登録の場合
-			if (n == -1) {
-				urlList.add(list.get(i).get("url").toString());
-			}
-			//Term
-			if (term.get(list.get(i).get("key")) == null) {
-				//新規作成
-				term.put(list.get(i).get("key"), Integer.valueOf(list.get(i).get("docFreq").toString()).intValue());
-			} else {
-				//追加作成
-				int a = term.get(list.get(i).get("key").toString());
-				int b = Integer.valueOf(list.get(i).get("docFreq").toString()).intValue();
-				term.put(list.get(i).get("key"), a + b);
-			}
-
+		//QbSS
+		QbSS qbss = new QbSS(_query, urls);
+		try {
+			data = qbss.parser();
+		} catch(Exception e) {
+			System.out.println("アクセス先がありません");
+			return null;
 		}
-		result.put("url", urlList);
 		result.put("docFreq", term);
-		//MaxDocsの値を取得する
-		int maxDocs_number = getMaxDocs();
-		result.put("maxDocs", maxDocs_number);
-
-		return result;
-	}
-
-	/**
-	 * getSuperColumnANDメソッド (AND演算で結果をまとめる) (未完成)
-	 *
-	 * @param keys
-	 * @return
-	 */
-	public Map<String, Object> getSuperColumnAND(ArrayList<String> keys) {
-		//結果を返すデータ構造
-		Map<String, Object> result = new HashMap<String, Object>();
-		Map<String, Integer> term = new HashMap<String, Integer>();
-		ArrayList<String> urlList = new ArrayList<String>();
-		//Cassandraに接続する
-		CassandraClient cc = new CassandraClient(_host, _port);
-		//複数クエリの結果を取得する
-		List<Map<String, String>> list = cc.getSuperColumn(keys);
-		//接続を切断する
-		cc.closeConnection();
-		//URLが一致するものだけをまとめる
-		//一件先読み
-		String url = list.get(0).get("url");	//URLが複数一致する場合にエラーがある
-		for (int i = 1; i < list.size(); i++) {
-			String data = list.get(i).get("url");
-			if (data.equals(url)) {
-				System.out.println(data);
-			}
-		}
-		result.put("url", urlList);
-		result.put("docFreq", term);
+		result.put("url", data);
 		//MaxDocsの値を取得する
 		int maxDocs_number = getMaxDocs();
 		result.put("maxDocs", maxDocs_number);
@@ -494,6 +296,10 @@ public class Location {
 		return length;
 	}
 
+	//-----------------------------------------------------
+	//Cassandraのデータを削除する
+	//-----------------------------------------------------
+
 	/**
 	 * deleteメソッド(削除)
 	 *
@@ -525,8 +331,7 @@ public class Location {
 	public void deleteURL(String url) throws Exception {
 		//URLのチェック
 		if (urlCheck(url)) {
-			//Cassandraにアクセスする
-			CassandraClient cc = new CassandraClient(_host, _port);
+
 		}
 	}
 
@@ -556,46 +361,6 @@ public class Location {
 	}
 
 	/**
-	 * deleteSuperColumnメソッド
-	 */
-	public void deleteSuperColumnAll() {
-		CassandraClient cc = new CassandraClient(_host, _port);
-		cc.deleteSuperColumnAll();
-		cc.closeConnection();
-	}
-
-	/**
-	 * deleteSuperColumnメソッド
-	 *
-	 * @param url
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	public void deleteSuperColumn(String url) throws Exception {
-		//URLのチェック
-		if (urlCheck(url)) {
-			//idf値を取得する
-			List list = docFreq(url + "terms");
-			for (int i = 0; i < list.size(); i+=2) {
-				//Cassandraのデータベースを削除する
-				CassandraClient cc = new CassandraClient(_host, _port);
-				//一致するタームフィールドを削除する
-				cc.deleteSuperColumn(list.get(i).toString(), url);
-				cc.closeConnection();
-			}
-		}
-	}
-
-	/**
-	 * 未開発
-	 */
-	public void describe() {
-		CassandraClient cc = new CassandraClient(_host, _port);
-		cc.describe();
-		cc.closeConnection();
-	}
-
-	/**
 	 * searchメソッド(未完成)
 	 *
 	 * @param start
@@ -606,6 +371,10 @@ public class Location {
 		cc.search(start, end);
 		cc.closeConnection();
 	}
+
+	//-----------------------------------------------------
+	//staticメソッド
+	//-----------------------------------------------------
 
 	/**
 	 * maxDocsメソッド
