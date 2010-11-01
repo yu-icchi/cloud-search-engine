@@ -11,11 +11,15 @@ public class LocationTest {
 
 		Location location = new Location();
 
+		location.query("solr AND (前田 OR ipod)");
+
 		ArrayList<String> input = new ArrayList<String>();
 
+		input.add("ipod");
 		input.add("solr");
+		input.add("前田");
 
-		location.getAND(input);
+		System.out.println("LocationTest: " + location.get(input));
 	}
 
 }

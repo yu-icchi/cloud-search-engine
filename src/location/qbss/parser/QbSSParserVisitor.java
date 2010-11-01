@@ -8,6 +8,7 @@ public interface QbSSParserVisitor
   public Object visit(ASTAnd node, Object data);
   public Object visit(ASTOr node, Object data);
   public Object visit(ASTNot node, Object data);
+  public Object visit(ASTQuote node, Object data);
   public Object visit(ASTWord node, Object data);
 }
-/* JavaCC - OriginalChecksum=b53cd3bf525e1a3ad42336b08192ba26 (do not edit this line) */
+/* JavaCC - OriginalChecksum=5672c12e17247ae98b4209979ce21ec6 (do not edit this line) */

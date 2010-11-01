@@ -177,6 +177,20 @@ void Value()      :
 {}
 {
 		Word()
+	|	<QUOTE> (Word())+/*@bgen(jjtree) #Quote(> 2) */
+                                  {
+                                    ASTQuote jjtn001 = new ASTQuote(JJTQUOTE);
+                                    boolean jjtc001 = true;
+                                    jjtree.openNodeScope(jjtn001);
+                                  }
+                                  try {
+/*@egen*/ <QUOTE>/*@bgen(jjtree)*/
+                                  } finally {
+                                    if (jjtc001) {
+                                      jjtree.closeNodeScope(jjtn001, jjtree.nodeArity() > 2);
+                                    }
+                                  }
+/*@egen*/           
 	|	<LP> Query() <RP>
 }
 

@@ -8,7 +8,8 @@ public interface QbSSParserTreeConstants
   public int JJTAND = 2;
   public int JJTOR = 3;
   public int JJTNOT = 4;
-  public int JJTWORD = 5;
+  public int JJTQUOTE = 5;
+  public int JJTWORD = 6;
 
 
   public String[] jjtNodeName = {
@@ -17,7 +18,8 @@ public interface QbSSParserTreeConstants
     "And",
     "Or",
     "Not",
+    "Quote",
     "Word",
   };
 }
-/* JavaCC - OriginalChecksum=5de5d4ced6b3135bb3c4f8317121e7bc (do not edit this line) */
+/* JavaCC - OriginalChecksum=63350cb288173b126c9a1689647d5b93 (do not edit this line) */
