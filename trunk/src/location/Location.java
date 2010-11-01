@@ -72,7 +72,7 @@ public class Location {
 	}
 
 	/**
-	 * setQueryメソッド
+	 * queryメソッド
 	 *
 	 * @param query
 	 */
