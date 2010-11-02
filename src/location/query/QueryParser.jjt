@@ -1,0 +1,81 @@
+//---------------------------------------------------------
+//QueryParser.jjt
+//
+//クエリーを解析し、正規化とタームを抽出をするためのParserである
+//---------------------------------------------------------
+
+//オプション定義
+options {
+	STATIC=false;
+	MULTI=true;
+	VISITOR=true;
+	NODE_EXTENDS="location.query.BaseNode";
+	UNICODE_INPUT=true;
+	JAVA_UNICODE_ESCAPE=true;
+}
+
+//パーサークラスの定義
+PARSER_BEGIN(QueryParser)
+package location.query.parser;
+public class QueryParser {
+
+}
+PARSER_END(QueryParser)
+
+//トークンの定義
+SKIP:
+{
+	"\r" | "\t" | "\n"
+}
+
+TOKEN:
+{
+		< WORD: (~[" ", "\u3000", "\r", "\t", "\n", "\"", "(", ")", "|", "-"])+ >
+	|	< LP: "(" >
+	|	< RP: ")" >
+	|	< QUOTE: "\"" >
+	|	< OP_AND: " AND " | " and " | " " | "\u3000" >
+	|	< OP_OR: " OR " | " or " | " | " >
+	|	< OP_NOT: " NOT " | " not " | " -" >
+}
+
+//文法の定義
+ASTStart Start():
+{}
+{
+	Query() { return jjtThis; }
+}
+
+void Query() #void:
+{}
+{
+	Value() (
+			<OP_AND> Value() #And(2)
+		|	<OP_OR> Value() #Or(2)
+		|	<OP_NOT> Value() #Not(2) )*
+}
+
+void Value() #void:
+{}
+{
+	Word()
+	|	Lp() Query() Rp()
+}
+
+void Lp():
+{ Token t; }
+{
+	t = <LP> { jjtThis.nodeValue = t.image; }
+}
+
+void Rp():
+{ Token t; }
+{
+	t = <RP> { jjtThis.nodeValue = t.image; }
+}
+
+void Word():
+{ Token t; }
+{
+	t = <WORD> { jjtThis.nodeValue = t.image; }
+}

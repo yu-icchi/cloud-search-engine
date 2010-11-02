@@ -5,7 +5,7 @@ public class QueryTest {
 
 	public static void main(String[] args) throws Exception {
 
-		String q = "(ipod AND solr) OR (前田 NOT 大島)";
+		String q = "前田　大島 | 渡辺 -松井";
 
 		Query query = new Query();
 

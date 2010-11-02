@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ParserLexer" default="cc" basedir=".">
     <target name="init">
-        <property file="build.properties"/>
+        <property file="build(QbSSParser).properties"/>
     </target>
     <target name="cc" depends="init">
         <delete dir="${build.parser.dir}"
