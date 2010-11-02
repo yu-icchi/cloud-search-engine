@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ParserLexer" default="cc" basedir=".">
+    <target name="init">
+        <property file="build(QueryParser).properties"/>
+    </target>
+    <target name="cc" depends="init">
+        <delete dir="${build.parser.dir}"
+            includes="*.*"/>
+        <jjtree target="${src.jjt.file}"
+            outputdirectory="${build.parser.dir}"
+            javacchome="${javacc.dir}"/>
+        <javacc target="${build.jj.file}"
+            javacchome="${javacc.dir}"/>
+    </target>
+</project>

@@ -8,18 +8,9 @@ package location.query;
 import java.io.StringReader;
 import java.util.ArrayList;
 
-import location.qbss.parser.ASTAnd;
-import location.qbss.parser.ASTNot;
-import location.qbss.parser.ASTOr;
-import location.qbss.parser.ASTQuote;
-import location.qbss.parser.ASTStart;
-import location.qbss.parser.ASTWord;
-import location.qbss.parser.ParseException;
-import location.qbss.parser.QbSSParser;
-import location.qbss.parser.QbSSParserVisitor;
-import location.qbss.parser.SimpleNode;
+import location.query.parser.*;
 
-public class Query implements QbSSParserVisitor {
+public class Query implements QueryParserVisitor {
 
 	//-----------------------------------------------------
 	//プロパティ
@@ -93,10 +84,10 @@ public class Query implements QbSSParserVisitor {
 	 * @throws ParseException
 	 */
 	public void parser(String query) throws ParseException {
-		QbSSParser parser = new QbSSParser(new StringReader(query));
+		QueryParser parser = new QueryParser(new StringReader(query));
 		Query visitor = new Query();
 		ASTStart start = parser.Start();
-		System.out.println(start.jjtAccept(visitor, null).toString());
+		start.jjtAccept(visitor, null);
 	}
 
 	//-----------------------------------------------------
@@ -180,11 +171,21 @@ public class Query implements QbSSParserVisitor {
 	}
 
 	/**
-	 * DOUBLE QUOTE (フレーズ検索)
+	 * LP "("
 	 */
 	@Override
-	public Object visit(ASTQuote node, Object data) {
-		return "";
+	public Object visit(ASTLp node, Object data) {
+		String value = node.nodeValue;
+		return value;
+	}
+
+	/**
+	 * RP ")"
+	 */
+	@Override
+	public Object visit(ASTRp node, Object data) {
+		String value = node.nodeValue;
+		return value;
 	}
 
 	/**
