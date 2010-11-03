@@ -34,7 +34,7 @@ TOKEN:
 	|	< LP: "(" >
 	|	< RP: ")" >
 	|	< QUOTE: "\"" >
-	|	< OP_AND: " AND " | " and " | " " | "\u3000" >
+	|	< OP_AND: " AND " | " and " | (" ")+ | ("\u3000")+ >
 	|	< OP_OR: " OR " | " or " | " | " >
 	|	< OP_NOT: " NOT " | " not " | " -" >
 }

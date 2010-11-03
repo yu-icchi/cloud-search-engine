@@ -8,7 +8,7 @@ public class QueryConverterTest {
 	public static void main(String[] args) throws Exception {
 
 		//クエリー
-		String q = "((前田 大島) OR (優子 前田)) -AKB48";
+		String q = "((前田　大島) | (優子　前田)) -AKB48";
 
 		QueryConverter query = new QueryConverter();
 
