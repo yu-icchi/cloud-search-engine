@@ -3,7 +3,7 @@
 //---------------------------------------------------------
 package location.query;
 
-public class QueryTest {
+public class QueryConverterTest {
 
 	public static void main(String[] args) throws Exception {
 
