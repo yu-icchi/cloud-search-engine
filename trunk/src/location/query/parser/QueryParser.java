@@ -161,12 +161,9 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
  /*@bgen(jjtree) Lp */
   ASTLp jjtn000 = new ASTLp(JJTLP);
   boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);Token t;
+  jjtree.openNodeScope(jjtn000);
     try {
-      t = jj_consume_token(LP);
-                   jjtree.closeNodeScope(jjtn000, true);
-                   jjtc000 = false;
-                   jjtn000.nodeValue = t.image;
+      jj_consume_token(LP);
     } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
@@ -178,12 +175,9 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
  /*@bgen(jjtree) Rp */
   ASTRp jjtn000 = new ASTRp(JJTRP);
   boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);Token t;
+  jjtree.openNodeScope(jjtn000);
     try {
-      t = jj_consume_token(RP);
-                   jjtree.closeNodeScope(jjtn000, true);
-                   jjtc000 = false;
-                   jjtn000.nodeValue = t.image;
+      jj_consume_token(RP);
     } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);

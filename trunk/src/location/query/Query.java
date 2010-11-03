@@ -107,11 +107,7 @@ public class Query implements QueryParserVisitor {
 	 */
 	@Override
 	public Object visit(ASTStart node, Object data) {
-		String word = node.jjtGetChild(0).jjtAccept(this, null).toString();
-		String right = node.jjtGetChild(1).jjtAccept(this, null).toString();
-		String left = node.jjtGetChild(2).jjtAccept(this, null).toString();
-		System.out.println("Start: " + right);
-		return word;
+		return node.jjtGetChild(0).jjtAccept(this, null);
 	}
 
 	/**
@@ -179,12 +175,12 @@ public class Query implements QueryParserVisitor {
 	 */
 	@Override
 	public Object visit(ASTLp node, Object data) {
-		String str = node.nodeValue;
-		System.out.println(str);
+		//String str = node.nodeValue;
+		//System.out.println(str);
 
 		Query._query += "(";
 
-		return str;
+		return "";
 	}
 
 	/**
@@ -192,12 +188,12 @@ public class Query implements QueryParserVisitor {
 	 */
 	@Override
 	public Object visit(ASTRp node, Object data) {
-		String str = node.nodeValue;
-		System.out.println(str);
+		//String str = node.nodeValue;
+		//System.out.println(str);
 
 		Query._query += ")";
 
-		return str;
+		return "";
 	}
 
 	/**

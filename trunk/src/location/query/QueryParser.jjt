@@ -63,15 +63,15 @@ void Value() #void:
 }
 
 void Lp():
-{ Token t; }
+{}
 {
-	t = <LP> { jjtThis.nodeValue = t.image; }
+	<LP>
 }
 
 void Rp():
-{ Token t; }
+{}
 {
-	t = <RP> { jjtThis.nodeValue = t.image; }
+	<RP>
 }
 
 void Word():

@@ -183,16 +183,11 @@ void Lp():
   ASTLp jjtn000 = new ASTLp(JJTLP);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/ Token t; }
+/*@egen*/}
 {/*@bgen(jjtree) Lp */
         try {
 /*@egen*/
-	t = <LP>/*@bgen(jjtree)*/
-                 {
-                   jjtree.closeNodeScope(jjtn000, true);
-                   jjtc000 = false;
-                 }
-/*@egen*/ { jjtn000.nodeValue = t.image; }/*@bgen(jjtree)*/
+	<LP>/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
@@ -206,16 +201,11 @@ void Rp():
   ASTRp jjtn000 = new ASTRp(JJTRP);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/ Token t; }
+/*@egen*/}
 {/*@bgen(jjtree) Rp */
         try {
 /*@egen*/
-	t = <RP>/*@bgen(jjtree)*/
-                 {
-                   jjtree.closeNodeScope(jjtn000, true);
-                   jjtc000 = false;
-                 }
-/*@egen*/ { jjtn000.nodeValue = t.image; }/*@bgen(jjtree)*/
+	<RP>/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
