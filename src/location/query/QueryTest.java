@@ -10,7 +10,7 @@ public class QueryTest {
 		//クエリー
 		String q = "((前田 大島) OR (優子 前田)) -AKB48";
 
-		Query query = new Query();
+		QueryConverter query = new QueryConverter();
 
 		//パーザーにクエリーを引数として与える
 		query.parser(q);
