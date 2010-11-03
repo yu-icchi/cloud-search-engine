@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import location.query.parser.*;
 
-public class Query implements QueryParserVisitor {
+public class QueryConverter implements QueryParserVisitor {
 
 	//-----------------------------------------------------
 	//プロパティ
@@ -29,7 +29,7 @@ public class Query implements QueryParserVisitor {
 	/**
 	 * コンストラクタ (デフォルト)
 	 */
-	public Query() {
+	public QueryConverter() {
 
 	}
 
@@ -43,7 +43,7 @@ public class Query implements QueryParserVisitor {
 	 * @return
 	 */
 	public String getQuery() {
-		return Query._query;
+		return QueryConverter._query;
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class Query implements QueryParserVisitor {
 	 * @param query
 	 */
 	public void setQuery(String query) {
-		Query._query = query;
+		QueryConverter._query = query;
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class Query implements QueryParserVisitor {
 	 * @return
 	 */
 	public ArrayList<String> getTermList() {
-		return Query._termList;
+		return QueryConverter._termList;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class Query implements QueryParserVisitor {
 	 * @param array
 	 */
 	public void setTermList(ArrayList<String> array) {
-		Query._termList = array;
+		QueryConverter._termList = array;
 	}
 
 	//-----------------------------------------------------
@@ -85,9 +85,9 @@ public class Query implements QueryParserVisitor {
 	 */
 	public void parser(String query) throws ParseException {
 		QueryParser parser = new QueryParser(new StringReader(query));
-		Query visitor = new Query();
+		QueryConverter visitor = new QueryConverter();
 		ASTStart start = parser.Start();
-		Query._query = (String) start.jjtAccept(visitor, null);
+		QueryConverter._query = (String) start.jjtAccept(visitor, null);
 	}
 
 	//-----------------------------------------------------
@@ -160,8 +160,8 @@ public class Query implements QueryParserVisitor {
 	public Object visit(ASTWord node, Object data) {
 		String value = node.nodeValue;
 		//重複を許さないぞ！！
-		if (!Query._termList.contains(value)) {
-			Query._termList.add(value);
+		if (!QueryConverter._termList.contains(value)) {
+			QueryConverter._termList.add(value);
 		}
 		return value;
 	}
