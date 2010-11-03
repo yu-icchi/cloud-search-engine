@@ -209,6 +209,7 @@ public class Location {
 				urls.put(map.get("key"), rightList);
 			}
 		}
+		//System.out.println(urls);
 		//QbSS
 		QbSS qbss = new QbSS(_query, urls);
 		try {
