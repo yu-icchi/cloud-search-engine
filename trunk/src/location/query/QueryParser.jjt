@@ -50,9 +50,9 @@ void Query() #void:
 {}
 {
 	Value() (
-			<OP_AND> Value() #And(2)
-		|	<OP_OR> Value() #Or(2)
-		|	<OP_NOT> Value() #Not(2) )*
+			And() Value()
+		|	Or() Value()
+		|	Not() Value() )*
 }
 
 void Value() #void:
@@ -62,16 +62,34 @@ void Value() #void:
 	|	Lp() Query() Rp()
 }
 
-void Lp():
-{}
+void And():
+{ Token t; }
 {
-	<LP>
+	t = <OP_AND> { jjtThis.nodeValue = t.image; }
+}
+
+void Or():
+{ Token t; }
+{
+	t = <OP_OR> { jjtThis.nodeValue = t.image; }
+}
+
+void Not():
+{ Token t; }
+{
+	t = <OP_NOT> { jjtThis.nodeValue = t.image; }
+}
+
+void Lp():
+{ Token t; }
+{
+	t = <LP> { jjtThis.nodeValue = t.image; }
 }
 
 void Rp():
-{}
+{ Token t; }
 {
-	<RP>
+	t = <RP> { jjtThis.nodeValue = t.image; }
 }
 
 void Word():

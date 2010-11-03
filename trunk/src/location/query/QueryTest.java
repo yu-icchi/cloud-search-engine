@@ -8,7 +8,7 @@ public class QueryTest {
 	public static void main(String[] args) throws Exception {
 
 		//クエリー
-		String q = "前田 大島 | 渡辺 -松井";
+		String q = "((前田 大島) OR (優子 前田)) -AKB48";
 
 		Query query = new Query();
 

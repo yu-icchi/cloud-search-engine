@@ -16,7 +16,7 @@ public class QbSSTest {
 	public static void main(String[] args) throws Exception {
 
 		//クエリーの設定
-		String query = "(456 AND 大島) OR (*** NOT dDd)";
+		String query = "((456 AND 大島) OR (*** NOT dDd)) OR 456";
 		//String query = "\"aaa bbb\"";
 		//Cassandraの結果集合
 		Map<String, List<String>> map = new HashMap<String, List<String>>();

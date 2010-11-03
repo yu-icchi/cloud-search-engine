@@ -85,90 +85,9 @@ void Query()      :
 {}
 {
 	Value() (
-			<OP_AND>/*@bgen(jjtree) #And( 2) */
-                                 {
-                                   ASTAnd jjtn001 = new ASTAnd(JJTAND);
-                                   boolean jjtc001 = true;
-                                   jjtree.openNodeScope(jjtn001);
-                                 }
-                                 try {
-/*@egen*/ Value()/*@bgen(jjtree)*/
-                                 } catch (Throwable jjte001) {
-                                   if (jjtc001) {
-                                     jjtree.clearNodeScope(jjtn001);
-                                     jjtc001 = false;
-                                   } else {
-                                     jjtree.popNode();
-                                   }
-                                   if (jjte001 instanceof RuntimeException) {
-                                     throw (RuntimeException)jjte001;
-                                   }
-                                   if (jjte001 instanceof ParseException) {
-                                     throw (ParseException)jjte001;
-                                   }
-                                   throw (Error)jjte001;
-                                 } finally {
-                                   if (jjtc001) {
-                                     jjtree.closeNodeScope(jjtn001,  2);
-                                   }
-                                 }
-/*@egen*/        
-		|	<OP_OR>/*@bgen(jjtree) #Or( 2) */
-                                {
-                                  ASTOr jjtn002 = new ASTOr(JJTOR);
-                                  boolean jjtc002 = true;
-                                  jjtree.openNodeScope(jjtn002);
-                                }
-                                try {
-/*@egen*/ Value()/*@bgen(jjtree)*/
-                                } catch (Throwable jjte002) {
-                                  if (jjtc002) {
-                                    jjtree.clearNodeScope(jjtn002);
-                                    jjtc002 = false;
-                                  } else {
-                                    jjtree.popNode();
-                                  }
-                                  if (jjte002 instanceof RuntimeException) {
-                                    throw (RuntimeException)jjte002;
-                                  }
-                                  if (jjte002 instanceof ParseException) {
-                                    throw (ParseException)jjte002;
-                                  }
-                                  throw (Error)jjte002;
-                                } finally {
-                                  if (jjtc002) {
-                                    jjtree.closeNodeScope(jjtn002,  2);
-                                  }
-                                }
-/*@egen*/       
-		|	<OP_NOT>/*@bgen(jjtree) #Not( 2) */
-                                 {
-                                   ASTNot jjtn003 = new ASTNot(JJTNOT);
-                                   boolean jjtc003 = true;
-                                   jjtree.openNodeScope(jjtn003);
-                                 }
-                                 try {
-/*@egen*/ Value()/*@bgen(jjtree)*/
-                                 } catch (Throwable jjte003) {
-                                   if (jjtc003) {
-                                     jjtree.clearNodeScope(jjtn003);
-                                     jjtc003 = false;
-                                   } else {
-                                     jjtree.popNode();
-                                   }
-                                   if (jjte003 instanceof RuntimeException) {
-                                     throw (RuntimeException)jjte003;
-                                   }
-                                   if (jjte003 instanceof ParseException) {
-                                     throw (ParseException)jjte003;
-                                   }
-                                   throw (Error)jjte003;
-                                 } finally {
-                                   if (jjtc003) {
-                                     jjtree.closeNodeScope(jjtn003,  2);
-                                   }
-                                 }
-/*@egen*/         )*
+			And() Value()
+		|	Or() Value()
+		|	Not() Value() )*
 }
 
 void Value()      :
@@ -178,16 +97,90 @@ void Value()      :
 	|	Lp() Query() Rp()
 }
 
+void And():
+{/*@bgen(jjtree) And */
+  ASTAnd jjtn000 = new ASTAnd(JJTAND);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token t; }
+{/*@bgen(jjtree) And */
+        try {
+/*@egen*/
+	t = <OP_AND>/*@bgen(jjtree)*/
+                     {
+                       jjtree.closeNodeScope(jjtn000, true);
+                       jjtc000 = false;
+                     }
+/*@egen*/ { jjtn000.nodeValue = t.image; }/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void Or():
+{/*@bgen(jjtree) Or */
+  ASTOr jjtn000 = new ASTOr(JJTOR);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token t; }
+{/*@bgen(jjtree) Or */
+        try {
+/*@egen*/
+	t = <OP_OR>/*@bgen(jjtree)*/
+                    {
+                      jjtree.closeNodeScope(jjtn000, true);
+                      jjtc000 = false;
+                    }
+/*@egen*/ { jjtn000.nodeValue = t.image; }/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void Not():
+{/*@bgen(jjtree) Not */
+  ASTNot jjtn000 = new ASTNot(JJTNOT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token t; }
+{/*@bgen(jjtree) Not */
+        try {
+/*@egen*/
+	t = <OP_NOT>/*@bgen(jjtree)*/
+                     {
+                       jjtree.closeNodeScope(jjtn000, true);
+                       jjtc000 = false;
+                     }
+/*@egen*/ { jjtn000.nodeValue = t.image; }/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
 void Lp():
 {/*@bgen(jjtree) Lp */
   ASTLp jjtn000 = new ASTLp(JJTLP);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+/*@egen*/ Token t; }
 {/*@bgen(jjtree) Lp */
         try {
 /*@egen*/
-	<LP>/*@bgen(jjtree)*/
+	t = <LP>/*@bgen(jjtree)*/
+                 {
+                   jjtree.closeNodeScope(jjtn000, true);
+                   jjtc000 = false;
+                 }
+/*@egen*/ { jjtn000.nodeValue = t.image; }/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
@@ -201,11 +194,16 @@ void Rp():
   ASTRp jjtn000 = new ASTRp(JJTRP);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+/*@egen*/ Token t; }
 {/*@bgen(jjtree) Rp */
         try {
 /*@egen*/
-	<RP>/*@bgen(jjtree)*/
+	t = <RP>/*@bgen(jjtree)*/
+                 {
+                   jjtree.closeNodeScope(jjtn000, true);
+                   jjtc000 = false;
+                 }
+/*@egen*/ { jjtn000.nodeValue = t.image; }/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);

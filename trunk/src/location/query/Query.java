@@ -87,7 +87,7 @@ public class Query implements QueryParserVisitor {
 		QueryParser parser = new QueryParser(new StringReader(query));
 		Query visitor = new Query();
 		ASTStart start = parser.Start();
-		start.jjtAccept(visitor, null);
+		Query._query = (String) start.jjtAccept(visitor, null);
 	}
 
 	//-----------------------------------------------------
@@ -107,7 +107,11 @@ public class Query implements QueryParserVisitor {
 	 */
 	@Override
 	public Object visit(ASTStart node, Object data) {
-		return node.jjtGetChild(0).jjtAccept(this, null);
+		String word = "";
+		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+			word += node.jjtGetChild(i).jjtAccept(this, null);
+		}
+		return word;
 	}
 
 	/**
@@ -115,19 +119,12 @@ public class Query implements QueryParserVisitor {
 	 */
 	@Override
 	public Object visit(ASTAnd node, Object data) {
+		/*
 		String left = node.jjtGetChild(0).jjtAccept(this, null).toString();
 		String right = node.jjtGetChild(1).jjtAccept(this, null).toString();
-		System.out.println(left + " AND " + right);
-		if (!left.equals("")) {
-			Query._termList.add(left);
-		}
-		if (!right.equals("")) {
-			Query._termList.add(right);
-		}
-
-		Query._query += left + " AND " + right;
-
-		return "";
+		return left + " AND " + right;
+		*/
+		return " AND ";
 	}
 
 	/**
@@ -135,19 +132,12 @@ public class Query implements QueryParserVisitor {
 	 */
 	@Override
 	public Object visit(ASTOr node, Object data) {
+		/*
 		String left = node.jjtGetChild(0).jjtAccept(this, null).toString();
 		String right = node.jjtGetChild(1).jjtAccept(this, null).toString();
-		System.out.println(left + " OR " + right);
-		if (!left.equals("")) {
-			Query._termList.add(left);
-		}
-		if (!right.equals("")) {
-			Query._termList.add(right);
-		}
-
-		Query._query += left + " OR " + right;
-
-		return "";
+		return left + " OR " + right;
+		*/
+		return " OR ";
 	}
 
 	/**
@@ -155,45 +145,12 @@ public class Query implements QueryParserVisitor {
 	 */
 	@Override
 	public Object visit(ASTNot node, Object data) {
+		/*
 		String left = node.jjtGetChild(0).jjtAccept(this, null).toString();
 		String right = node.jjtGetChild(1).jjtAccept(this, null).toString();
-		System.out.println(left + " NOT " + right);
-		if (!left.equals("")) {
-			Query._termList.add(left);
-		}
-		if (!right.equals("")) {
-			Query._termList.add(right);
-		}
-
-		Query._query += left + " NOT " + right;
-
-		return "";
-	}
-
-	/**
-	 * LP
-	 */
-	@Override
-	public Object visit(ASTLp node, Object data) {
-		//String str = node.nodeValue;
-		//System.out.println(str);
-
-		Query._query += "(";
-
-		return "";
-	}
-
-	/**
-	 * RP
-	 */
-	@Override
-	public Object visit(ASTRp node, Object data) {
-		//String str = node.nodeValue;
-		//System.out.println(str);
-
-		Query._query += ")";
-
-		return "";
+		return left + " NOT " + right;
+		*/
+		return " NOT ";
 	}
 
 	/**
@@ -202,15 +159,27 @@ public class Query implements QueryParserVisitor {
 	@Override
 	public Object visit(ASTWord node, Object data) {
 		String value = node.nodeValue;
+		//重複を許さないぞ！！
+		if (!Query._termList.contains(value)) {
+			Query._termList.add(value);
+		}
 		return value;
 	}
 
-	//-----------------------------------------------------
-	//staticメソッド
-	//-----------------------------------------------------
+	/**
+	 * LP
+	 */
+	@Override
+	public Object visit(ASTLp node, Object data) {
+		return node.nodeValue;
+	}
 
-	static void sumSet() {
-
+	/**
+	 * RP
+	 */
+	@Override
+	public Object visit(ASTRp node, Object data) {
+		return node.nodeValue;
 	}
 
 }
