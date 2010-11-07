@@ -8,6 +8,7 @@ package upload.consistency;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,88 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class ConsistentHashing {
+
+	//-----------------------------------------------------
+	//プロパティ
+	//-----------------------------------------------------
+
+	//LSE(Solrサーバ)のノード格納
+	static List<String> nodeList = new ArrayList<String>();
+
+	//レプリケーション(仮想ノード)数
+	static int REPLICANTS;
+
+	//-----------------------------------------------------
+	//コンストラクタ
+	//-----------------------------------------------------
+
+	/**
+	 * コンストラクタ(デフォルト)
+	 */
+	public ConsistentHashing() {
+
+	}
+
+	//-----------------------------------------------------
+	//get・setメソッド
+	//-----------------------------------------------------
+
+	/**
+	 * getNodeメソッド
+	 *
+	 * @return
+	 * 		nodeListの数を返す
+	 */
+	public int getNodeNum() {
+		return ConsistentHashing.nodeList.size();
+	}
+
+	//-----------------------------------------------------
+	//publicメソッド
+	//-----------------------------------------------------
+
+	/**
+	 * addNodeメソッド
+	 * 		ノード(Solrサーバのアドレス)の追加をする
+	 *
+	 * @param nodeURL
+	 */
+	public void addNode(String nodeURL) {
+		ConsistentHashing.nodeList.add(nodeURL);
+	}
+
+	//-----------------------------------------------------
+	//staticメソッド
+	//-----------------------------------------------------
+
+	/**
+	 * getHashメソッド
+	 *
+	 * @param value
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 */
+	static BigInteger getHash(String value) throws NoSuchAlgorithmException {
+		MessageDigest digest = MessageDigest.getInstance("md5");
+		byte[] byteHash = digest.digest(value.getBytes());
+		return new BigInteger(byteHash);
+	}
+
+	/**
+	 * searchメソッド
+	 *
+	 * @param circle
+	 * @param rec
+	 * @return
+	 */
+	static String search(NavigableMap<BigInteger, String> circle, BigInteger rec ) {
+		BigInteger key = circle.ceilingKey(rec);
+		if (key == null) {
+			return (String) circle.get(circle.firstKey());
+		} else {
+			return (String) circle.get(key);
+		}
+	}
 
 	/**
 	 * テスト用　Main
@@ -58,21 +141,6 @@ public class ConsistentHashing {
 				System.out.print(strascii + " ");
 			}
 			System.out.print("\n");
-		}
-	}
-
-	static BigInteger getHash(String value) throws NoSuchAlgorithmException {
-		MessageDigest digest = MessageDigest.getInstance("md5");
-		byte[] byteHash = digest.digest(value.getBytes());
-		return new BigInteger(byteHash);
-	}
-
-	static String search(NavigableMap<BigInteger, String> circle, BigInteger rec ) {
-		BigInteger key = circle.ceilingKey(rec);
-		if (key == null) {
-			return (String) circle.get(circle.firstKey());
-		} else {
-			return (String) circle.get(key);
 		}
 	}
 }
