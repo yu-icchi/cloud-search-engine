@@ -18,9 +18,11 @@ public class IndexReaderTest {
 	 */
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws Exception {
-		IndexReader reader = IndexReader.open("app/SecondLevelSolr/solr2/solr/data/index");
-		Document doc = reader.document(1);
-		System.out.println(doc.get("id"));
+		IndexReader reader = IndexReader.open("app/SecondLevelSolr/solr1/solr/data/index");
+		for (int i = 0; i < reader.maxDoc(); i++) {
+			Document doc = reader.document(i);
+			System.out.println(doc.get("id"));
+		}
 		reader.clone();
 	}
 }
