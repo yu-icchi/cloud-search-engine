@@ -465,6 +465,6 @@ public class Location {
 		String line = in.readLine();
 		Map map = (Map) JSON.decode(line);
 		map = (Map) map.get("index");
-		return map.get("maxDoc").toString();
+		return map.get("numDoc").toString();
 	}
 }
