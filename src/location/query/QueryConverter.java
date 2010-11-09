@@ -159,9 +159,16 @@ public class QueryConverter implements QueryParserVisitor {
 	@Override
 	public Object visit(ASTWord node, Object data) {
 		String value = node.nodeValue;
+		String word = value;
 		//重複を許さないぞ！！
 		if (!QueryConverter._termList.contains(value)) {
-			QueryConverter._termList.add(value);
+			//t.getBoostaaでの"^"以降を除く
+			if (value.contains("^")) {
+				//^が存在するまでの文字列を取り出す
+				word = value.substring(0, value.indexOf("^"));
+			}
+			//タームリストに追加する
+			QueryConverter._termList.add(word);
 		}
 		return value;
 	}

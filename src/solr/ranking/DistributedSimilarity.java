@@ -126,7 +126,7 @@ public class DistributedSimilarity {
 	 *
 	 * @param data
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void solrScoreImport(Map data) {
 
 		//スコアリスト
