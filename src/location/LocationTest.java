@@ -16,7 +16,7 @@ public class LocationTest {
 	public static void main(String[] args) throws ParseException {
 
 		//クエリーの設定
-		String query = "solr | ipod | 前田";
+		String query = "solr | ipod";
 
 		//クエリーの解析
 		QueryConverter queryConverter = new QueryConverter();
