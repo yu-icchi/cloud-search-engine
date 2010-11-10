@@ -12,6 +12,8 @@ import java.util.Map;
 import net.arnx.jsonic.JSON;
 
 import location.GlobalIDF;
+import location.Location;
+import location.query.QueryConverter;
 
 import solr.ranking.DistributedSimilarity;
 //import solr.ranking.Ranking;
@@ -23,27 +25,29 @@ public class ShardsSolrApp {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 		//POST送信でトップサーバにアクセス
-		URL solrURL = new URL("http://localhost:6365/solr/select");
+		URL solrURL = new URL("http://localhost:8983/solr/select");
 		URLConnection con = solrURL.openConnection();
 		con.setDoOutput(true);
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
-		//クエリーの設定
-		String query = "solr ipod electron";
-		//String query = "前田^1.5 48 メンバー さん AKB AND account:test1";
-		//GlobalIDFクラスに接続し、TermからURLとIDFを取得する
-		ArrayList<String> list = new ArrayList<String>();
-		//list.add("前田");
-		//list.add("48");
-		//list.add("メンバー");
-		//list.add("さん");
-		//list.add("AKB");
-		list.add("solr");
-		list.add("ipod");
-		list.add("electron");
-		GlobalIDF g_idf = new GlobalIDF();
-		Map<String, Object> gidf = g_idf.get(list);
-		List urlList = (List) gidf.get("url");
+		//ユーザークエリーの指定
+		String query = "solr | ipod";
+		//クエリーの解析
+		QueryConverter queryConverter = new QueryConverter();
+		queryConverter.parser(query);
+		//データベース(Locationサーバ)にアクセス
+		Location location = new Location();
+		//正規化したクエリーを与える
+		location.query(queryConverter.getQuery());
+		//クエリーのタームを与える
+		Map<String, Object> locationMap = location.get(queryConverter.getTermList());
+		//URL
+		List<String> urlList = (List<String>) locationMap.get("url");
+		//maxDocs
+		int maxDocs = (Integer) locationMap.get("maxDocs");
+		//docFreq
+		Map<String, Integer> docFreq = (Map<String, Integer>) locationMap.get("docFreq");
+		System.out.println(urlList + ":" + maxDocs + ":" + docFreq);
 		//分散検索先の設定
 		String shards = "";
 		for (int i = 0; i < urlList.size(); i++) {
@@ -53,11 +57,8 @@ public class ShardsSolrApp {
 			shards += url.substring(7, url.length()) + ",";
 		}
 		System.out.println(shards);
-		System.out.println(gidf.get("maxDocs"));
-		System.out.println(gidf.get("docFreq"));
-
 		//検索式
-		out.print("shards=" + shards + "&q=" + query +"&debugQuery=on&wt=json");
+		out.print("shards=" + shards + "&q=" + queryConverter.getQuery() +"&debugQuery=on&wt=json");
 		out.close();
 		//検索
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -68,17 +69,11 @@ public class ShardsSolrApp {
 		Map map2 = (Map) map.get("debug");
 		//System.out.println(map2.get("explain"));
 		Map map3 = (Map) map2.get("explain");
-		System.out.println(map3);
-
-		//グローバルIDFに必要なdocFreqの値を取り出す
-		Map<String, Integer> docFreq = (Map<String, Integer>) gidf.get("docFreq");
-		//グローバルIDFに必要なmaxDocsの値を取り出す
-		int maxDocs = Integer.valueOf(gidf.get("maxDocs").toString()).intValue();
 		//ランキング修正をする
 		DistributedSimilarity ranking = new DistributedSimilarity(docFreq, maxDocs);
 		//Solrのスコアデータを格納する
 		ranking.solrScoreImport(map3);
 		//ランキング修正結果を返す
-		ranking.ranking();
+		System.out.println(ranking.ranking());
 	}
 }
