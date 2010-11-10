@@ -7,6 +7,8 @@
 package solr.ranking;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -172,9 +174,9 @@ public class DistributedSimilarity {
 	 *
 	 * @return MapをListでまとめたモノ
 	 */
-	public List<Map<String, Float>> ranking() {
+	public List<Map<String, Object>> ranking() {
 		//出力結果を返す変数
-		List<Map<String, Float>> resultList = new  ArrayList<Map<String, Float>>();
+		List<Map<String, Object>> resultList = new  ArrayList<Map<String, Object>>();
 
 		for (int i = 0; i < scoreList.size(); i++) {
 			Map<String, DistributedScore> map = scoreList.get(i);
@@ -185,14 +187,25 @@ public class DistributedSimilarity {
 				String id = it.next();
 				DistributedScore score = map.get(id);
 				score.setQueryNormSum(sumOfSquaredWeightsValue);
-				System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
+				//System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
 				//System.out.println(id + " : " + score.score());
-				Map<String, Float> resultMap = new HashMap<String, Float>();
-				resultMap.put(id, score.score());
+				Map<String, Object> resultMap = new HashMap<String, Object>();
+				resultMap.put("id", id);
+				resultMap.put("score", score.score());
 				resultList.add(resultMap);
 			}
 		}
 
+		//ソート
+		Collections.sort(resultList, new Comparator<Map<String, Object>>() {
+			public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+				String p1 = map1.get("score").toString();
+				String p2 = map2.get("score").toString();
+				return p2.compareTo(p1);
+			}
+		});
+
+		//結果を返す
 		return resultList;
 	}
 
