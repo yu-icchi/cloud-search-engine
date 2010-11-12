@@ -1,4 +1,4 @@
-package upload.solrserver;
+package upload.manager;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
