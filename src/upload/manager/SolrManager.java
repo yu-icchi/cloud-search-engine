@@ -3,7 +3,7 @@
 //
 //Jakarta Commons HTTP Client を利用したマルチ版のHTTP接続による監視
 //---------------------------------------------------------
-package upload.solrserver;
+package upload.manager;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
