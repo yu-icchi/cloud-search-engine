@@ -8,12 +8,8 @@ package upload.consistency;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.NavigableMap;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class ConsistentHashing {
@@ -23,10 +19,10 @@ public class ConsistentHashing {
 	//-----------------------------------------------------
 
 	//LSE(Solrサーバ)のノード格納
-	static List<String> nodeList = new ArrayList<String>();
+	private static NavigableMap<BigInteger, String> circle = new TreeMap<BigInteger, String>();
 
 	//レプリケーション(仮想ノード)数
-	static int REPLICANTS;
+	private static int REPLICANTS = 100;
 
 	//-----------------------------------------------------
 	//コンストラクタ
@@ -39,18 +35,13 @@ public class ConsistentHashing {
 
 	}
 
-	//-----------------------------------------------------
-	//get・setメソッド
-	//-----------------------------------------------------
-
 	/**
-	 * getNodeメソッド
+	 * コンストラクタ(仮想ノード数を指定する)
 	 *
-	 * @return
-	 * 		nodeListの数を返す
+	 * @param replicants
 	 */
-	public int getNodeNum() {
-		return ConsistentHashing.nodeList.size();
+	public ConsistentHashing(int replicants) {
+		ConsistentHashing.REPLICANTS = replicants;
 	}
 
 	//-----------------------------------------------------
@@ -58,17 +49,116 @@ public class ConsistentHashing {
 	//-----------------------------------------------------
 
 	/**
-	 * addNodeメソッド
-	 * 		ノード(Solrサーバのアドレス)の追加をする
+	 * addNodeメソッド (ノードの追加する)
 	 *
-	 * @param nodeURL
+	 * @param node ノードのアドレスを指定する
+	 * @throws NoSuchAlgorithmException
 	 */
-	public void addNode(String nodeURL) {
-		ConsistentHashing.nodeList.add(nodeURL);
+	public void addNode(String node) throws NoSuchAlgorithmException {
+		circle.put(getHash(node), node);
+		/*
+		for (int i = 1; i <= REPLICANTS; i++) {
+			circle.put(getHash(node + "_" + i), node);
+		}
+		*/
+	}
+
+	/**
+	 * addNodeメソッド (複数のノードを一遍に登録する)
+	 *
+	 * @param nodes
+	 * @throws NoSuchAlgorithmException
+	 */
+	public void addNode(String... nodes) throws NoSuchAlgorithmException {
+		for (int i = 0; i < nodes.length; i++) {
+			circle.put(getHash(nodes[i]), nodes[i]);
+			/*
+			for (int j = 1; j <= REPLICANTS; j++) {
+				circle.put(getHash(nodes[i] + "_" + j), nodes[i]);
+			}
+			*/
+		}
+	}
+
+	/**
+	 * addNodeメソッド (Listでノードを一遍に登録する)
+	 *
+	 * @param nodes
+	 * @throws NoSuchAlgorithmException
+	 */
+	public void addNode(List<String> nodes) throws NoSuchAlgorithmException {
+		for (String node : nodes) {
+			circle.put(getHash(node), node);
+		}
+	}
+
+	/**
+	 * delNodeメソッド (ノードの削除する)
+	 *
+	 * @param node
+	 * @throws NoSuchAlgorithmException
+	 */
+	public void delNode(String node) throws NoSuchAlgorithmException {
+		circle.remove(getHash(node));
+		/*
+		for (int i = 1; i <= REPLICANTS; i++) {
+			circle.remove(getHash(node + "_" + i));
+		}
+		*/
+	}
+
+	/**
+	 * delNodeメソッド (複数のノードを一遍に削除する)
+	 *
+	 * @param nodes
+	 * @throws NoSuchAlgorithmException
+	 */
+	public void delNode(String... nodes) throws NoSuchAlgorithmException {
+		for (int i = 0; i < nodes.length; i++) {
+			circle.remove(getHash(nodes[i]));
+			/*
+			for (int j = 1; j <= REPLICANTS; j++) {
+				circle.remove(getHash(nodes[i] + "_" + j));
+			}
+			*/
+		}
+	}
+
+	/**
+	 * nextNodeメソッド
+	 *
+	 * @param key
+	 * @throws NoSuchAlgorithmException
+	 */
+	public void nextNode(String key) throws NoSuchAlgorithmException {
+		BigInteger foo = circle.higherKey(getHash(key));
+		if (foo == null) {
+			System.out.println(circle.get(circle.firstKey()));
+		} else {
+			System.out.println(circle.get(foo));
+		}
+	}
+
+	/**
+	 * searchNodeメソッド (格納する文書のアドレスを調べる)
+	 *
+	 * @param key
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 */
+	public String searchNode(String key) throws NoSuchAlgorithmException {
+		return search(circle, getHash(key));
+	}
+
+	/**
+	 * nodeListメソッド (ノードリスト一覧を表示する)
+	 */
+	public void nodeList() {
+		System.out.println(circle);
 	}
 
 	//-----------------------------------------------------
-	//staticメソッド
+	//privateメソッド
 	//-----------------------------------------------------
 
 	/**
@@ -78,7 +168,7 @@ public class ConsistentHashing {
 	 * @return
 	 * @throws NoSuchAlgorithmException
 	 */
-	static BigInteger getHash(String value) throws NoSuchAlgorithmException {
+	private static BigInteger getHash(String value) throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("md5");
 		byte[] byteHash = digest.digest(value.getBytes());
 		return new BigInteger(byteHash);
@@ -91,7 +181,7 @@ public class ConsistentHashing {
 	 * @param rec
 	 * @return
 	 */
-	static String search(NavigableMap<BigInteger, String> circle, BigInteger rec ) {
+	private static String search(NavigableMap<BigInteger, String> circle, BigInteger rec ) {
 		BigInteger key = circle.ceilingKey(rec);
 		if (key == null) {
 			return (String) circle.get(circle.firstKey());
@@ -100,47 +190,4 @@ public class ConsistentHashing {
 		}
 	}
 
-	/**
-	 * テスト用　Main
-	 * @param args
-	 */
-	public static void main(String[] args) throws Exception {
-		int numOfReplicants = 100;
-		String[] nodeLists = {"n1", "n2", "n3", "n4"};
-		NavigableMap<BigInteger, String> circle = new TreeMap<BigInteger, String>();
-		SortedMap<String, List> nodesmap = new TreeMap<String, List>();
-		List<String> alphalist = Arrays.asList(
-	           "A","B","C","D","E","F","G","H","I","J","K","L","M",
-	           "N","O","P","Q","R","S","T","U","V","W","X","Y","Z");
-		for( int i = 0; i < nodeLists.length; i++ ){
-			nodesmap.put( nodeLists[i], new LinkedList<String>());
-		}
-
-		for( String node : nodesmap.keySet() ){
-			circle.put( getHash(node), node );
-			for (int i = 0; i < numOfReplicants; i++) {
-				circle.put(getHash(node + "_" + i), node);
-			}
-		}
-
-		for( String str : alphalist ){
-			String node = search(circle, getHash(str));
-			if( !nodesmap.containsKey(node)){
-				List<String> asciiList = new LinkedList<String>();
-				asciiList.add(str);
-				nodesmap.put(node, asciiList);
-			}else{
-				nodesmap.get(node).add(str);
-			}
-		}
-
-		for( String node : nodesmap.keySet()){
-			System.out.print(node + " ");
-			List<String> asciiList = nodesmap.get(node);
-			for( String strascii : asciiList ){
-				System.out.print(strascii + " ");
-			}
-			System.out.print("\n");
-		}
-	}
 }
