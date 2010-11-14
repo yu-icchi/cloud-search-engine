@@ -18,8 +18,11 @@ public class WordReader {
 	 * Word(.doc)からテキストを抽出する
 	 *
 	 * @param filePath
+	 * @return
 	 */
-	static void extractDoc(String filePath) {
+	public String extractDoc(String filePath) {
+
+		String line = "";
 
 		try {
 			FileInputStream fileStream = new FileInputStream(filePath);
@@ -35,40 +38,19 @@ public class WordReader {
 
 					for (int k = 0; k < paragraph.numCharacterRuns(); k++) {
 						CharacterRun ran = paragraph.getCharacterRun(k);
-						String line = ran.text();
-						System.out.println(line);
+						String tmp = ran.text();
+						//trimメソッドでいらないモノを削除する
+						line += tmp.trim();
 					}
 				}
 			}
 			fileStream.close();
+			return line;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 
-	}
-
-	/**
-	 * Word(.docx)からテキストを抽出する(未完成)
-	 *
-	 * @param filePath
-	 */
-	static void extractDocx(String filePath) {
-
-		try {
-			FileInputStream fileStream = new FileInputStream(filePath);
-
-			//XWPFがDOCX拡張子に対応している
-			XWPFDocument doc = new XWPFDocument(fileStream);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	public static void main(String[] args) {
-		String file = "demo/sample.doc";
-		extractDoc(file);
 	}
 
 }
