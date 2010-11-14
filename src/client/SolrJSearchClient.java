@@ -43,6 +43,8 @@ public class SolrJSearchClient {
 
 		//ユーザーからのクエリー
 		String queryString = "solr | ipod";
+		//ユーザーのアカウント情報
+		String account = "user1";
 		//クエリーの解析
 		QueryConverter queryConverter = new QueryConverter();
 		queryConverter.parser(queryString);
@@ -73,7 +75,7 @@ public class SolrJSearchClient {
 		//分散検索のアクセス先
 		query.set("shards", shards);
 		//正規化したクエリーを指定
-		query.setQuery(queryConverter.getQuery());
+		query.setQuery("(" + queryConverter.getQuery() + ") AND account:" + account);
 		//GSEサーバのSolrの指定
 		SolrServer server = new CommonsHttpSolrServer("http://localhost:8983/solr/");
 		//POST通信で検索をする

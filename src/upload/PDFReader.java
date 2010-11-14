@@ -23,7 +23,7 @@ public class PDFReader {
 	 * @param filePath
 	 * @return
 	 */
-	static String extractText(String filePath) {
+	public String extractPDF(String filePath) {
 		ByteArrayOutputStream out = null;
 		try {
 			FileInputStream pdfStream = new FileInputStream(filePath);
@@ -42,10 +42,4 @@ public class PDFReader {
 		return out.toString();
 	}
 
-	public static void main(String[] args) {
-		String pdfFile = "demo/a2-mapion.pdf";
-		String data = null;
-		data = extractText(pdfFile);
-		System.out.println(data);
-	}
 }
