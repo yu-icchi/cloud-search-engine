@@ -14,6 +14,7 @@ public class SolrJUpdateClient {
 	 * Cloud-Search-Engineの更新部分
 	 * 		1.アップロードするファイルを決める
 	 * 		2.Consistent Hashingにより分散するLSEの格納場所を決める
+	 * 		3.拡張子から自動的に読み込むクラスを選び、テキストを抽出し、インデックスに格納する
 	 *
 	 * @param args
 	 * @throws Exception
