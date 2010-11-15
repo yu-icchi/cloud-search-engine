@@ -11,12 +11,12 @@ public class GlobalIDFTest {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		GlobalIDF g_idf = new GlobalIDF();
+		GlobalIDF g_idf = new GlobalIDF("192.168.168.230", 9160);
 
 		//-------------------------------------------------
 		//setメソッド
 		//-------------------------------------------------
-		//g_idf.set("http://localhost:6365/solr/");
+		g_idf.set("http://localhost:8082/solr/");
 		//g_idf.set("http://localhost:6366/solr/");
 
 		//g_idf.setSuperColumn("http://localhost:8983/solr/");
@@ -31,13 +31,13 @@ public class GlobalIDFTest {
 
 		//g_idf.queryParser("(solr AND ipod)");
 
-		ArrayList<String> list = new ArrayList<String>();
-		list.add("ipod");
-		list.add("前田");
-		list.add("1");
+		//ArrayList<String> list = new ArrayList<String>();
+		//list.add("ipod");
+		//list.add("前田");
+		//list.add("1");
 
-		Map<String, Object> obj = g_idf.get(list);
-		System.out.println(obj);
+		//Map<String, Object> obj = g_idf.get(list);
+		//System.out.println(obj);
 
 		//System.out.println(g_idf.get("solr"));
 

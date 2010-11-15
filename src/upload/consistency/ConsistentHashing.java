@@ -56,11 +56,11 @@ public class ConsistentHashing {
 	 */
 	public void addNode(String node) throws NoSuchAlgorithmException {
 		circle.put(getHash(node), node);
-		/*
+		//仮想ノードを追加する
 		for (int i = 1; i <= REPLICANTS; i++) {
 			circle.put(getHash(node + "_" + i), node);
 		}
-		*/
+
 	}
 
 	/**
@@ -72,11 +72,11 @@ public class ConsistentHashing {
 	public void addNode(String... nodes) throws NoSuchAlgorithmException {
 		for (int i = 0; i < nodes.length; i++) {
 			circle.put(getHash(nodes[i]), nodes[i]);
-			/*
+			//仮想ノードを追加する
 			for (int j = 1; j <= REPLICANTS; j++) {
 				circle.put(getHash(nodes[i] + "_" + j), nodes[i]);
 			}
-			*/
+
 		}
 	}
 
@@ -89,6 +89,10 @@ public class ConsistentHashing {
 	public void addNode(List<String> nodes) throws NoSuchAlgorithmException {
 		for (String node : nodes) {
 			circle.put(getHash(node), node);
+			//仮想ノードを追加する
+			for (int i = 1; i <= REPLICANTS; i++) {
+				circle.put(getHash(node + "_" + i), node);
+			}
 		}
 	}
 
@@ -100,11 +104,11 @@ public class ConsistentHashing {
 	 */
 	public void delNode(String node) throws NoSuchAlgorithmException {
 		circle.remove(getHash(node));
-		/*
+		//仮想ノードを追加する
 		for (int i = 1; i <= REPLICANTS; i++) {
 			circle.remove(getHash(node + "_" + i));
 		}
-		*/
+
 	}
 
 	/**
@@ -116,11 +120,11 @@ public class ConsistentHashing {
 	public void delNode(String... nodes) throws NoSuchAlgorithmException {
 		for (int i = 0; i < nodes.length; i++) {
 			circle.remove(getHash(nodes[i]));
-			/*
+			//仮想ノードを追加する
 			for (int j = 1; j <= REPLICANTS; j++) {
 				circle.remove(getHash(nodes[i] + "_" + j));
 			}
-			*/
+
 		}
 	}
 

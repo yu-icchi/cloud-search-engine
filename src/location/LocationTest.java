@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import location.query.QueryConverter;
-import location.query.parser.ParseException;
 
 public class LocationTest {
 
@@ -13,8 +12,9 @@ public class LocationTest {
 	 * @throws ParseException
 	 */
 	@SuppressWarnings("unchecked")
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args) throws Exception {
 
+		/*
 		//クエリーの設定
 		String query = "solr | ipod";
 
@@ -35,6 +35,10 @@ public class LocationTest {
 		System.out.println("maxDocs: " + map.get("maxDocs"));
 		System.out.println("url: " + list);
 		System.out.println("maxDocs: " + map.get("docFreq"));
+		*/
+
+		GlobalIDF location = new GlobalIDF();
+		location.set("http://localhost:8081/solr/");
 	}
 
 }
