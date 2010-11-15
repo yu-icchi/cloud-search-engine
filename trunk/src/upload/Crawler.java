@@ -117,7 +117,7 @@ public class Crawler {
 		String suffix = getSuffix(filePath);
 		//格納するインデックスの情報
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("id", "filePath");
+		map.put("id", filePath);
 		map.put("account", Crawler.account);
 		//拡張子により読み込み処理を変える
 		if (suffix.equals("txt")) {
@@ -133,9 +133,11 @@ public class Crawler {
 			PowerPointReader reader = new PowerPointReader();
 			text = reader.extractPPT(filePath);
 		}
+		System.out.println(text);
 		if (text == null) {
 			return false;
 		}
+		map.put("text", text);
 		//インデックス格納
 		return indexWriterSolr(Crawler.server, map);
 	}
@@ -153,6 +155,7 @@ public class Crawler {
 	 */
 	private static boolean indexWriterSolr(String host, Map<String, String> data) {
 		try {
+			System.out.println(data);
 			//インデックスを格納するサーバを決める
 			SolrServer server = new CommonsHttpSolrServer(host);
 			//ドキュメントを作成
