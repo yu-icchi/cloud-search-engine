@@ -42,7 +42,7 @@ public class SolrJSearchClient {
 	public static void main(String[] args) throws Exception {
 
 		//ユーザーからのクエリー
-		String queryString = "solr | ipod";
+		String queryString = "ipod";
 		//ユーザーのアカウント情報
 		String account = "user1";
 		//クエリーの解析
@@ -77,7 +77,7 @@ public class SolrJSearchClient {
 		//正規化したクエリーを指定
 		query.setQuery("(" + queryConverter.getQuery() + ") AND account:" + account);
 		//GSEサーバのSolrの指定
-		SolrServer server = new CommonsHttpSolrServer("http://localhost:8983/solr/");
+		SolrServer server = new CommonsHttpSolrServer("http://localhost:8081/solr/");
 		//POST通信で検索をする
 		QueryResponse response = server.query(query, SolrRequest.METHOD.POST);
 		//Solrの結果を格納

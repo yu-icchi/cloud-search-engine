@@ -111,29 +111,33 @@ public class Crawler {
 	 * @return
 	 */
 	public boolean setIndex() {
+		//インデックスに格納するテキスト
+		String text = "";
 		//拡張子
 		String suffix = getSuffix(filePath);
 		//格納するインデックスの情報
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("id", "");
+		map.put("id", "filePath");
 		map.put("account", Crawler.account);
-		map.put("time", "");
 		//拡張子により読み込み処理を変える
 		if (suffix.equals("txt")) {
 			TextFileReader reader = new TextFileReader();
-			map.put("text", reader.extractText(filePath));
+			text = reader.extractText(filePath);
 		} else if (suffix.equals("doc")) {
 			WordReader reader = new WordReader();
-			map.put("text", reader.extractDoc(filePath));
+			text = reader.extractDoc(filePath);
 		} else if (suffix.equals("pdf")) {
 			PDFReader reader = new PDFReader();
-			map.put("text", reader.extractPDF(filePath));
+			text = reader.extractPDF(filePath);
 		} else if (suffix.equals("ppt")) {
 			PowerPointReader reader = new PowerPointReader();
-			map.put("text", reader.extractPPT(filePath));
+			text = reader.extractPPT(filePath);
+		}
+		if (text == null) {
+			return false;
 		}
 		//インデックス格納
-		return indexWriterSolr(Crawler.filePath, map);
+		return indexWriterSolr(Crawler.server, map);
 	}
 
 	//-----------------------------------------------------
@@ -157,7 +161,6 @@ public class Crawler {
 			document.addField("id", data.get("id"));
 			document.addField("account", data.get("account"));
 			document.addField("text", data.get("text"));
-			document.addField("time", data.get("time"));
 			//サーバに追加
 			server.add(document);
 			//コミット

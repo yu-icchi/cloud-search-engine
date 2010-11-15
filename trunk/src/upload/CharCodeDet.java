@@ -7,7 +7,7 @@ import org.mozilla.universalchardet.UniversalDetector;
 
 public class CharCodeDet {
 
-	static String _path;
+	private static String _path;
 
 	/**
 	 *

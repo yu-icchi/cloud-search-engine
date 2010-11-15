@@ -5,6 +5,7 @@
 //---------------------------------------------------------
 package client;
 
+import location.Location;
 import upload.Crawler;
 import upload.consistency.ConsistentHashing;
 
@@ -19,24 +20,30 @@ public class SolrJUpdateClient {
 	 * @param args
 	 * @throws Exception
 	 */
-	public static void main(String args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		//Account
 		String account = "user1";
 		//ファイルのパス
 		String filePath = "demo/sample.txt";
 		//複数のサーバ
-		String[] server = {"http://localhost:8983/solr", "http://localhost:7574/solr"};
+		String[] server = {"http://localhost:8081/solr/", "http://localhost:8082/solr/"};
 		//ConsistentHashingで格納するサーバを決める
 		ConsistentHashing hash = new ConsistentHashing();
 		hash.addNode(server);
 		String node = hash.searchNode(filePath);
+		System.out.println("インデックス格納先ノード: " + node);
 		//インデックスにデータを格納させる
 		Crawler crawler = new Crawler(account, filePath, node);
 		boolean flag = crawler.setIndex();
 		if (flag) {
+			//LocationServerを更新させる
+			Location location = new Location();
+			location.set(node);
 			//正常
+			System.out.println("成功");
 		} else {
 			//エラー
+			System.out.println("エラー");
 		}
 	}
 
