@@ -33,7 +33,12 @@ public class CharCodeDet {
 			detector.handleData(buf, 0, nread);
 		}
 		detector.dataEnd();
-		//結果を返す、判断出来ない場合はnullになる。
-		return detector.getDetectedCharset();
+		//結果を返す、判断出来ない場合はASCIIにする。
+		String enc = detector.getDetectedCharset();
+		if (enc == null) {
+			return "ASCII";
+		} else {
+			return enc;
+		}
 	}
 }

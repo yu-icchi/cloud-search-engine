@@ -42,7 +42,7 @@ public class SolrJSearchClient {
 	public static void main(String[] args) throws Exception {
 
 		//ユーザーからのクエリー
-		String queryString = "ipod";
+		String queryString = "hello";
 		//ユーザーのアカウント情報
 		String account = "user1";
 		//クエリーの解析

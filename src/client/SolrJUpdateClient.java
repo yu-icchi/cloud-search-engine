@@ -5,7 +5,7 @@
 //---------------------------------------------------------
 package client;
 
-import location.Location;
+import location.GlobalIDF;
 import upload.Crawler;
 import upload.consistency.ConsistentHashing;
 
@@ -37,7 +37,7 @@ public class SolrJUpdateClient {
 		boolean flag = crawler.setIndex();
 		if (flag) {
 			//LocationServerを更新させる
-			Location location = new Location();
+			GlobalIDF location = new GlobalIDF();
 			location.set(node);
 			//正常
 			System.out.println("成功");

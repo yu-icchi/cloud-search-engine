@@ -3,7 +3,7 @@
 //
 //SolrJを利用してSolrにアップする
 //---------------------------------------------------------
-package upload;
+package solr;
 
 import java.io.File;
 import java.io.IOException;
