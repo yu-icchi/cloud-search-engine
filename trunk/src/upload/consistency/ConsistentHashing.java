@@ -18,8 +18,10 @@ public class ConsistentHashing {
 	//プロパティ
 	//-----------------------------------------------------
 
-	//LSE(Solrサーバ)のノード格納
+	//LSE(Solrサーバ)の仮想ノード付き格納リング
 	private static NavigableMap<BigInteger, String> circle = new TreeMap<BigInteger, String>();
+	//LSE(Solrサーバ)の物理的ノード格納リング
+	private static NavigableMap<BigInteger, String> continuum = new TreeMap<BigInteger, String>();
 
 	//レプリケーション(仮想ノード)数
 	private static int REPLICANTS = 100;
@@ -55,12 +57,12 @@ public class ConsistentHashing {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public void addNode(String node) throws NoSuchAlgorithmException {
-		circle.put(getHash(node), node);
-		//仮想ノードを追加する
-		for (int i = 1; i <= REPLICANTS; i++) {
+		//物理ノードに追加する
+		continuum.put(getHash(node), node);
+		//仮想ノードに追加する
+		for (int i = 0; i < REPLICANTS; i++) {
 			circle.put(getHash(node + "_" + i), node);
 		}
-
 	}
 
 	/**
@@ -71,12 +73,12 @@ public class ConsistentHashing {
 	 */
 	public void addNode(String... nodes) throws NoSuchAlgorithmException {
 		for (int i = 0; i < nodes.length; i++) {
-			circle.put(getHash(nodes[i]), nodes[i]);
-			//仮想ノードを追加する
-			for (int j = 1; j <= REPLICANTS; j++) {
+			//物理ノードに追加する
+			continuum.put(getHash(nodes[i]), nodes[i]);
+			//仮想ノードに追加する
+			for (int j = 0; j < REPLICANTS; j++) {
 				circle.put(getHash(nodes[i] + "_" + j), nodes[i]);
 			}
-
 		}
 	}
 
@@ -88,9 +90,10 @@ public class ConsistentHashing {
 	 */
 	public void addNode(List<String> nodes) throws NoSuchAlgorithmException {
 		for (String node : nodes) {
-			circle.put(getHash(node), node);
-			//仮想ノードを追加する
-			for (int i = 1; i <= REPLICANTS; i++) {
+			//物理ノードに追加する
+			continuum.put(getHash(node), node);
+			//仮想ノードに追加する
+			for (int i = 0; i < REPLICANTS; i++) {
 				circle.put(getHash(node + "_" + i), node);
 			}
 		}
@@ -103,12 +106,12 @@ public class ConsistentHashing {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public void delNode(String node) throws NoSuchAlgorithmException {
-		circle.remove(getHash(node));
-		//仮想ノードを追加する
-		for (int i = 1; i <= REPLICANTS; i++) {
+		//物理ノードに追加する
+		continuum.remove(getHash(node));
+		//仮想ノードに追加する
+		for (int i = 0; i < REPLICANTS; i++) {
 			circle.remove(getHash(node + "_" + i));
 		}
-
 	}
 
 	/**
@@ -119,12 +122,12 @@ public class ConsistentHashing {
 	 */
 	public void delNode(String... nodes) throws NoSuchAlgorithmException {
 		for (int i = 0; i < nodes.length; i++) {
-			circle.remove(getHash(nodes[i]));
-			//仮想ノードを追加する
-			for (int j = 1; j <= REPLICANTS; j++) {
+			//物理ノードに追加する
+			continuum.remove(getHash(nodes[i]));
+			//仮想ノードに追加する
+			for (int j = 0; j < REPLICANTS; j++) {
 				circle.remove(getHash(nodes[i] + "_" + j));
 			}
-
 		}
 	}
 
@@ -132,14 +135,15 @@ public class ConsistentHashing {
 	 * nextNodeメソッド
 	 *
 	 * @param key
+	 * @return
 	 * @throws NoSuchAlgorithmException
 	 */
-	public void nextNode(String key) throws NoSuchAlgorithmException {
-		BigInteger foo = circle.higherKey(getHash(key));
-		if (foo == null) {
-			System.out.println(circle.get(circle.firstKey()));
+	public String nextNode(String key) throws NoSuchAlgorithmException {
+		BigInteger hash = continuum.higherKey(getHash(key));
+		if (hash == null) {
+			return continuum.get(continuum.firstKey());
 		} else {
-			System.out.println(circle.get(foo));
+			return continuum.get(hash);
 		}
 	}
 
@@ -158,7 +162,7 @@ public class ConsistentHashing {
 	 * nodeListメソッド (ノードリスト一覧を表示する)
 	 */
 	public void nodeList() {
-		System.out.println(circle);
+		System.out.println(continuum);
 	}
 
 	//-----------------------------------------------------
