@@ -22,7 +22,7 @@ public class CJKAnalyzerExtract {
 	@SuppressWarnings("deprecation")
 	private static Analyzer analyzer = new CJKAnalyzer();
 
-	private String text;
+	private ArrayList<String> stringArray = new ArrayList<String>();
 
 	//-----------------------------------------------------
 	//コンストラクタ
@@ -35,21 +35,20 @@ public class CJKAnalyzerExtract {
 
 	}
 
-	public CJKAnalyzerExtract(String text) {
-		this.text = text;
+	public CJKAnalyzerExtract(ArrayList<String> array) {
+		this.stringArray = array;
 	}
 
 	//-----------------------------------------------------
 	//ゲッター・セッター
 	//-----------------------------------------------------
 
-	public void setText(String text) {
-		this.text = text;
+	public void setStringArray(ArrayList<String> stringArray) {
+		this.stringArray = stringArray;
 	}
 
-
-	public String getText() {
-		return text;
+	public ArrayList<String> getStringArray() {
+		return stringArray;
 	}
 
 	//-----------------------------------------------------
@@ -59,17 +58,15 @@ public class CJKAnalyzerExtract {
 	@SuppressWarnings("deprecation")
 	public ArrayList<String> extract() throws Exception {
 
-		TokenStream stream = analyzer.tokenStream( "F", new StringReader( this.text ) );
-
 		ArrayList<String> array = new ArrayList<String>();
 
-		for( Token token = stream.next(); token != null; token = stream.next() ){
-
-			array.add(token.termText());
-
+		for (String str : this.stringArray) {
+			TokenStream stream = analyzer.tokenStream( "F", new StringReader( str ) );
+			for( Token token = stream.next(); token != null; token = stream.next() ){
+				array.add(token.termText());
+			}
+			stream.close();
 		}
-
-		stream.close();
 
 		return array;
 	}

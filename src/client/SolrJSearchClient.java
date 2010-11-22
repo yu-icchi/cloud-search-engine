@@ -21,6 +21,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
+import analysis.CJKAnalyzerExtract;
+
 import solr.ranking.DistributedSimilarity;
 
 public class SolrJSearchClient {
@@ -28,11 +30,12 @@ public class SolrJSearchClient {
 	/**
 	 * Cloud-Search-Engineの検索部分
 	 * 		1.ユーザーがGoogle形式のクエリーを入力
-	 * 		2.LocationにアクセスしQbSSにより最適なアクセス先を探す
-	 * 		3.分散検索をするためのクエリーを設定する
-	 * 		3.トップレベルSolrのアドレスを指定し、分散検索をする
-	 * 		4.ランキングを修正する
-	 * 		5.修正したランキング順に結果を表示する
+	 * 		2.クエリー内容をインデックスで作成されたタームの形にする
+	 * 		3.LocationにアクセスしQbSSにより最適なアクセス先を探す
+	 * 		4.分散検索をするためのクエリーを設定する
+	 * 		5.トップレベルSolrのアドレスを指定し、分散検索をする
+	 * 		6.ランキングを修正する
+	 * 		7.修正したランキング順に結果を表示する
 	 *
 	 *
 	 * @param args
@@ -52,8 +55,10 @@ public class SolrJSearchClient {
 		Location location = new Location();
 		//正規化したクエリーを与える
 		location.query(queryConverter.getQuery());
+		//CJKAnalyzerでタームを分割してLocationに与えるデータを作る
+		CJKAnalyzerExtract analyzerExtract = new CJKAnalyzerExtract(queryConverter.getTermList());
 		//クエリーのタームを与える
-		Map<String, Object> map = location.get(queryConverter.getTermList());
+		Map<String, Object> map = location.get(analyzerExtract.extract());
 		//URL
 		List<String> urlList = (List<String>) map.get("url");
 		//maxDocs
