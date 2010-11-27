@@ -73,5 +73,6 @@
 	<classpathentry kind="lib" path="lib/poi/ooxml-lib/geronimo-stax-api_1.0_spec-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/poi/ooxml-lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/msgpack/msgpack-0.4.0-devel.jar"/>
+	<classpathentry kind="lib" path="lib/serializer.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

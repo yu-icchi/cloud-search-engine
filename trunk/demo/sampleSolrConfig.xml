@@ -1,1 +1,130 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><solrconfig/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<config>
+  <abortOnConfigurationError>${solr.abortOnConfigurationError:true}</abortOnConfigurationError>
+  <lib dir="../../contrib/extraction/lib"/>
+  <lib dir="../../dist/" regex="apache-solr-cell-\d.*\.jar"/>
+  <lib dir="../../dist/" regex="apache-solr-clustering-\d.*\.jar"/>
+  <lib dir="../../contrib/clustering/lib/downloads/"/>
+  <lib dir="../../contrib/clustering/lib/"/>
+  <lib dir="/total/crap/dir/ignored"/>
+  <indexDefaults>
+    <useCompoundFile>false</useCompoundFile>
+    <mergeFactor>10</mergeFactor>
+    <ramBufferSizeMB>32</ramBufferSizeMB>
+    <maxFieldLength>10000</maxFieldLength>
+    <writeLockTimeout>10000</writeLockTimeout>
+    <commitLockTimeout>10000</commitLockTimeout>
+    <lockType>native</lockType>
+  </indexDefaults>
+  <mainIndex>
+    <useCompoundFile>false</useCompoundFile>
+    <ramBufferSizeMB>32</ramBufferSizeMB>
+    <mergeFactor>10</mergeFactor>
+    <unlockOnStartup>false</unlockOnStartup>
+    <reopenReaders>true</reopenReaders>
+    <deletionPolicy class="solr.SolrDeletionPolicy">
+      <str name="maxCommitsToKeep">1</str>
+      <str name="maxOptimizedCommitsToKeep">0</str>
+    </deletionPolicy>
+    <infoStream file="INFOSTREAM.txt">false</infoStream>
+  </mainIndex>
+  <jmx/>
+  <updateHandler class="solr.DirectUpdateHandler2"/>
+  <query>
+    <maxBooleanClauses>1024</maxBooleanClauses>
+    <filterCache autowarmCount="0" class="solr.FastLRUCache" initialSize="512" size="512"/>
+    <queryResultCache autowarmCount="0" class="solr.LRUCache" initialSize="512" size="512"/>
+    <documentCache autowarmCount="0" class="solr.LRUCache" initialSize="512" size="512"/>
+    <enableLazyFieldLoading>true</enableLazyFieldLoading>
+    <queryResultWindowSize>20</queryResultWindowSize>
+    <queryResultMaxDocsCached>200</queryResultMaxDocsCached>
+    <listener class="solr.QuerySenderListener" event="newSearcher">
+      <arr name="queries"/>
+    </listener>
+    <listener class="solr.QuerySenderListener" event="firstSearcher">
+      <arr name="queries">
+        <lst>
+          <str name="q">solr rocks</str>
+          <str name="start">0</str>
+          <str name="rows">10</str>
+        </lst>
+        <lst>
+          <str name="q">static firstSearcher warming query from solrconfig.xml</str>
+        </lst>
+      </arr>
+    </listener>
+    <useColdSearcher>false</useColdSearcher>
+    <maxWarmingSearchers>2</maxWarmingSearchers>
+  </query>
+  <requestDispatcher handleSelect="true">
+    <requestParsers enableRemoteStreaming="true" multipartUploadLimitInKB="2048000"/>
+    <httpCaching etagSeed="Solr" lastModifiedFrom="openTime"/>
+  </requestDispatcher>
+  <requestHandler class="solr.SearchHandler" default="true" name="standard">
+    <lst name="defaults">
+      <str name="echoParams">explicit</str>
+    </lst>
+  </requestHandler>
+  <requestHandler class="solr.XmlUpdateRequestHandler" name="/update"/>
+  <requestHandler class="solr.BinaryUpdateRequestHandler" name="/update/javabin"/>
+  <requestHandler class="solr.DocumentAnalysisRequestHandler" name="/analysis/document"/>
+  <requestHandler class="solr.FieldAnalysisRequestHandler" name="/analysis/field"/>
+  <requestHandler class="solr.DumpRequestHandler" name="/debug/dump">
+    <lst name="defaults">
+      <str name="echoParams">explicit</str>
+      <str name="echoHandler">true</str>
+    </lst>
+  </requestHandler>
+  <requestHandler class="solr.CSVRequestHandler" name="/update/csv" startup="lazy"/>
+  <requestHandler class="solr.SearchHandler" name="/replication">
+    <lst name="master">
+      <str name="replicateAfter">commit</str>
+      <str name="replicateAfter">startup</str>
+    </lst>
+    <lst name="slave">
+      <str name="masterUrl">http://localhost:7100/solr/core0/replication</str>
+      <str name="pollInterval">10:00:00</str>
+      <str name="compression">internal</str>
+    </lst>
+  </requestHandler>
+  <searchComponent class="org.apache.solr.handler.component.TermsComponent" name="termsComponent"/>
+  <requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/terms">
+    <lst name="defaults">
+      <bool name="terms">true</bool>
+    </lst>
+    <arr name="components">
+      <str>termsComponent</str>
+    </arr>
+  </requestHandler>
+  <requestHandler class="org.apache.solr.handler.admin.AdminHandlers" name="/admin/"/>
+  <requestHandler class="PingRequestHandler" name="/admin/ping">
+    <lst name="defaults">
+      <str name="qt">standard</str>
+      <str name="q">solrpingquery</str>
+      <str name="echoParams">all</str>
+    </lst>
+  </requestHandler>
+  <highlighting>
+    <fragmenter class="org.apache.solr.highlight.GapFragmenter" default="true" name="gap">
+      <lst name="defualts">
+        <int name="hl.fragsize">100</int>
+      </lst>
+    </fragmenter>
+    <fragmenter class="org.apache.solr.highlight.RegexFragmenter" name="regex">
+      <lst name="defualts">
+        <int name="hl.fragsize">70</int>
+        <float name="hl.regex.slop">0.5</float>
+        <str name="hl.regex.pattern">[-\w ,/\n\"']{20,200}</str>
+      </lst>
+    </fragmenter>
+    <formatter class="org.apache.solr.highlight.HtmlFormatter" default="true" name="html">
+      <lst name="defualts">
+        <str name="hl.simple.pre">&lt;![CDATA[&lt;em&gt;]]&gt;</str>
+        <str name="hl.simple.post">&lt;![CDATA[&lt;/em&gt;]]&gt;</str>
+      </lst>
+    </formatter>
+  </highlighting>
+  <queryResponseWriter class="org.apache.solr.request.XSLTResponseWriter" name="xslt">
+    <int name="xsltCacheLifetimeSeconds">5</int>
+  </queryResponseWriter>
+</config>
