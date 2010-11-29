@@ -277,7 +277,13 @@ public class DistributedSimilarity {
 					tf = extractWeight(i+1);
 					//System.out.println("tf:" + tf);
 					//IDFを計算し、格納する
-					idf = idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(key));
+
+					idf = 0.0f;
+					for (String term : extractKeywordList(line)) {
+						idf += idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(term));
+					}
+
+					//idf = idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(key));
 					//System.out.println("idf:" + idf);
 					//Normを取得し、格納する
 					norm = extractWeight(i+3);
@@ -312,6 +318,11 @@ public class DistributedSimilarity {
 	 */
 	static float idf(int maxDocs, int docFreq) {
 		return (float) (Math.log(maxDocs / (double) (docFreq + 1)) + 1.0);
+	}
+
+	static List<String> idfTermList(String line) {
+		System.out.println(extractKeyword(line));
+		return null;
 	}
 
 	/**
@@ -367,6 +378,38 @@ public class DistributedSimilarity {
 		}
 		//無ければ空文字を返す
 		return "";
+	}
+
+	/**
+	 * extractKeywordListaメソッド
+	 *
+	 * @param line
+	 * @return
+	 */
+	static List<String> extractKeywordList(String line) {
+		//出力用のList変数
+		List<String> list = new ArrayList<String>();
+		//パターン【fieldWeight(text:"◯◯ ◯◯ ◯◯ ◯◯" in ◯)】
+		Pattern p = Pattern.compile("\\((" + DistributedSimilarity.field +":\"*([\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)*\"*)");
+		Matcher m = p.matcher(line);
+		if (m.find()) {
+			//コロンかスペースかハットで区切る
+			String[] str = m.group(1).split(":|\\s|\\^|\\)|\"");
+			for (int i = 1; i < str.length; i++) {
+				//"in"の文字で終了
+				if (str[i].equals("in")) {
+					break;
+				}
+				//何も無い文字は飛ばす
+				if (str[i].equals("")) {
+					continue;
+				}
+				//必要な文字だけ格納
+				list.add(str[i]);
+			}
+		}
+
+		return list;
 	}
 
 	/**
