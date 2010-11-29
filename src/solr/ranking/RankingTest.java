@@ -6,8 +6,8 @@ public class RankingTest {
 
 		System.out.println(DistributedSimilarity.extractKeywordList("fieldWeight(text:kumofs in 0)"));
 
-		System.out.println(DistributedSimilarity.idf(1, 1) * 4);
-
+		System.out.println(DistributedSimilarity.idf(3, 2));
+		System.out.println(DistributedSimilarity.idf(3, 1));
 	}
 
 }
