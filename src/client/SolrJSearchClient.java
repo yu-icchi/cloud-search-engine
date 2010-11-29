@@ -45,7 +45,7 @@ public class SolrJSearchClient {
 	public static void main(String[] args) throws Exception {
 
 		//ユーザーからのクエリー
-		String queryString = "kumofs";
+		String queryString = "プログラム | クラウド";
 		//ユーザーのアカウント情報
 		String account = "user1";
 		//クエリーの解析
