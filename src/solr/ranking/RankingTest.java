@@ -4,11 +4,10 @@ public class RankingTest {
 
 	public static void main(String[] args) {
 
-		System.out.println(Ranking.getField());
+		System.out.println(DistributedSimilarity.extractKeywordList("fieldWeight(text:kumofs in 0)"));
 
-		Ranking.setField("id");
+		System.out.println(DistributedSimilarity.idf(1, 1) * 4);
 
-		System.out.println(Ranking.getField());
 	}
 
 }

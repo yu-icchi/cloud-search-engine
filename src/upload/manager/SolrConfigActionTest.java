@@ -23,7 +23,7 @@ public class SolrConfigActionTest {
 		try {
 			int statusCode = client.executeMethod(method);
 			if (statusCode != HttpStatus.SC_OK) {
-				//System.out.println("Method failed: " + method.getStatusLine());
+				System.out.println("Method failed: " + method.getStatusLine());
 			}
 			byte[] responseBody = method.getResponseBody();
 			File file = new File("demo/solrconfig.xml");
