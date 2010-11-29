@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import location.qbss.QbSS;
-//import location.query.LocationQueryConverter;
+import location.query.LocationQueryConverter;
 
 import net.arnx.jsonic.JSON;
 
@@ -79,10 +79,10 @@ public class Location {
 	 * @throws Exception
 	 */
 	public void query(String query) throws Exception {
-		//LocationQueryConverter convert = new LocationQueryConverter();
-		//convert.parser(query);
-		//_query = convert.getQuery();
-		_query = query;
+		LocationQueryConverter convert = new LocationQueryConverter();
+		convert.parser(query);
+		_query = convert.getQuery();
+		//_query = query;
 	}
 
 	//-----------------------------------------------------

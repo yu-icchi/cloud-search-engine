@@ -277,12 +277,11 @@ public class DistributedSimilarity {
 					tf = extractWeight(i+1);
 					//System.out.println("tf:" + tf);
 					//IDFを計算し、格納する
-
 					idf = 0.0f;
 					for (String term : extractKeywordList(line)) {
 						idf += idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(term));
 					}
-
+					System.out.println("Ranking-idf: " + idf);
 					//idf = idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(key));
 					//System.out.println("idf:" + idf);
 					//Normを取得し、格納する
