@@ -45,7 +45,7 @@ public class SolrJSearchClient {
 	public static void main(String[] args) throws Exception {
 
 		//ユーザーからのクエリー
-		String queryString = "solr | ipod";
+		String queryString = "kumofs";
 		//ユーザーのアカウント情報
 		String account = "user1";
 		//クエリーの解析
@@ -59,6 +59,7 @@ public class SolrJSearchClient {
 		CJKAnalyzerExtract analyzerExtract = new CJKAnalyzerExtract(queryConverter.getTermList());
 		//クエリーのタームを与える
 		Map<String, Object> map = location.get(analyzerExtract.extract());
+		System.out.println(map);
 		//URL
 		List<String> urlList = (List<String>) map.get("url");
 		//maxDocs
@@ -67,6 +68,10 @@ public class SolrJSearchClient {
 		Map<String, Integer> docFreq = (Map<String, Integer>) map.get("docFreq");
 		//分散検索先の設定
 		String shards = "";
+		//エラー処理
+		if (urlList == null) {
+			return;
+		}
 		for (int i = 0; i < urlList.size(); i++) {
 			//URLを取り出す
 			String url = urlList.get(i).toString();

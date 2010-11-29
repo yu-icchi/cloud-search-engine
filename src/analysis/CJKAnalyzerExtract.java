@@ -5,10 +5,12 @@
 //---------------------------------------------------------
 package analysis;
 
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.cjk.CJKAnalyzer;
@@ -61,7 +63,8 @@ public class CJKAnalyzerExtract {
 		ArrayList<String> array = new ArrayList<String>();
 
 		for (String str : this.stringArray) {
-			TokenStream stream = analyzer.tokenStream( "F", new StringReader( str ) );
+			Reader reader = new NormalizeReader(new StringReader(str));
+			TokenStream stream = new LowerCaseFilter(analyzer.tokenStream("F", reader));
 			for( Token token = stream.next(); token != null; token = stream.next() ){
 				array.add(token.termText());
 			}
@@ -69,6 +72,30 @@ public class CJKAnalyzerExtract {
 		}
 
 		return array;
+	}
+
+	@SuppressWarnings("deprecation")
+	public String qbssExtract(String value) throws Exception {
+
+		ArrayList<String> list = new ArrayList<String>();
+
+		Reader reader = new NormalizeReader(new StringReader(value));
+		TokenStream stream = new LowerCaseFilter(analyzer.tokenStream("F", reader));
+		for( Token token = stream.next(); token != null; token = stream.next() ){
+			list.add(token.termText());
+		}
+
+		String result = "(";
+
+		for (int i = 0; i < list.size(); i++) {
+			if (i != list.size() - 1) {
+				result += list.get(i) + " AND ";
+			} else {
+				result += list.get(i) + ")";
+			}
+		}
+
+		return result;
 	}
 
 }
