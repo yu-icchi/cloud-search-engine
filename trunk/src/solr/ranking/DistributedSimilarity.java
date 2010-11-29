@@ -248,7 +248,7 @@ public class DistributedSimilarity {
 			String line = _data[i].trim();
 			String[] str = line.split("=");
 
-			//System.out.println(str[1]);
+			//System.out.println(line);
 
 			//queryWeightの部分を探す
 			if (str[1].indexOf("queryWeight") != -1) {

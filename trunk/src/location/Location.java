@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import location.qbss.QbSS;
+//import location.query.LocationQueryConverter;
 
 import net.arnx.jsonic.JSON;
 
@@ -75,8 +76,12 @@ public class Location {
 	 * queryメソッド
 	 *
 	 * @param query
+	 * @throws Exception
 	 */
-	public void query(String query) {
+	public void query(String query) throws Exception {
+		//LocationQueryConverter convert = new LocationQueryConverter();
+		//convert.parser(query);
+		//_query = convert.getQuery();
 		_query = query;
 	}
 
@@ -209,7 +214,7 @@ public class Location {
 				urls.put(map.get("key"), rightList);
 			}
 		}
-		//System.out.println(urls);
+		System.out.println(urls);
 		//QbSS
 		QbSS qbss = new QbSS(_query, urls);
 		try {
