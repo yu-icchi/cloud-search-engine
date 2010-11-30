@@ -36,6 +36,8 @@ public class DistributedSimilarity {
 	static float sumOfSquaredWeightsValue = 0.0f;
 	static Map<String, Float> boostMap = new HashMap<String, Float>();
 
+	//static List<Float> idfList = new ArrayList<Float>();
+
 	//スコアリスト
 	static List<Map<String, DistributedScore>> scoreList;
 
@@ -187,8 +189,8 @@ public class DistributedSimilarity {
 				String id = it.next();
 				DistributedScore score = map.get(id);
 				score.setQueryNormSum(sumOfSquaredWeightsValue);
-				//System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
-				//System.out.println(id + " : " + score.score());
+				System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
+				System.out.println(id + " : " + score.score());
 				Map<String, Object> resultMap = new HashMap<String, Object>();
 				resultMap.put("id", id);
 				resultMap.put("score", score.score());
@@ -281,6 +283,7 @@ public class DistributedSimilarity {
 					for (String term : extractKeywordList(line)) {
 						idf += idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(term));
 					}
+					//idfList.add(idf);
 					System.out.println("Ranking-idf: " + idf);
 					//idf = idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(key));
 					//System.out.println("idf:" + idf);
@@ -352,6 +355,13 @@ public class DistributedSimilarity {
 			//Σ(idf(t)*t.getBoost)^2の計算
 			sum += (idf * boost) * (idf * boost);
 		}
+
+		/*
+		for (float idf : idfList) {
+			//Σ(idf(t)*t.getBoost)^2の計算
+			sum += (idf * boost) * (idf * boost);
+		}
+		*/
 
 		return sum;
 	}
