@@ -122,7 +122,7 @@ public class CassandraClient {
 			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
 			columnPath.setColumn(url.getBytes("utf-8"));
 			//レコードを挿入
-			client.insert(KEYSPACE, "MaxDocs", columnPath, data.getBytes("utf-8"), System.currentTimeMillis(), ConsistencyLevel.ONE);
+			client.insert(KEYSPACE, "MaxDocs", columnPath, data.getBytes("utf-8"), System.currentTimeMillis(), ConsistencyLevel.QUORUM);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -150,7 +150,7 @@ public class CassandraClient {
 				columns.add(columnOrSuperColumn);
 			}
 			cfmap.put(COLUMN_FAMILY, columns);
-			client.batch_insert(KEYSPACE, key, cfmap, ConsistencyLevel.ALL);
+			client.batch_insert(KEYSPACE, key, cfmap, ConsistencyLevel.QUORUM);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -179,7 +179,7 @@ public class CassandraClient {
 				columnFamilyMap.put(COLUMN_FAMILY, mutationList);
 				map.put(new String(term), columnFamilyMap);
 			}
-			client.batch_mutate(KEYSPACE, map, ConsistencyLevel.ONE);
+			client.batch_mutate(KEYSPACE, map, ConsistencyLevel.QUORUM);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -205,7 +205,7 @@ public class CassandraClient {
 				addMutationSuperColumn(colMap, SUPER_COLUMN, term.getBytes("utf-8"), url.getBytes("utf-8"), doc.getBytes("utf-8"), timestamp);
 			}
 			mutationMap.put(TERM, colMap);
-			client.batch_mutate(KEYSPACE, mutationMap, ConsistencyLevel.ONE);
+			client.batch_mutate(KEYSPACE, mutationMap, ConsistencyLevel.QUORUM);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -271,7 +271,7 @@ public class CassandraClient {
 			ColumnParent parent = new ColumnParent(COLUMN_FAMILY);
 			SlicePredicate predicate = new SlicePredicate();
 			predicate.setColumn_names(Arrays.asList("idf".getBytes(), "url".getBytes()));
-			List<ColumnOrSuperColumn> ret = client.get_slice(KEYSPACE, key, parent, predicate, ConsistencyLevel.ONE);
+			List<ColumnOrSuperColumn> ret = client.get_slice(KEYSPACE, key, parent, predicate, ConsistencyLevel.QUORUM);
 			//結果を出力する変数
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (ColumnOrSuperColumn csc : ret) {
@@ -304,7 +304,7 @@ public class CassandraClient {
 			sliceRange.setFinish(new byte[] {});
 			slicePredicate.setSlice_range(sliceRange);
 			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
-			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, key, columnParent, slicePredicate, ConsistencyLevel.ONE);
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, key, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
 			//結果を出力する変数
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (ColumnOrSuperColumn c : results) {
@@ -343,7 +343,7 @@ public class CassandraClient {
 			slicePredicate.setSlice_range(sliceRange);
 			//multigetメソッドを使う
 			Map<String, List<ColumnOrSuperColumn>> results = client.multiget_slice(KEYSPACE,
-					keys, columnParent, slicePredicate, ConsistencyLevel.ONE);
+					keys, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
 			//出力する
 			//結果を出力する変数
 			List<Map<String, String>> lists = new ArrayList<Map<String, String>>();
@@ -382,7 +382,7 @@ public class CassandraClient {
 			slicePredicate.setSlice_range(sliceRange);
 			//multigetメソッドを使う
 			Map<String, List<ColumnOrSuperColumn>> results = client.multiget_slice(KEYSPACE,
-					keys, columnParent, slicePredicate, ConsistencyLevel.ONE);
+					keys, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
 			//出力する
 			//結果を出力する変数
 			List<Map<String, String>> lists = new ArrayList<Map<String, String>>();
@@ -425,7 +425,7 @@ public class CassandraClient {
 			ColumnParent columnParent = new ColumnParent(SUPER_COLUMN);
 			//探しているスーパーカラム名を指定する
 			columnParent.setSuper_column(key.getBytes("utf-8"));
-			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, TERM, columnParent, slicePredicate, ConsistencyLevel.ONE);
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, TERM, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
 			//結果を出力する変数
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (ColumnOrSuperColumn c : results) {
@@ -458,7 +458,7 @@ public class CassandraClient {
 			for (String str : keys) {
 				slicePredicate.addToColumn_names(str.getBytes("utf-8"));
 			}
-			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, TERM, columnParent, slicePredicate, ConsistencyLevel.ONE);
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, TERM, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
 			//結果を出力する変数
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (ColumnOrSuperColumn cs : results) {
@@ -495,7 +495,7 @@ public class CassandraClient {
 			sliceRange.setFinish(new byte[] {});
 			slicePredicate.setSlice_range(sliceRange);
 			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
-			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, "MaxDocs", columnParent, slicePredicate, ConsistencyLevel.ONE);
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, "MaxDocs", columnParent, slicePredicate, ConsistencyLevel.QUORUM);
 			//結果を出力する変数
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (ColumnOrSuperColumn c : results) {
@@ -525,14 +525,14 @@ public class CassandraClient {
 		try {
 			ColumnParent columnParent = new ColumnParent(SUPER_COLUMN);
 			//登録しているターム数を調べる
-			int count = client.get_count(KEYSPACE, TERM, columnParent, ConsistencyLevel.ONE);
+			int count = client.get_count(KEYSPACE, TERM, columnParent, ConsistencyLevel.QUORUM);
 			SlicePredicate slicePredicate = new SlicePredicate();
 			SliceRange sliceRange = new SliceRange();
 			sliceRange.setStart(new byte[0]);
 			sliceRange.setFinish(new byte[0]);
 			sliceRange.setCount(count);
 			slicePredicate.setSlice_range(sliceRange);
-			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, TERM, columnParent, slicePredicate, ConsistencyLevel.ONE);
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, TERM, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
 			for (ColumnOrSuperColumn cs : results) {
 				SuperColumn superColumn = cs.getSuper_column();
 				//System.out.println(new String(superColumn.getName(), "utf-8"));
@@ -555,7 +555,7 @@ public class CassandraClient {
 			//スーパーカラムを指定する
 			ColumnParent columnParent = new ColumnParent(SUPER_COLUMN);
 			//登録しているターム数を調べる
-			int count = client.get_count(KEYSPACE, TERM, columnParent, ConsistencyLevel.ONE);
+			int count = client.get_count(KEYSPACE, TERM, columnParent, ConsistencyLevel.QUORUM);
 			return count;
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -612,11 +612,11 @@ public class CassandraClient {
 			KeyRange keyRange = new KeyRange();
 			keyRange.setStart_key("");
 			keyRange.setEnd_key("");
-			//問題はsetCountの数、デフォルトだと100になっている
+			//問題はsetCountの数、デフォルトだと100になっているgetKeyCountみたいなのがない
 			keyRange.setCount(10000000);
 
 			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
-
+			//columnを複数取得する設定
 			SlicePredicate slicePredicate = new SlicePredicate();
 			SliceRange sliceRange = new SliceRange();
 			sliceRange.setStart(new byte[0]);
@@ -652,7 +652,7 @@ public class CassandraClient {
 			deletePath.setSuper_column(term.getBytes("utf-8"));
 			deletePath.setColumn(url.getBytes("utf-8"));
 			//レコードを削除する
-			client.remove(KEYSPACE, TERM, deletePath, System.currentTimeMillis(), ConsistencyLevel.ALL);
+			client.remove(KEYSPACE, TERM, deletePath, System.currentTimeMillis(), ConsistencyLevel.QUORUM);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -664,7 +664,7 @@ public class CassandraClient {
 	public void deleteSuperColumnAll() {
 		try {
 			ColumnPath columnPath = new ColumnPath(SUPER_COLUMN);
-			client.remove(KEYSPACE, TERM, columnPath, System.currentTimeMillis(), ConsistencyLevel.ALL);
+			client.remove(KEYSPACE, TERM, columnPath, System.currentTimeMillis(), ConsistencyLevel.QUORUM);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
