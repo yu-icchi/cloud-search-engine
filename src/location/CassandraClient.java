@@ -31,6 +31,10 @@ import org.apache.thrift.transport.TTransportException;
 
 public class CassandraClient {
 
+	//-----------------------------------------------------
+	//プロパティ
+	//-----------------------------------------------------
+
 	static final String KEYSPACE = "Keyspace1";
 	static final String COLUMN_FAMILY = "Standard1";
 	static final String SUPER_COLUMN = "Super1";
@@ -39,6 +43,10 @@ public class CassandraClient {
 	static Cassandra.Client client = null;
 	static String host;
 	static int port;
+
+	//-----------------------------------------------------
+	//コンストラクタ
+	//-----------------------------------------------------
 
 	/**
 	 * コンストラクタ(引数あり)
@@ -54,6 +62,10 @@ public class CassandraClient {
 		//接続する
 		client = openConnection();
 	}
+
+	//-----------------------------------------------------
+	//接続関連メソッド
+	//-----------------------------------------------------
 
 	/**
 	 * connectメソッド(接続先を指定する)
@@ -93,6 +105,10 @@ public class CassandraClient {
 			e.printStackTrace();
 		}
 	}
+
+	//-----------------------------------------------------
+	//データ格納メソッド
+	//-----------------------------------------------------
 
 	/**
 	 * insertMaxDocメソッド
@@ -239,6 +255,10 @@ public class CassandraClient {
 		}
 		return null;
 	}
+
+	//-----------------------------------------------------
+	//データ取得メソッド
+	//-----------------------------------------------------
 
 	/**
 	 * getメソッド(複数カラムを取得する)
@@ -543,6 +563,10 @@ public class CassandraClient {
 		return 0;
 	}
 
+	//-----------------------------------------------------
+	//データ削除メソッド
+	//-----------------------------------------------------
+
 	/**
 	 * deleteメソッド
 	 *
@@ -551,7 +575,7 @@ public class CassandraClient {
 	public void delete(String key) {
 		try {
 			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
-			client.remove(KEYSPACE, key, columnPath, System.currentTimeMillis(), ConsistencyLevel.ALL);
+			client.remove(KEYSPACE, key, columnPath, System.currentTimeMillis(), ConsistencyLevel.QUORUM);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -570,11 +594,44 @@ public class CassandraClient {
 			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
 			columnPath.setColumn(url.getBytes("utf-8"));
 			//レコードを削除する
-			client.remove(KEYSPACE, key, columnPath, System.currentTimeMillis(), ConsistencyLevel.ALL);
+			client.remove(KEYSPACE, key, columnPath, System.currentTimeMillis(), ConsistencyLevel.QUORUM);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void deleteURL(String url) {
+		try {
+			//keyの範囲を決める (「""」はALLと指定している)
+			KeyRange keyRange = new KeyRange();
+			keyRange.setStart_key("");
+			keyRange.setEnd_key("");
+			//問題はsetCountの数、デフォルトだと100になっている
+			keyRange.setCount(10000000);
+
+			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
+
+			SlicePredicate slicePredicate = new SlicePredicate();
+			SliceRange sliceRange = new SliceRange();
+			sliceRange.setStart(new byte[0]);
+			sliceRange.setFinish(new byte[0]);
+			slicePredicate.setSlice_range(sliceRange);
+
+			List<KeySlice> list = client.get_range_slices(KEYSPACE, columnParent, slicePredicate, keyRange, ConsistencyLevel.QUORUM);
+
+			//key毎にURLがあるか調べて削除する
+			for (KeySlice slice : list) {
+				String key = slice.getKey();
+				//ColumnPathの作成
+				ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
+				columnPath.setColumn(url.getBytes("utf-8"));
+				//レコードを削除する
+				client.remove(KEYSPACE, key, columnPath, System.currentTimeMillis(), ConsistencyLevel.QUORUM);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -639,7 +696,7 @@ public class CassandraClient {
 	}
 
 	/**
-	 * searchメソッド(精度はまだ良くない)
+	 * searchメソッド
 	 *
 	 * @param start
 	 * @param end
@@ -649,17 +706,20 @@ public class CassandraClient {
 			KeyRange keyRange = new KeyRange();
 			keyRange.setStart_key(start);
 			keyRange.setEnd_key(end);
-			keyRange.setCount(100);
+			keyRange.setCount(10000000);
+			System.out.println(keyRange.getCount());
 
 			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
 
 			SlicePredicate slicePredicate = new SlicePredicate();
 			SliceRange sliceRange = new SliceRange();
-			sliceRange.setStart(new byte[] {});
-			sliceRange.setFinish(new byte[] {});
+			sliceRange.setStart(new byte[0]);
+			sliceRange.setFinish(new byte[0]);
 			slicePredicate.setSlice_range(sliceRange);
 
-			List<KeySlice> list = client.get_range_slices(KEYSPACE, columnParent, slicePredicate, keyRange, ConsistencyLevel.ONE);
+			List<KeySlice> list = client.get_range_slices(KEYSPACE, columnParent, slicePredicate, keyRange, ConsistencyLevel.QUORUM);
+
+			System.out.println(list.size());
 
 			for (KeySlice slice : list) {
 				String key = slice.getKey();

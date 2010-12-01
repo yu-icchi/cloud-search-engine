@@ -16,7 +16,7 @@ public class GlobalIDFTest {
 		//-------------------------------------------------
 		//setメソッド
 		//-------------------------------------------------
-		g_idf.set("http://localhost:8082/solr/");
+		//g_idf.set("http://localhost:8082/solr/");
 		//g_idf.set("http://localhost:6366/solr/");
 
 		//g_idf.setSuperColumn("http://localhost:8983/solr/");
@@ -71,7 +71,7 @@ public class GlobalIDFTest {
 
 		//System.out.println(g_idf.termsLength());
 
-		//g_idf.search("apach", "base");
+		g_idf.search("", "");
 
 
 	}
