@@ -601,6 +601,11 @@ public class CassandraClient {
 
 	}
 
+	/**
+	 * deleteURLメソッド
+	 *
+	 * @param url
+	 */
 	public void deleteURL(String url) {
 		try {
 			//keyの範囲を決める (「""」はALLと指定している)
