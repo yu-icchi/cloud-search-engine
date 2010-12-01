@@ -11,7 +11,7 @@ public class GlobalIDFTest {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		GlobalIDF g_idf = new GlobalIDF("192.168.168.230", 9160);
+		GlobalIDF g_idf = new GlobalIDF("127.0.0.1", 9160);
 
 		//-------------------------------------------------
 		//setメソッド
