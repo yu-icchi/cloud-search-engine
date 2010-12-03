@@ -11,12 +11,12 @@ public class GlobalIDFTest {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		GlobalIDF g_idf = new GlobalIDF("127.0.0.1", 9160);
+		GlobalIDF g_idf = new GlobalIDF("192.168.168.139", 9160);
 
 		//-------------------------------------------------
 		//setメソッド
 		//-------------------------------------------------
-		//g_idf.set("http://localhost:8082/solr/");
+		g_idf.set("http://localhost:8085/solr/");
 		//g_idf.set("http://localhost:6366/solr/");
 
 		//g_idf.setSuperColumn("http://localhost:8983/solr/");
@@ -57,6 +57,8 @@ public class GlobalIDFTest {
 		//g_idf.delete("http://localhost:6365/solr/");
 		//g_idf.delete("http://localhost:7574/solr/");
 
+		//g_idf.deleteURL("http://localhost:8085/solr/");
+
 		//g_idf.deleteTerm("MaxDocs");
 
 		//g_idf.deleteMaxDocs("http://localhost:8983/solr/");
@@ -71,7 +73,7 @@ public class GlobalIDFTest {
 
 		//System.out.println(g_idf.termsLength());
 
-		g_idf.search("", "");
+		//g_idf.search("", "");
 
 
 	}
