@@ -498,6 +498,8 @@ public class GlobalIDF {
 		if (urlCheck(url)) {
 			//Cassandraにアクセスする
 			CassandraClient cc = new CassandraClient(_host, _port);
+			cc.deleteURL(url);
+			cc.closeConnection();
 		}
 	}
 
