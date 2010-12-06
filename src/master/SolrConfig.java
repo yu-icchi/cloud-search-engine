@@ -35,9 +35,17 @@ public class SolrConfig {
 	//デフォルトの出力先
 	private static String _path = "demo/sampleSolrConfig.xml";
 	//キャッシュのサイズ
-	private static String cacheSize = "512";
+	//private static String cacheSize = "512";
 	//文書からトークナイヅされたあとの単語列先頭から検索対象にする値
 	private static String maxFieldLength = "10000";
+	//合成ファイルインデックス(true)、複数ファイルインデックス(false)
+	private static String uesCompoundFile = "false";
+	//インデックスファイルにフラッシュされる前にメモリ保存
+	private static String ramBufferSizeMB = "32";
+	//インデックスファイルセグメントのマージのタイミング
+	private static String mergeFactor = "10";
+	//インデックスファイルは更新するときにLuceneによってロックされる
+	private static String lockType = "native";
 
 	//-----------------------------------------------------
 	//コンストラクタ
@@ -54,44 +62,77 @@ public class SolrConfig {
 	//ゲッター・セッター
 	//-----------------------------------------------------
 
+	/**
+	 * setPathメソッド
+	 *
+	 * @param path
+	 */
 	public void setPath(String path) {
 		SolrConfig._path = path;
 	}
 
 	/**
-	 * setCacheメソッド
+	 * setUseCompoundFileメソッド
 	 *
-	 * @param cacheSize
+	 * @param bool
 	 */
-	public void setCacheSize(String cacheSize) {
-		SolrConfig.cacheSize = cacheSize;
+	public void setUseCompoundFile(boolean bool) {
+		if (bool) {
+			SolrConfig.uesCompoundFile = "true";
+		} else {
+			SolrConfig.uesCompoundFile = "false";
+		}
 	}
 
 	/**
-	 * getCacheメソッド
+	 * setRamBufferSizeMBメソッド
 	 *
-	 * @return
+	 * @param size
 	 */
-	public String getCacheSize() {
-		return cacheSize;
+	public void setRamBufferSizeMB(int size) {
+		SolrConfig.ramBufferSizeMB = Integer.toString(size);
+	}
+
+	/**
+	 * setMergeFactorメソッド
+	 *
+	 * @param merge
+	 */
+	public void setMergeFactor(int merge) {
+		SolrConfig.mergeFactor = Integer.toString(merge);
 	}
 
 	/**
 	 * setMaxFieldLengthメソッド
 	 *
-	 * @param maxFieldLength
+	 * @param length
 	 */
-	public void setMaxFieldLength(String maxFieldLength) {
-		SolrConfig.maxFieldLength = maxFieldLength;
+	public void setMaxFieldLength(int length) {
+		SolrConfig.maxFieldLength = Integer.toString(length);
 	}
 
 	/**
-	 * getMaxFieldLengthメソッド
+	 * setCacheSizeメソッド
 	 *
-	 * @return
+	 * @param size
 	 */
-	public String getMaxFieldLength() {
-		return maxFieldLength;
+	//public void setCacheSize(int size) {
+	//	SolrConfig.cacheSize = Integer.toString(size);
+	//}
+
+	/**
+	 * setLockTypeメソッド
+	 *
+	 * @param type
+	 */
+	public void setLockType(String type) {
+		if (type.equals("single")) {
+			SolrConfig.lockType = "single";
+		} else if (type.equals("native")) {
+			SolrConfig.lockType = "native";
+		} else if (type.equals("simple")) {
+			SolrConfig.lockType = "simple";
+		}
 	}
 
 	//-----------------------------------------------------
@@ -157,13 +198,13 @@ public class SolrConfig {
 	 */
 	public void indexDefaults() {
 		Element indexDefaultsElement = _document.createElement("indexDefaults");
-		indexDefaultsElement.appendChild(setElement("useCompoundFile", null, null, "false"));
-		indexDefaultsElement.appendChild(setElement("mergeFactor", null, null, "10"));
-		indexDefaultsElement.appendChild(setElement("ramBufferSizeMB", null, null, "32"));
-		indexDefaultsElement.appendChild(setElement("maxFieldLength", null, null, "10000"));
+		indexDefaultsElement.appendChild(setElement("useCompoundFile", null, null, uesCompoundFile));
+		indexDefaultsElement.appendChild(setElement("mergeFactor", null, null, mergeFactor));
+		indexDefaultsElement.appendChild(setElement("ramBufferSizeMB", null, null, ramBufferSizeMB));
+		indexDefaultsElement.appendChild(setElement("maxFieldLength", null, null, maxFieldLength));
 		indexDefaultsElement.appendChild(setElement("writeLockTimeout", null, null, "10000"));
 		indexDefaultsElement.appendChild(setElement("commitLockTimeout", null, null, "10000"));
-		indexDefaultsElement.appendChild(setElement("lockType", null, null, "native"));
+		indexDefaultsElement.appendChild(setElement("lockType", null, null, lockType));
 		_root.appendChild(indexDefaultsElement);
 	}
 
@@ -172,9 +213,9 @@ public class SolrConfig {
 	 */
 	public void mainIndex() {
 		Element mainIndex = _document.createElement("mainIndex");
-		mainIndex.appendChild(setElement("useCompoundFile", null, null, "false"));
-		mainIndex.appendChild(setElement("ramBufferSizeMB", null, null, "32"));
-		mainIndex.appendChild(setElement("mergeFactor", null, null, "10"));
+		mainIndex.appendChild(setElement("useCompoundFile", null, null, uesCompoundFile));
+		mainIndex.appendChild(setElement("ramBufferSizeMB", null, null, ramBufferSizeMB));
+		mainIndex.appendChild(setElement("mergeFactor", null, null, mergeFactor));
 		mainIndex.appendChild(setElement("unlockOnStartup", null, null, "false"));
 		mainIndex.appendChild(setElement("reopenReaders", null, null, "true"));
 		//deletionPolicy
