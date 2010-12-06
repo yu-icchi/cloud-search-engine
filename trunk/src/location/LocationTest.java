@@ -38,7 +38,7 @@ public class LocationTest {
 		*/
 
 		GlobalIDF location = new GlobalIDF();
-		location.set("http://localhost:8081/solr/");
+		location.set("http://192.168.168:8081/solr/");
 	}
 
 }
