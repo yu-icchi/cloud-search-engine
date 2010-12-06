@@ -33,7 +33,7 @@ public class SolrConfig {
 	private static Element _root;
 
 	//デフォルトの出力先
-	private static final String _path = "demo/sampleSolrConfig.xml";
+	private static String _path = "demo/sampleSolrConfig.xml";
 	//キャッシュのサイズ
 	private static String cacheSize = "512";
 	//文書からトークナイヅされたあとの単語列先頭から検索対象にする値
@@ -54,12 +54,16 @@ public class SolrConfig {
 	//ゲッター・セッター
 	//-----------------------------------------------------
 
+	public void setPath(String path) {
+		SolrConfig._path = path;
+	}
+
 	/**
 	 * setCacheメソッド
 	 *
 	 * @param cacheSize
 	 */
-	public static void setCacheSize(String cacheSize) {
+	public void setCacheSize(String cacheSize) {
 		SolrConfig.cacheSize = cacheSize;
 	}
 
@@ -68,7 +72,7 @@ public class SolrConfig {
 	 *
 	 * @return
 	 */
-	public static String getCacheSize() {
+	public String getCacheSize() {
 		return cacheSize;
 	}
 
@@ -77,7 +81,7 @@ public class SolrConfig {
 	 *
 	 * @param maxFieldLength
 	 */
-	public static void setMaxFieldLength(String maxFieldLength) {
+	public void setMaxFieldLength(String maxFieldLength) {
 		SolrConfig.maxFieldLength = maxFieldLength;
 	}
 
@@ -86,7 +90,7 @@ public class SolrConfig {
 	 *
 	 * @return
 	 */
-	public static String getMaxFieldLength() {
+	public String getMaxFieldLength() {
 		return maxFieldLength;
 	}
 
