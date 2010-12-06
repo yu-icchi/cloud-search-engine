@@ -5,6 +5,10 @@
 //---------------------------------------------------------
 package master;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.PostMethod;
+
 public class Master {
 
 	//-----------------------------------------------------
@@ -50,4 +54,26 @@ public class Master {
 		return null;
 	}
 
+	public static void httpConnect(String url) {
+		HttpClient httpClient = new HttpClient();
+		PostMethod method = new PostMethod(url);
+		try {
+			int status = httpClient.executeMethod(method);
+			if (status != HttpStatus.SC_OK) {
+				System.out.println("Method failed: " + method.getStatusText());
+			}
+			byte[] responseBody = method.getResponseBody();
+			System.out.println(new String(responseBody));
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			method.releaseConnection();
+		}
+
+	}
+
+
+	public static void main(String[] args) {
+		httpConnect("http://www.google.com");
+	}
 }
