@@ -75,5 +75,8 @@
 	<classpathentry kind="lib" path="lib/serializer.jar"/>
 	<classpathentry kind="lib" path="lib/msgpack/msgpack-0.4.3-devel.jar"/>
 	<classpathentry kind="lib" path="lib/msgpack/msgpack-rpc-0.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/jboss/netty-3.0.0.CR3-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/jboss/netty-3.0.0.CR3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jboss/netty-3.0.0.CR3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
