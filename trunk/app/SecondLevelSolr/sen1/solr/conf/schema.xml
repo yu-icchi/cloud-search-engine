@@ -200,6 +200,7 @@
 
     <fieldType name="text_sen" class="solr.TextField" positionIncrementGap="100">
       <analyzer>
+		  <charFilter class="solr.HTMLStripCharFilterFactory"/>
 	      <tokenizer class="solrbook.analysis.SenTokenizerFactory"/>
       </analyzer>
     </fieldType>
