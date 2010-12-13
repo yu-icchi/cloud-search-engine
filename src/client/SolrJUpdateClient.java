@@ -22,7 +22,7 @@ public class SolrJUpdateClient {
 	 */
 	public static void main(String[] args) throws Exception {
 		//Account
-		String account = "test1";
+		String account = "test1 test2";
 		//ファイルのパス
 		String filePath = "demo/data.txt";
 		//複数のサーバ
