@@ -12,6 +12,10 @@ public class DistributedScore {
 	//
 	private float coord = 0.0f;
 	//
+	private int overlap = 0;
+	//
+	private int maxOverlap = 0;
+	//
 	private float weight = 0.0f;
 	//
 	private float queryNormSum = 0.0f;
@@ -34,6 +38,38 @@ public class DistributedScore {
 	 */
 	public float getCoord() {
 		return coord;
+	}
+
+	/**
+	 *
+	 * @param overlap
+	 */
+	public void setOverlap(int overlap) {
+		this.overlap = overlap;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public int getOverlap() {
+		return overlap;
+	}
+
+	/**
+	 *
+	 * @param maxOverlap
+	 */
+	public void setMaxOverlap(int maxOverlap) {
+		this.maxOverlap = maxOverlap;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public int getMaxOverlap() {
+		return maxOverlap;
 	}
 
 	/**
@@ -68,6 +104,14 @@ public class DistributedScore {
 		return queryNormSum;
 	}
 
+	public float coord() {
+		if (this.overlap != 0) {
+			return (float) this.overlap / this.maxOverlap;
+		} else {
+			return this.coord;
+		}
+	}
+
 	//-----------------------------------------------------
 	//publicメソッド
 	//-----------------------------------------------------
@@ -78,7 +122,7 @@ public class DistributedScore {
 	 * @return
 	 */
 	public float score() {
-		return (float) (this.coord * (1.0 / Math.sqrt(this.queryNormSum)) * this.weight);
+		return (float) (coord() * (1.0 / Math.sqrt(this.queryNormSum)) * this.weight);
 	}
 
 }

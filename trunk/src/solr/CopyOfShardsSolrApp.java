@@ -29,7 +29,7 @@ public class CopyOfShardsSolrApp {
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "(前田敦子^2.0 OR 大島優子)";
+		String query = "大島優子";
 
 		//検索式
 		out.print(/*"shards=" + "localhost:6365/solr,localhost:6366/solr" + */"&q=" + query +"&debugQuery=on&wt=json");
@@ -47,8 +47,8 @@ public class CopyOfShardsSolrApp {
 
 		//グローバルIDFに必要なdocFreqの値を取り出す
 		Map<String, Integer> docFreq = new HashMap<String, Integer>();
-		docFreq.put("前田", 1);
-		docFreq.put("敦子", 1);
+		//docFreq.put("前田", 1);
+		//docFreq.put("敦子", 1);
 		docFreq.put("大島", 1);
 		docFreq.put("優子", 1);
 		//グローバルIDFに必要なmaxDocsの値を取り出す

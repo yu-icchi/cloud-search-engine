@@ -37,6 +37,8 @@ public class DistributedSimilarity {
 	//static float sumOfSquaredWeightsValue2 = 0.0f;
 	static Map<String, Float> boostMap = new HashMap<String, Float>();
 
+	static int maxOverlap = 0;
+
 	//static List<Float> idfList = new ArrayList<Float>();
 
 	//スコアリスト
@@ -191,6 +193,9 @@ public class DistributedSimilarity {
 				String id = it.next();
 				DistributedScore score = map.get(id);
 				score.setQueryNormSum(sumOfSquaredWeightsValue);
+				score.setMaxOverlap(maxOverlap);
+				System.out.println("maxOverlap: " + maxOverlap);
+				System.out.println("CoordNum: " + score.coord());
 				System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
 				System.out.println(id + " : " + score.score());
 				Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -237,11 +242,6 @@ public class DistributedSimilarity {
 		float boost = 1.0f;
 		//norm値
 		float norm = 0.0f;
-
-		//coord計算用のoverlap
-		int overlap = 0;
-		//coord計算用のmaxOverlap
-		int maxOverlap = docFreq.size();
 
 		//改行で分割する
 		_data = data.split("\n");
@@ -301,14 +301,16 @@ public class DistributedSimilarity {
 					System.out.println("Weight1:" + score.getWeight());
 					//System.out.println("QueryNormSum:" + (float) (1.0 / Math.sqrt(score.getQueryNormSum())));
 					//オーバーラップ変数
-					overlap++;
+					maxOverlap++;
 				}
 			}
 
+			//coordの部分を探す、無ければ"1"にする
 			if (str[1].indexOf("coord") != -1) {
 				float coord = extractWeight(i);
-				System.out.println("Coord:" + coord);
+				System.out.println("Coord:" + extractCoord(_data[i]));
 				score.setCoord(coord);
+				score.setOverlap(extractCoord(_data[i]));
 			} else {
 				score.setCoord(1);
 			}
@@ -402,6 +404,26 @@ public class DistributedSimilarity {
 		}
 		//無ければ空文字を返す
 		return "";
+	}
+
+	/**
+	 * extractCoordメソッド
+	 *
+	 * @param line
+	 * @return
+	 */
+	static int extractCoord(String line) {
+		//coord(◯/◯)の分子を見つける
+		Pattern p = Pattern.compile("\\(([0-9]/[0-9])\\)");
+		Matcher m = p.matcher(line);
+		if (m.find()) {
+			//"/"で区切る
+			String[] str = m.group(1).split("/");
+			//分子だけを取り出す
+			return Integer.valueOf(str[0]);
+		}
+		//無ければ"1"を返す
+		return 1;
 	}
 
 	/**
