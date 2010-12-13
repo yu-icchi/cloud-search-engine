@@ -22,11 +22,11 @@ public class SolrJUpdateClient {
 	 */
 	public static void main(String[] args) throws Exception {
 		//Account
-		String account = "user1";
+		String account = "test1";
 		//ファイルのパス
-		String filePath = "demo/sample.doc";
+		String filePath = "demo/data.txt";
 		//複数のサーバ
-		String[] server = {"http://localhost:8081/solr/"};
+		String[] server = {"http://localhost:6365/solr/"};
 		//ConsistentHashingで格納するサーバを決める
 		ConsistentHashing hash = new ConsistentHashing();
 		hash.addNode(server);

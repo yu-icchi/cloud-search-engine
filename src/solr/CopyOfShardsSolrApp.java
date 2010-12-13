@@ -23,16 +23,16 @@ public class CopyOfShardsSolrApp {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 		//POST送信でトップサーバにアクセス
-		URL solrURL = new URL("http://localhost:8081/solr/select");
+		URL solrURL = new URL("http://localhost:6365/solr/select");
 		URLConnection con = solrURL.openConnection();
 		con.setDoOutput(true);
 		PrintWriter out = new PrintWriter(con.getOutputStream());
 		//パラメータ設定
 		//クエリーの設定
-		String query = "(solr ipod)^3.0";
+		String query = "(前田敦子^2.0 OR 大島優子)";
 
 		//検索式
-		out.print("shards=" + "localhost:8081/solr,localhost:8082/solr" + "&q=" + query +"&debugQuery=on&wt=json");
+		out.print(/*"shards=" + "localhost:6365/solr,localhost:6366/solr" + */"&q=" + query +"&debugQuery=on&wt=json");
 		out.close();
 		//検索
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -43,14 +43,16 @@ public class CopyOfShardsSolrApp {
 		Map map2 = (Map) map.get("debug");
 		//System.out.println(map2.get("explain"));
 		Map map3 = (Map) map2.get("explain");
-		//System.out.println(map3);
+		System.out.println(map3);
 
 		//グローバルIDFに必要なdocFreqの値を取り出す
 		Map<String, Integer> docFreq = new HashMap<String, Integer>();
-		docFreq.put("solr", 1);
-		docFreq.put("ipod", 3);
+		docFreq.put("前田", 1);
+		docFreq.put("敦子", 1);
+		docFreq.put("大島", 1);
+		docFreq.put("優子", 1);
 		//グローバルIDFに必要なmaxDocsの値を取り出す
-		int maxDocs = 19;
+		int maxDocs = 3;
 		//ランキング修正をする
 		DistributedSimilarity ranking = new DistributedSimilarity(docFreq, maxDocs);
 		//Solrのスコアデータを格納する
