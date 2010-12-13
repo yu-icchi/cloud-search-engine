@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class DistributedSimilarity {
+public class CopyOfDistributedSimilarity {
 
 	/**
 	 * プロパティ
@@ -34,7 +34,6 @@ public class DistributedSimilarity {
 
 	//queryNormを計算する時に使用する変数 (呼び出しを1回にし計算コストを抑える)
 	static float sumOfSquaredWeightsValue = 0.0f;
-	//static float sumOfSquaredWeightsValue2 = 0.0f;
 	static Map<String, Float> boostMap = new HashMap<String, Float>();
 
 	//static List<Float> idfList = new ArrayList<Float>();
@@ -49,7 +48,7 @@ public class DistributedSimilarity {
 	/**
 	 * コンストラクタ (デフォルト)
 	 */
-	public DistributedSimilarity() {
+	public CopyOfDistributedSimilarity() {
 
 	}
 
@@ -59,9 +58,9 @@ public class DistributedSimilarity {
 	 * @param docFreq (Map)
 	 * @param maxDocs (int)
 	 */
-	public DistributedSimilarity(Map<String, Integer> docFreq, int maxDocs) {
-		DistributedSimilarity.docFreq = docFreq;
-		DistributedSimilarity.maxDocs = maxDocs;
+	public CopyOfDistributedSimilarity(Map<String, Integer> docFreq, int maxDocs) {
+		CopyOfDistributedSimilarity.docFreq = docFreq;
+		CopyOfDistributedSimilarity.maxDocs = maxDocs;
 	}
 
 	//-----------------------------------------------------
@@ -74,7 +73,7 @@ public class DistributedSimilarity {
 	 * @param maxDocs
 	 */
 	public void setMaxDocs(int maxDocs) {
-		DistributedSimilarity.maxDocs = maxDocs;
+		CopyOfDistributedSimilarity.maxDocs = maxDocs;
 	}
 
 	/**
@@ -92,7 +91,7 @@ public class DistributedSimilarity {
 	 * @param docFreq
 	 */
 	public void setDocFreq(Map<String, Integer> docFreq) {
-		DistributedSimilarity.docFreq = docFreq;
+		CopyOfDistributedSimilarity.docFreq = docFreq;
 	}
 
 	/**
@@ -110,7 +109,7 @@ public class DistributedSimilarity {
 	 * @param field
 	 */
 	public static void setField(String field) {
-		DistributedSimilarity.field = field;
+		CopyOfDistributedSimilarity.field = field;
 	}
 
 	/**
@@ -156,9 +155,8 @@ public class DistributedSimilarity {
 		}
 
 		//sumOfSqueredWeightsの計算
-		//sumOfSquaredWeightsValue = sumOfSquaredWeights();
-		//System.out.println(sumOfSquaredWeightsValue2);
-		//System.out.println("QueryNormSum:" + (float) (1.0 / Math.sqrt(sumOfSquaredWeightsValue2)));
+		sumOfSquaredWeightsValue = sumOfSquaredWeights();
+		//System.out.println(sumOfSquaredWeights());
 
 	}
 
@@ -285,12 +283,10 @@ public class DistributedSimilarity {
 					//IDFを計算し、格納する
 					idf = 0.0f;
 					for (String term : extractKeywordList(line)) {
-						idf += idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(term));
+						idf += idf(CopyOfDistributedSimilarity.maxDocs, CopyOfDistributedSimilarity.docFreq.get(term));
 					}
 					//idfList.add(idf);
 					System.out.println("Ranking-idf: " + idf);
-					sumOfSquaredWeightsValue += (idf * boost) * (idf * boost);
-					System.out.println((idf * boost) * (idf * boost));
 					//idf = idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(key));
 					//System.out.println("idf:" + idf);
 					//Normを取得し、格納する
@@ -305,7 +301,6 @@ public class DistributedSimilarity {
 					if (extractWeight(i+4) != 0.0f) {
 						float coord = extractWeight(i+4);
 						System.out.println("Coord:" + coord);
-						score.setCoord(coord);
 					}
 				}
 			}
@@ -313,7 +308,7 @@ public class DistributedSimilarity {
 		}
 
 		//coordを計算し、格納する
-		//score.setCoord((float) overlap / maxOverlap);
+		score.setCoord((float) overlap / maxOverlap);
 		//System.out.println("Coord:" + score.getCoord());
 
 		//System.out.println("Weight2:" + score.getWeight());
@@ -388,8 +383,8 @@ public class DistributedSimilarity {
 	static String extractKeyword(String line) {
 		//検索対象のフィールドを指定する 【queryWeight(text:◯◯◯) or queryWeight(text:◯◯◯^◯.◯)】【fieldWeight(text:◯◯◯ in ◯)】
 		//正規表現で調べる、英数字・数字・ラテン文字・ひらがな・カタカナ・漢字
-		Pattern p = Pattern.compile("\\((" + DistributedSimilarity.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)" +
-									"|(" + DistributedSimilarity.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)^[0-9]\\.[0-9]\\)");
+		Pattern p = Pattern.compile("\\((" + CopyOfDistributedSimilarity.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)" +
+									"|(" + CopyOfDistributedSimilarity.field +":[\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)^[0-9]\\.[0-9]\\)");
 		Matcher m = p.matcher(line);
 		if (m.find()) {
 			//コロンかスペースかハットで区切る
@@ -411,7 +406,7 @@ public class DistributedSimilarity {
 		//出力用のList変数
 		List<String> list = new ArrayList<String>();
 		//パターン【fieldWeight(text:"◯◯ ◯◯ ◯◯ ◯◯" in ◯)】
-		Pattern p = Pattern.compile("\\((" + DistributedSimilarity.field +":\"*([\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)*\"*)");
+		Pattern p = Pattern.compile("\\((" + CopyOfDistributedSimilarity.field +":\"*([\\w]*[\\p{InBasicLatin}]*[\\p{InHiragana}]*[\\p{InKatakana}]*[\\p{InCJKUnifiedIdeographs}]*)*\"*)");
 		Matcher m = p.matcher(line);
 		if (m.find()) {
 			//コロンかスペースかハットで区切る
