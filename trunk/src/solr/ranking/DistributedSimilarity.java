@@ -302,12 +302,15 @@ public class DistributedSimilarity {
 					//System.out.println("QueryNormSum:" + (float) (1.0 / Math.sqrt(score.getQueryNormSum())));
 					//オーバーラップ変数
 					overlap++;
-					if (extractWeight(i+4) != 0.0f) {
-						float coord = extractWeight(i+4);
-						System.out.println("Coord:" + coord);
-						score.setCoord(coord);
-					}
 				}
+			}
+
+			if (str[1].indexOf("coord") != -1) {
+				float coord = extractWeight(i);
+				System.out.println("Coord:" + coord);
+				score.setCoord(coord);
+			} else {
+				score.setCoord(1);
 			}
 
 		}
