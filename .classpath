@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="lib/apache-cassandra-0.6.2/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/apache-cassandra-0.6.2/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/apache-cassandra-0.6.2/google-collections-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/apache-cassandra-0.6.2/hadoop-core-0.20.1.jar"/>
 	<classpathentry kind="lib" path="lib/apache-cassandra-0.6.2/high-scale-lib.jar"/>
 	<classpathentry kind="lib" path="lib/apache-cassandra-0.6.2/ivy-2.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/apache-cassandra-0.6.2/jackson-core-asl-1.4.0.jar"/>
@@ -78,5 +77,10 @@
 	<classpathentry kind="lib" path="lib/jboss/netty-3.0.0.CR3-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/jboss/netty-3.0.0.CR3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jboss/netty-3.0.0.CR3.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop/hadoop-hdfs-0.21.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop/hadoop-common-0.21.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop/hadoop-mapred-0.21.0.jar"/>
+	<classpathentry kind="lib" path="app/SecondLevelSolr/sen1/sen/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="app/SecondLevelSolr/sen1/sen/lib/sen.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
