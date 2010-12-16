@@ -168,6 +168,8 @@ public class Crawler {
 			server.add(document);
 			//コミット
 			server.commit();
+			//最適化
+			server.optimize();
 			return true;
 		} catch (Exception e) {
 			return false;
