@@ -71,8 +71,8 @@ public class DirCheckDaemon {
 		this.removeFile();
 		this.newFile();
 		this.modifierFile();
-		System.out.println(this.lastmodifieds);
-		System.out.println(this.registereds);
+		//System.out.println(this.lastmodifieds);
+		//System.out.println(this.registereds);
 	}
 
 	//-----------------------------------------------------
@@ -83,7 +83,7 @@ public class DirCheckDaemon {
 	 * removeFileメソッド
 	 * 削除されたファイルを見つけて、リストを更新する
 	 */
-	private void removeFile() {
+	public void removeFile() {
 		Iterator<String> it = registereds.iterator();
 		while (it.hasNext()) {
 			String filename = it.next();
@@ -100,7 +100,7 @@ public class DirCheckDaemon {
 	 * newFileメソッド
 	 * 新たに追加されたファイルを見つけ、リストを更新する
 	 */
-	private void newFile() {
+	public void newFile() {
 		String[] files = TARGET_DIR.list();
 		for (int i = 0; i < files.length; i++) {
 			//リストと照合する
@@ -116,7 +116,7 @@ public class DirCheckDaemon {
 	 * modifierFileメソッド
 	 * 更新されたファイルを見つけ、リストを更新する
 	 */
-	private void modifierFile() {
+	public void modifierFile() {
 		Iterator<String> it = registereds.iterator();
 		while (it.hasNext()) {
 			String filename = it.next();
@@ -137,18 +137,15 @@ public class DirCheckDaemon {
 	}
 
 	//-----------------------------------------------------
-	//バックグラウンド・クラス定義
+	//内部クラス
 	//-----------------------------------------------------
 
 	/**
 	 * AutoCheckFileクラス
 	 *
 	 * バックグラウンドで更新チェックをするスレッド
-	 *
-	 * @author yuta
-	 *
 	 */
-	private class AutoCheckFile implements Runnable {
+	public class AutoCheckFile implements Runnable {
 
 		public void run() {
 			while (!stopFlag) {
@@ -156,8 +153,9 @@ public class DirCheckDaemon {
 					//チェック間隔
 					Thread.sleep(1000L);
 				} catch (InterruptedException e) {
-					check();
+					e.printStackTrace();
 				}
+				check();
 			}
 		}
 

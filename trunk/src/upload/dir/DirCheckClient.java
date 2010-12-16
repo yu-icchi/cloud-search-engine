@@ -7,7 +7,7 @@ public class DirCheckClient {
 		check.start();
 		try {
 			//10sec
-			Thread.sleep(60 * 1000L);
+			Thread.sleep(10 * 1000L);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
