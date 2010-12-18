@@ -33,6 +33,9 @@ public class TextFileReader {
 			//Stringクラスにどんどん追加していく形になっている、この方法はあまり好ましくない
 			while ((tmp = br.readLine()) != null) {
 				str += tmp;
+				if (!tmp.isEmpty()) {
+					System.out.println(tmp);
+				}
 			}
 			br.close();
 			return str;
@@ -55,16 +58,16 @@ public class TextFileReader {
 			//テキストファイルを読み込む
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(dir), enc));
 			String tmp;
-			//Stringクラスにどんどん追加していく形になっている、この方法はあまり好ましくない
+			//addFieldで一行毎に追加する
 			while ((tmp = br.readLine()) != null) {
-				document.addField("text", tmp);
+				if (!tmp.isEmpty()) {
+					document.addField("text", tmp);
+				}
 			}
 			br.close();
 			return document;
 		} catch (Exception e) {
 			return document;
-		} finally {
-
 		}
 	}
 

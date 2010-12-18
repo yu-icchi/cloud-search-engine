@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 
 import analysis.CJKAnalyzerExtract;
+import analysis.SenAnalyzerExtract;
 
 import location.query.parser.*;
 
@@ -19,10 +20,13 @@ public class LocationQueryConverter implements QueryParserVisitor {
 	//-----------------------------------------------------
 
 	//ターム抽出を格納する
-	static ArrayList<String> _termList = new ArrayList<String>();
+	private static ArrayList<String> _termList = new ArrayList<String>();
 
 	//クエリ
-	static String _query = "";
+	private static String _query = "";
+
+	//Analyzer
+	private static String _analyzer = null;
 
 	//-----------------------------------------------------
 	//コンストラクタ
@@ -33,6 +37,15 @@ public class LocationQueryConverter implements QueryParserVisitor {
 	 */
 	public LocationQueryConverter() {
 
+	}
+
+	/**
+	 * コンストラクタ (Analyzerの指定)
+	 *
+	 * @param type
+	 */
+	public LocationQueryConverter(String type) {
+		LocationQueryConverter._analyzer = type;
 	}
 
 	//-----------------------------------------------------
@@ -172,14 +185,27 @@ public class LocationQueryConverter implements QueryParserVisitor {
 			//タームリストに追加する
 			LocationQueryConverter._termList.add(word);
 		}
-		//LocationのNgram用に変更
-		CJKAnalyzerExtract extract = new CJKAnalyzerExtract();
-		try {
-			word = extract.qbssExtract(word);
-			//System.out.println(word);
-		} catch (Exception e) {
-			e.printStackTrace();
+
+		//Analyzerによって変更させる
+		if (LocationQueryConverter._analyzer.equals("sen")) {
+			//LocationのSen用に変更
+			SenAnalyzerExtract extract = new SenAnalyzerExtract();
+			try {
+				word = extract.qbssExtract(word);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (LocationQueryConverter._analyzer.equals("cjk")) {
+			//LocationのNgram用に変更
+			CJKAnalyzerExtract extract = new CJKAnalyzerExtract();
+			try {
+				word = extract.qbssExtract(word);
+				//System.out.println(word);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+
 		return word;
 	}
 

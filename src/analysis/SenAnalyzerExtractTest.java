@@ -20,6 +20,8 @@ public class SenAnalyzerExtractTest {
 
 		System.out.println(analyzerText.extract());
 
+		System.out.println(analyzerText.qbssExtract("高城亜樹"));
+
 	}
 
 }

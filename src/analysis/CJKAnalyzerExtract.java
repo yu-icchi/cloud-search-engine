@@ -57,6 +57,9 @@ public class CJKAnalyzerExtract {
 	//publicメソッド
 	//-----------------------------------------------------
 
+	/**
+	 *
+	 */
 	@SuppressWarnings("deprecation")
 	public ArrayList<String> extract() throws Exception {
 
@@ -74,6 +77,12 @@ public class CJKAnalyzerExtract {
 		return array;
 	}
 
+	/**
+	 *
+	 * @param value
+	 * @return
+	 * @throws Exception
+	 */
 	@SuppressWarnings("deprecation")
 	public String qbssExtract(String value) throws Exception {
 

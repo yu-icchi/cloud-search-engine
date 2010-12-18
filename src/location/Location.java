@@ -76,13 +76,23 @@ public class Location {
 	 * queryメソッド
 	 *
 	 * @param query
+	 * @param type
+	 * @throws Exception
+	 */
+	public void query(String query, String type) throws Exception {
+		LocationQueryConverter convert = new LocationQueryConverter(type);
+		convert.parser(query);
+		_query = convert.getQuery();
+	}
+
+	/**
+	 * queryメソッド
+	 *
+	 * @param query
 	 * @throws Exception
 	 */
 	public void query(String query) throws Exception {
-		LocationQueryConverter convert = new LocationQueryConverter();
-		convert.parser(query);
-		_query = convert.getQuery();
-		//_query = query;
+		_query = query;
 	}
 
 	//-----------------------------------------------------

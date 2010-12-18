@@ -5,14 +5,14 @@
 //---------------------------------------------------------
 package upload;
 
-import java.io.File;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 
-public class Crawler {
+public class CopyOfCrawler {
 
 	//-----------------------------------------------------
 	//プロパティ
@@ -36,10 +36,10 @@ public class Crawler {
 	 * @param path
 	 * @param server
 	 */
-	public Crawler(String account, String path, String server) {
-		Crawler.setAccount(account);
-		Crawler.setFilePath(path);
-		Crawler.setServer(server);
+	public CopyOfCrawler(String account, String path, String server) {
+		CopyOfCrawler.setAccount(account);
+		CopyOfCrawler.setFilePath(path);
+		CopyOfCrawler.setServer(server);
 	}
 
 	//-----------------------------------------------------
@@ -52,7 +52,7 @@ public class Crawler {
 	 * @param account
 	 */
 	public static void setAccount(String account) {
-		Crawler.account = account;
+		CopyOfCrawler.account = account;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class Crawler {
 	 * @param filePath
 	 */
 	public static void setFilePath(String filePath) {
-		Crawler.filePath = filePath;
+		CopyOfCrawler.filePath = filePath;
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class Crawler {
 	 * @param server
 	 */
 	public static void setServer(String server) {
-		Crawler.server = server;
+		CopyOfCrawler.server = server;
 	}
 
 	/**
@@ -107,65 +107,79 @@ public class Crawler {
 	/**
 	 * setIndexメソッド
 	 *
+	 * @param data
 	 * @return
 	 */
 	public boolean setIndex() {
+		//インデックスに格納するテキスト
+		String text = "";
+		//拡張子
+		String suffix = getSuffix(filePath);
+		//格納するインデックスの情報
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("id", filePath);
+		map.put("account", CopyOfCrawler.account);
+		//拡張子により読み込み処理を変える
+		if (suffix.equals("txt")) {
+			TextFileReader reader = new TextFileReader();
+			text = reader.extractText(filePath);
+		} else if (suffix.equals("doc")) {
+			WordReader reader = new WordReader();
+			text = reader.extractDoc(filePath);
+		} else if (suffix.equals("pdf")) {
+			PDFReader reader = new PDFReader();
+			text = reader.extractPDF(filePath);
+		} else if (suffix.equals("ppt")) {
+			PowerPointReader reader = new PowerPointReader();
+			text = reader.extractPPT(filePath);
+		}
+		System.out.println(text);
+		if (text == null) {
+			return false;
+		}
+		map.put("text", text);
+		//インデックス格納
+		return indexWriterSolr(CopyOfCrawler.server, map);
+	}
+
+	//-----------------------------------------------------
+	//privateメソッド
+	//-----------------------------------------------------
+
+	/**
+	 * indexWriterSolrメソッド (指定したSolrサーバにインデックスを登録する)
+	 *
+	 * @param host
+	 * @param data
+	 * @return
+	 */
+	private static boolean indexWriterSolr(String host, Map<String, String> data) {
 		try {
-
-			//拡張子
-			String suffix = getSuffix(filePath);
-
+			System.out.println(data);
 			//インデックスを格納するサーバを決める
-			SolrServer solr = new CommonsHttpSolrServer(server);
+			SolrServer server = new CommonsHttpSolrServer(host);
 			//ドキュメントを作成
 			SolrInputDocument document = new SolrInputDocument();
 			//フィールドの指定
-			document.addField("id", Crawler.filePath);
-			document.addField("account", Crawler.account);
+			document.addField("id", data.get("id"));
+			document.addField("account", data.get("account"));
+			//document.addField("text", data.get("text"));
 
-			File file = new File(filePath);
-
-			//document.addField("title", file.getName());
-			//document.addField("type", suffix);
-			//document.addField("path", file.getPath());
-			//document.addField("date", new Date(file.lastModified()));
-			//document.addField("time", file.lastModified());
-
-			System.out.println(new Date(file.lastModified()));
-			System.out.println(file.getPath());
-			System.out.println(file.length());
-
-			//拡張子により読み込み処理を変える
-			if (suffix.equals("txt")) {
-				TextFileReader reader = new TextFileReader();
-				document = reader.extractText(filePath, document);
-			} else if (suffix.equals("doc")) {
-				WordReader reader = new WordReader();
-				document = reader.extractDoc(filePath, document);
-			} else if (suffix.equals("pdf")) {
-				PDFReader reader = new PDFReader();
-				document = reader.extractPDF(filePath, document);
-			} else if (suffix.equals("ppt")) {
-				PowerPointReader reader = new PowerPointReader();
-				document = reader.extractPPT(filePath, document);
-			}
+			TextFileReader reader = new TextFileReader();
+			document = reader.extractText(filePath, document);
 
 			//サーバに追加
-			solr.add(document);
+			server.add(document);
 			//コミット
-			solr.commit();
+			server.commit();
 			//最適化
-			solr.optimize();
-
+			server.optimize();
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
-	}
 
-	//-----------------------------------------------------
-	//内部メソッド
-	//-----------------------------------------------------
+	}
 
 	/**
 	 * getSuffixメソッド (拡張子を調べる)

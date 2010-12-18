@@ -65,4 +65,34 @@ public class SenAnalyzerExtract {
 		return array;
 	}
 
+	/**
+	 *
+	 * @param value
+	 * @return
+	 * @throws Exception
+	 */
+	public String qbssExtract(String value) throws Exception {
+
+		ArrayList<String> list = new ArrayList<String>();
+
+		StringTagger tagger = StringTagger.getInstance();
+
+		Token[] token = tagger.analyze(value);
+		for (int i = 0; i < token.length; i++) {
+			list.add(token[i].getBasicString());
+		}
+
+		String result = "(";
+
+		for (int i = 0; i < list.size(); i++) {
+			if (i != list.size() - 1) {
+				result += list.get(i) + " AND ";
+			} else {
+				result += list.get(i) + ")";
+			}
+		}
+
+		return result;
+	}
+
 }

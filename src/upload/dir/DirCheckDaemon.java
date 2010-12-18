@@ -67,7 +67,7 @@ public class DirCheckDaemon {
 	 * checkメソッド
 	 * ファイルのチェックをする
 	 */
-	public void check() {
+	private void check() {
 		this.removeFile();
 		this.newFile();
 		this.modifierFile();
@@ -83,7 +83,7 @@ public class DirCheckDaemon {
 	 * removeFileメソッド
 	 * 削除されたファイルを見つけて、リストを更新する
 	 */
-	public void removeFile() {
+	private void removeFile() {
 		Iterator<String> it = registereds.iterator();
 		while (it.hasNext()) {
 			String filename = it.next();
@@ -100,7 +100,7 @@ public class DirCheckDaemon {
 	 * newFileメソッド
 	 * 新たに追加されたファイルを見つけ、リストを更新する
 	 */
-	public void newFile() {
+	private void newFile() {
 		String[] files = TARGET_DIR.list();
 		for (int i = 0; i < files.length; i++) {
 			//リストと照合する
@@ -116,7 +116,7 @@ public class DirCheckDaemon {
 	 * modifierFileメソッド
 	 * 更新されたファイルを見つけ、リストを更新する
 	 */
-	public void modifierFile() {
+	private void modifierFile() {
 		Iterator<String> it = registereds.iterator();
 		while (it.hasNext()) {
 			String filename = it.next();
@@ -145,7 +145,7 @@ public class DirCheckDaemon {
 	 *
 	 * バックグラウンドで更新チェックをするスレッド
 	 */
-	public class AutoCheckFile implements Runnable {
+	private class AutoCheckFile implements Runnable {
 
 		public void run() {
 			while (!stopFlag) {
@@ -155,6 +155,7 @@ public class DirCheckDaemon {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				//更新を確認する
 				check();
 			}
 		}

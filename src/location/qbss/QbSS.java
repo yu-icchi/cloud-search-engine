@@ -19,10 +19,10 @@ public class QbSS implements QbSSParserVisitor {
 	//-----------------------------------------------------
 
 	//クエリーデータ
-	static String _query;
+	private static String _query;
 
 	//Cassandraからのデータ
-	static Map<String, List<String>> _data;
+	private static Map<String, List<String>> _data;
 
 	//-----------------------------------------------------
 	//コンストラクタ
@@ -119,13 +119,15 @@ public class QbSS implements QbSSParserVisitor {
 		List<String> leftList = _data.get(left);
 		List<String> rightList = _data.get(right);
 		List<String> list = new ArrayList<String>();
-		for (int i = 0; i < leftList.size(); i++) {
-			if (rightList.contains(leftList.get(i))) {
-				//System.out.println(leftList.get(i));
-				list.add(leftList.get(i));
+		if (rightList != null) {
+			for (int i = 0; i < leftList.size(); i++) {
+				if (rightList.contains(leftList.get(i))) {
+					//System.out.println(leftList.get(i));
+					list.add(leftList.get(i));
+				}
 			}
+			_data.put(left + "AND" + right, list);
 		}
-		_data.put(left + "AND" + right, list);
 
 		return left + "AND" + right;
 	}
@@ -142,13 +144,15 @@ public class QbSS implements QbSSParserVisitor {
 		//URLリストのOR演算処理 (総当り法)
 		List<String> leftList = _data.get(left);
 		List<String> rightList = _data.get(right);
-		for (int i = 0; i < leftList.size(); i++) {
-			if (!rightList.contains(leftList.get(i))) {
-				rightList.add(leftList.get(i));
+		if (rightList != null) {
+			for (int i = 0; i < leftList.size(); i++) {
+				if (!rightList.contains(leftList.get(i))) {
+					rightList.add(leftList.get(i));
+				}
 			}
+			//System.out.println(rightList);
+			_data.put(left + "OR" + right, rightList);
 		}
-		//System.out.println(rightList);
-		_data.put(left + "OR" + right, rightList);
 
 		return left + "OR" + right;
 	}
@@ -166,13 +170,15 @@ public class QbSS implements QbSSParserVisitor {
 		List<String> leftList = _data.get(left);
 		List<String> rightList = _data.get(right);
 		List<String> list = new ArrayList<String>();
-		for (int i = 0; i < leftList.size(); i++) {
-			if (!rightList.contains(leftList.get(i))) {
-				//System.out.println(leftList.get(i));
-				list.add(leftList.get(i));
+		if (rightList != null) {
+			for (int i = 0; i < leftList.size(); i++) {
+				if (!rightList.contains(leftList.get(i))) {
+					//System.out.println(leftList.get(i));
+					list.add(leftList.get(i));
+				}
 			}
+			_data.put(left + "NOT" + right, list);
 		}
-		_data.put(left + "NOT" + right, list);
 
 		return left + "NOT" + right;
 	}

@@ -21,7 +21,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
-import analysis.CJKAnalyzerExtract;
+//import analysis.CJKAnalyzerExtract;
+import analysis.SenAnalyzerExtract;
 
 import solr.ranking.DistributedSimilarity;
 
@@ -45,18 +46,18 @@ public class SolrJSearchClient {
 	public static void main(String[] args) throws Exception {
 
 		//ユーザーからのクエリー
-		String queryString = "プログラム | クラウド";
+		String queryString = "高城亜樹　倉持明日香";
 		//ユーザーのアカウント情報
-		String account = "user1";
+		String account = "test1";
 		//クエリーの解析
 		QueryConverter queryConverter = new QueryConverter();
 		queryConverter.parser(queryString);
 		//データベース(Locationサーバ)にアクセス
 		Location location = new Location();
 		//正規化したクエリーを与える
-		location.query(queryConverter.getQuery());
+		location.query(queryConverter.getQuery(), "sen");
 		//CJKAnalyzerでタームを分割してLocationに与えるデータを作る
-		CJKAnalyzerExtract analyzerExtract = new CJKAnalyzerExtract(queryConverter.getTermList());
+		SenAnalyzerExtract analyzerExtract = new SenAnalyzerExtract(queryConverter.getTermList());
 		//クエリーのタームを与える
 		Map<String, Object> map = location.get(analyzerExtract.extract());
 		System.out.println(map);
@@ -87,7 +88,7 @@ public class SolrJSearchClient {
 		//正規化したクエリーを指定
 		query.setQuery("(" + queryConverter.getQuery() + ") AND account:" + account);
 		//GSEサーバのSolrの指定
-		SolrServer server = new CommonsHttpSolrServer("http://localhost:8081/solr/");
+		SolrServer server = new CommonsHttpSolrServer("http://localhost:6365/solr/");
 		//POST通信で検索をする
 		QueryResponse response = server.query(query, SolrRequest.METHOD.POST);
 		//Solrの結果を格納
