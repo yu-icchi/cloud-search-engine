@@ -8,9 +8,9 @@ public class LocationQueryConverterTest {
 	public static void main(String[] args) {
 
 		//クエリー
-		String q = "((前田敦子^1.5　篠田麻里子) | (大島優子　板野友美)) -AKB48";
+		String q = "高城亜樹はAKB48メンバーである";
 
-		LocationQueryConverter query = new LocationQueryConverter();
+		LocationQueryConverter query = new LocationQueryConverter("sen");
 
 		try {
 

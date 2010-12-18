@@ -16,7 +16,7 @@ public class QbSSTest {
 	public static void main(String[] args) throws Exception {
 
 		//クエリーの設定
-		String query = "456 AND 456 AND 456";
+		String query = "456 AND 456 NOT 1515";
 		//String query = "\"aaa bbb\"";
 		//Cassandraの結果集合
 		Map<String, List<String>> map = new HashMap<String, List<String>>();
@@ -36,7 +36,7 @@ public class QbSSTest {
 		list4.add("http://localhost:6564/solr/");
 		map.put("dDd", list4);
 
-		System.out.println(map);
+		//System.out.println(map);
 
 		//QbSS
 		QbSS qbss = new QbSS(query, map);
