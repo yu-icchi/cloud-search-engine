@@ -5,7 +5,7 @@
 //---------------------------------------------------------
 package client;
 
-import location.GlobalIDF;
+import location.Location;
 import upload.Crawler;
 import upload.consistency.ConsistentHashing;
 
@@ -24,7 +24,7 @@ public class SolrJUpdateClient {
 		//Account
 		String account = "test1 test2";
 		//ファイルのパス
-		String filePath = "demo/sample.doc";
+		String filePath = "demo/sample.ppt";
 		//複数のサーバ
 		String[] server = {"http://localhost:6365/solr/"};
 		//ConsistentHashingで格納するサーバを決める
@@ -37,7 +37,7 @@ public class SolrJUpdateClient {
 		boolean flag = crawler.setIndex();
 		if (flag) {
 			//LocationServerを更新させる
-			GlobalIDF location = new GlobalIDF();
+			Location location = new Location();
 			location.set(node);
 			//正常
 			System.out.println("成功");

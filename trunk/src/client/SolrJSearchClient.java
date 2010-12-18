@@ -5,6 +5,7 @@
 //---------------------------------------------------------
 package client;
 
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -87,8 +88,10 @@ public class SolrJSearchClient {
 		query.set("shards", shards);
 		//正規化したクエリーを指定
 		query.setQuery("(" + queryConverter.getQuery() + ") AND account:" + account);
-		//GSEサーバのSolrの指定
-		SolrServer server = new CommonsHttpSolrServer("http://localhost:6365/solr/");
+		//GSEサーバのSolrのアドレスを読み出す
+		//Solrサーバを指定する
+		InetAddress address = InetAddress.getLocalHost();
+		SolrServer server = new CommonsHttpSolrServer("http://" + address.getHostAddress() + ":6365/solr/");
 		//POST通信で検索をする
 		QueryResponse response = server.query(query, SolrRequest.METHOD.POST);
 		//Solrの結果を格納

@@ -49,7 +49,7 @@ public class Location {
 	}
 
 	/**
-	 * コンストラクタ
+	 * コンストラクタ (ホスト・ポートの指定)
 	 *
 	 * @param host (String) ホストを指定する
 	 * @param port (int) ポート番号を指定する
@@ -57,6 +57,15 @@ public class Location {
 	public Location(String host, int port) {
 		_host = host;
 		_port = port;
+	}
+
+	/**
+	 * コンストラクタ (ホスト指定)
+	 *
+	 * @param host
+	 */
+	public Location(String host) {
+		_host = host;
 	}
 
 	//-----------------------------------------------------
@@ -480,6 +489,6 @@ public class Location {
 		String line = in.readLine();
 		Map map = (Map) JSON.decode(line);
 		map = (Map) map.get("index");
-		return map.get("numDoc").toString();
+		return map.get("maxDoc").toString();
 	}
 }
