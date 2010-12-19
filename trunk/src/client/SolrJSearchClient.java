@@ -52,16 +52,17 @@ public class SolrJSearchClient {
 		XMLConfig config = new XMLConfig("demo/gse-config.xml");
 		//Location Serverのアドレスとポートを取得する
 		Map<String, String> locationConfig = config.getElement("location");
-		System.out.println(locationConfig);
+		String locationHost = locationConfig.get("host");
+		int locationPort = Integer.valueOf(locationConfig.get("port"));
 		//ユーザーからのクエリー
-		String queryString = "高城亜樹　倉持明日香";
+		String queryString = "高城亜樹";
 		//ユーザーのアカウント情報
 		String account = "test1";
 		//クエリーの解析
 		QueryConverter queryConverter = new QueryConverter();
 		queryConverter.parser(queryString);
 		//データベース(Locationサーバ)にアクセス
-		Location location = new Location(locationConfig.get("host"));
+		Location location = new Location(locationHost, locationPort);
 		//正規化したクエリーを与える
 		location.query(queryConverter.getQuery(), "sen");
 		//CJKAnalyzerでタームを分割してLocationに与えるデータを作る
