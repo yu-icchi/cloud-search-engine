@@ -22,6 +22,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
+import client.config.XMLConfig;
+
 //import analysis.CJKAnalyzerExtract;
 import analysis.SenAnalyzerExtract;
 
@@ -46,6 +48,11 @@ public class SolrJSearchClient {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 
+		//GSEのConfig.xmlデータを取得する
+		XMLConfig config = new XMLConfig("demo/gse-config.xml");
+		//Location Serverのアドレスとポートを取得する
+		Map<String, String> locationConfig = config.getElement("location");
+		System.out.println(locationConfig);
 		//ユーザーからのクエリー
 		String queryString = "高城亜樹　倉持明日香";
 		//ユーザーのアカウント情報
@@ -54,7 +61,7 @@ public class SolrJSearchClient {
 		QueryConverter queryConverter = new QueryConverter();
 		queryConverter.parser(queryString);
 		//データベース(Locationサーバ)にアクセス
-		Location location = new Location();
+		Location location = new Location(locationConfig.get("host"));
 		//正規化したクエリーを与える
 		location.query(queryConverter.getQuery(), "sen");
 		//CJKAnalyzerでタームを分割してLocationに与えるデータを作る

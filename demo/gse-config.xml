@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gse-config>
+	<location>
+		<host>localhost</host>
+		<port>9160</port>
+	</location>
+	<account>
+		<host>localhost</host>
+		<port>3100</port>
+	</account>
+</gse-config>
