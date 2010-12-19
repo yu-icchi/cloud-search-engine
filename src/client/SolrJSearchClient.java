@@ -51,7 +51,7 @@ public class SolrJSearchClient {
 		//GSEのConfig.xmlデータを取得する
 		XMLConfig config = new XMLConfig("demo/gse-config.xml");
 		//Location Serverのアドレスとポートを取得する
-		Map<String, String> locationConfig = config.getElement("location");
+		Map<String, String> locationConfig = config.getHost2Port("location");
 		String locationHost = locationConfig.get("host");
 		int locationPort = Integer.valueOf(locationConfig.get("port"));
 		//ユーザーからのクエリー

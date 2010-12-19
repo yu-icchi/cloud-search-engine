@@ -52,7 +52,7 @@ public class XMLConfig {
 	 * @param name
 	 * @return
 	 */
-	public Map<String, String> getElement(String name) {
+	public Map<String, String> getHost2Port(String name) {
 		Map<String, String> map = new HashMap<String, String>();
 		NodeList list = root.getElementsByTagName(name);
 		for (int i = 0; i < list.getLength(); i++) {
@@ -78,7 +78,7 @@ public class XMLConfig {
 
 	public static void main(String[] args) throws Exception {
 		XMLConfig config = new XMLConfig("demo/gse-config.xml");
-		System.out.println(config.getElement("location"));
-		System.out.println(config.getElement("account"));
+		System.out.println(config.getHost2Port("location"));
+		System.out.println(config.getHost2Port("account"));
 	}
 }
