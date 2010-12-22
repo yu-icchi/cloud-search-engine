@@ -6,7 +6,9 @@
 package client.config;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -63,6 +65,17 @@ public class XMLConfig {
 		return map;
 	}
 
+	public List<String> getNodes(String name) {
+		List<String> nodes = new ArrayList<String>();
+		NodeList list = root.getElementsByTagName(name);
+		System.out.println(list.getLength());
+		for (int i = 0; i < list.getLength(); i++) {
+			Element element = (Element) list.item(i);
+			nodes.add(getChildren(element, "node"));
+		}
+		return nodes;
+	}
+
 	/**
 	 * getChildrenメソッド
 	 *
@@ -80,5 +93,6 @@ public class XMLConfig {
 		XMLConfig config = new XMLConfig("demo/gse-config.xml");
 		System.out.println(config.getHost2Port("location"));
 		System.out.println(config.getHost2Port("account"));
+		System.out.println(config.getNodes("nodes"));
 	}
 }
