@@ -65,13 +65,17 @@ public class XMLConfig {
 		return map;
 	}
 
+	/**
+	 *
+	 * @param name
+	 * @return
+	 */
 	public List<String> getNodes(String name) {
 		List<String> nodes = new ArrayList<String>();
 		NodeList list = root.getElementsByTagName(name);
-		System.out.println(list.getLength());
 		for (int i = 0; i < list.getLength(); i++) {
-			Element element = (Element) list.item(i);
-			nodes.add(getChildren(element, "node"));
+			Element cElement = (Element) list.item(i);
+			nodes.add(cElement.getFirstChild().getNodeValue());
 		}
 		return nodes;
 	}
@@ -93,6 +97,6 @@ public class XMLConfig {
 		XMLConfig config = new XMLConfig("demo/gse-config.xml");
 		System.out.println(config.getHost2Port("location"));
 		System.out.println(config.getHost2Port("account"));
-		System.out.println(config.getNodes("nodes"));
+		System.out.println(config.getNodes("node"));
 	}
 }
