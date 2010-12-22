@@ -8,4 +8,9 @@
 		<host>localhost</host>
 		<port>3100</port>
 	</account>
+	<nodes>
+		<node>192.168.168.135</node>
+		<node>192.168.168.147</node>
+		<node>192.168.168.154</node>
+	</nodes>
 </gse-config>
