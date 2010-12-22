@@ -3,6 +3,8 @@ package upload.consistency;
 import java.util.ArrayList;
 import java.util.List;
 
+import client.config.XMLConfig;
+
 public class ConsistentHashingTest {
 
 	/**
@@ -41,9 +43,13 @@ public class ConsistentHashingTest {
 		System.out.println(hash.prevNode(next));
 */
 
+		XMLConfig config = new XMLConfig("demo/gse-config.xml");
+		List<String> nodes = config.getNodes("node");
+		System.out.println(nodes);
+
 		//仮想ノードなし
 		ConsistentHashing2 hash2 = new ConsistentHashing2();
-		hash2.addNode("n1", "n2", "n3", "n4");
+		hash2.addNode(nodes);
 		hash2.nodeList();
 		for (String str : list) {
 			System.out.println(str + " : " + hash2.searchNode(str));
