@@ -88,10 +88,14 @@ public class Location {
 	 * @param type
 	 * @throws Exception
 	 */
-	public void query(String query, String type) throws Exception {
-		LocationQueryConverter convert = new LocationQueryConverter(type);
-		convert.parser(query);
-		_query = convert.getQuery();
+	public void query(String query, String type) {
+		try {
+			LocationQueryConverter convert = new LocationQueryConverter(type);
+			convert.parser(query);
+			_query = convert.getQuery();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -100,7 +104,7 @@ public class Location {
 	 * @param query
 	 * @throws Exception
 	 */
-	public void query(String query) throws Exception {
+	public void query(String query) {
 		_query = query;
 	}
 
@@ -112,30 +116,33 @@ public class Location {
 	 * setメソッド(格納)
 	 *
 	 *  @param url (String) URLを指定する
-	 *  @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void set(String url) throws Exception {
-		//URLのチェック
-		if (urlCheck(url)) {
-			//MaxDocsデータを格納する
-			setMaxDocs(url);
-			//idf値を取得する
-			List<Object> list = docFreq(url + "terms");
-			//List → List<Map<String, String>>
-			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-			Map<String, String> map;
-			for (int i = 0; i < list.size(); i+=2) {
-				map = new HashMap<String, String>();
-				map.put("term", list.get(i).toString());
-				map.put("docFreq", list.get(i + 1).toString());
-				map.put("url", url);
-				data.add(map);
+	public void set(String url) {
+		try {
+			//URLのチェック
+			if (urlCheck(url)) {
+				//MaxDocsデータを格納する
+				setMaxDocs(url);
+				//idf値を取得する
+				List<Object> list = docFreq(url + "terms");
+				//List → List<Map<String, String>>
+				List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+				Map<String, String> map;
+				for (int i = 0; i < list.size(); i+=2) {
+					map = new HashMap<String, String>();
+					map.put("term", list.get(i).toString());
+					map.put("docFreq", list.get(i + 1).toString());
+					map.put("url", url);
+					data.add(map);
+				}
+				//Cassandraに接続する
+				CassandraClient cc = new CassandraClient(_host, _port);
+				cc.insertDocFreq(data);
+				cc.closeConnection();
 			}
-			//Cassandraに接続する
-			CassandraClient cc = new CassandraClient(_host, _port);
-			cc.insertDocFreq(data);
-			cc.closeConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -145,10 +152,14 @@ public class Location {
 	 *  @param  url (String) URLを指定する
 	 *  @throws Exception
 	 */
-	public static void setMaxDocs(String url) throws Exception {
-		CassandraClient cc = new CassandraClient(_host, _port);
-		cc.insertMaxDoc(url, maxDoc(url + "admin/luke"));
-		cc.closeConnection();
+	public static void setMaxDocs(String url) {
+		try {
+			CassandraClient cc = new CassandraClient(_host, _port);
+			cc.insertMaxDoc(url, maxDoc(url + "admin/luke"));
+			cc.closeConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	//-----------------------------------------------------
@@ -332,18 +343,22 @@ public class Location {
 	 *  @param url (String) URLを指定する
 	 */
 	@SuppressWarnings("unchecked")
-	public void delete(String url) throws Exception {
-		//URLのチェック
-		if (urlCheck(url)) {
-			//idf値を取得する
-			List list = docFreq(url + "terms");
-			for (int i = 0; i < list.size(); i+=2) {
-				//Cassandraのデータベースを削除する
-				CassandraClient cc = new CassandraClient(_host, _port);
-				//一致するタームフィールドを削除する
-				cc.delete(list.get(i).toString(), url);
-				cc.closeConnection();
+	public void delete(String url) {
+		try {
+			//URLのチェック
+			if (urlCheck(url)) {
+				//idf値を取得する
+				List list = docFreq(url + "terms");
+				for (int i = 0; i < list.size(); i+=2) {
+					//Cassandraのデータベースを削除する
+					CassandraClient cc = new CassandraClient(_host, _port);
+					//一致するタームフィールドを削除する
+					cc.delete(list.get(i).toString(), url);
+					cc.closeConnection();
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -353,10 +368,14 @@ public class Location {
 	 * @param url
 	 * @throws Exception
 	 */
-	public void deleteURL(String url) throws Exception {
-		//URLのチェック
-		if (urlCheck(url)) {
+	public void deleteURL(String url) {
+		try {
+			//URLのチェック
+			if (urlCheck(url)) {
 
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -428,7 +447,7 @@ public class Location {
 	 *  @param url (String) URLを指定する
 	 *   @return (boolean) True or False
 	 */
-	static boolean urlCheck(String url) {
+	private static boolean urlCheck(String url) {
 		//「http://localhost:8983/solr/」or「http://localhost:8983/core0/solr/」のような形にマッチするようになっている
 		final String MATCH_URL = "^https?:\\/\\/[-_.a-zA-Z0-9]+(:[0-9]+)*(\\/[-_a-zA-Z0-9]+)*(\\/solr\\/)$";
 		Pattern pattern = Pattern.compile(MATCH_URL);
@@ -448,7 +467,7 @@ public class Location {
 	 *  @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	static List docFreq(String url) throws Exception {
+	private static List docFreq(String url) throws Exception {
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL(url);
 		URLConnection con = solrURL.openConnection();
@@ -475,7 +494,7 @@ public class Location {
 	 *  @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	static String maxDoc(String url) throws Exception {
+	private static String maxDoc(String url) throws Exception {
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL(url);
 		URLConnection con = solrURL.openConnection();

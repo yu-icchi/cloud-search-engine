@@ -9,8 +9,17 @@
 		<port>3100</port>
 	</account>
 	<nodes>
-		<node>192.168.168.135</node>
-		<node>192.168.168.147</node>
-		<node>192.168.168.154</node>
+		<node>192.168.1.106</node>
+		<node>192.168.1.6</node>
+		<node>192.168.1.104</node>
 	</nodes>
+	<lse>
+		<host>localhost</host>
+		<port>8080</port>
+	</lse>
+	<replication>3</replication>
+	<manager>
+		<host>192.168.168.123</host>
+		<port>7500</port>
+	</manager>
 </gse-config>

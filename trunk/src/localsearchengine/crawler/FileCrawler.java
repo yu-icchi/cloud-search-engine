@@ -1,9 +1,4 @@
-//---------------------------------------------------------
-//Crawlerクラス
-//
-//ファサードパターンで、ファイルの拡張子から最適な方法で文書を抽出し、Solrに格納
-//---------------------------------------------------------
-package upload;
+package localsearchengine.crawler;
 
 import java.io.File;
 import java.util.Date;
@@ -12,14 +7,18 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 
-public class Crawler {
+import upload.PDFReader;
+import upload.PowerPointReader;
+import upload.TextFileReader;
+import upload.WordReader;
 
+public class FileCrawler {
 	//-----------------------------------------------------
 	//プロパティ
 	//-----------------------------------------------------
 
 	//ファイルパス
-	private static String filePath;
+	private static File file;
 	//インデックスを格納するサーバ
 	private static String server;
 	//アカウント情報格納
@@ -36,10 +35,10 @@ public class Crawler {
 	 * @param path
 	 * @param server
 	 */
-	public Crawler(String account, String path, String server) {
-		Crawler.setAccount(account);
-		Crawler.setFilePath(path);
-		Crawler.setServer(server);
+	public FileCrawler(String account, File file, String server) {
+		FileCrawler.setAccount(account);
+		FileCrawler.setFile(file);
+		FileCrawler.setServer(server);
 	}
 
 	//-----------------------------------------------------
@@ -52,7 +51,7 @@ public class Crawler {
 	 * @param account
 	 */
 	public static void setAccount(String account) {
-		Crawler.account = account;
+		FileCrawler.account = account;
 	}
 
 	/**
@@ -69,8 +68,8 @@ public class Crawler {
 	 *
 	 * @param filePath
 	 */
-	public static void setFilePath(String filePath) {
-		Crawler.filePath = filePath;
+	public static void setFile(File file) {
+		FileCrawler.file = file;
 	}
 
 	/**
@@ -78,8 +77,8 @@ public class Crawler {
 	 *
 	 * @return
 	 */
-	public static String getFilePath() {
-		return filePath;
+	public static File getFile() {
+		return file;
 	}
 
 	/**
@@ -88,7 +87,7 @@ public class Crawler {
 	 * @param server
 	 */
 	public static void setServer(String server) {
-		Crawler.server = server;
+		FileCrawler.server = server;
 	}
 
 	/**
@@ -113,7 +112,7 @@ public class Crawler {
 		try {
 
 			//拡張子
-			String suffix = getSuffix(filePath);
+			String suffix = getSuffix(file.getName());
 
 			//インデックスを格納するサーバを決める
 			SolrServer solr = new CommonsHttpSolrServer(server);
@@ -121,16 +120,8 @@ public class Crawler {
 			//ドキュメントを作成
 			SolrInputDocument document = new SolrInputDocument();
 			//フィールドの指定
-			document.addField("id", Crawler.filePath);
-			document.addField("account", Crawler.account);
-
-			File file = new File(filePath);
-
-			//document.addField("title", file.getName());
-			//document.addField("type", suffix);
-			//document.addField("path", file.getPath());
-			//document.addField("date", new Date(file.lastModified()));
-			//document.addField("time", file.lastModified());
+			document.addField("id", FileCrawler.file.getPath());
+			document.addField("account", FileCrawler.account);
 
 			System.out.println(new Date(file.lastModified()));
 			System.out.println(file.getPath());
@@ -139,16 +130,16 @@ public class Crawler {
 			//拡張子により読み込み処理を変える
 			if (suffix.equals("txt")) {
 				TextFileReader reader = new TextFileReader();
-				document = reader.extractText(filePath, document);
+				document = reader.extractText(file.getPath(), document);
 			} else if (suffix.equals("doc")) {
 				WordReader reader = new WordReader();
-				document = reader.extractDoc(filePath, document);
+				document = reader.extractDoc(file.getPath(), document);
 			} else if (suffix.equals("pdf")) {
 				PDFReader reader = new PDFReader();
-				document = reader.extractPDF(filePath, document);
+				document = reader.extractPDF(file.getPath(), document);
 			} else if (suffix.equals("ppt")) {
 				PowerPointReader reader = new PowerPointReader();
-				document = reader.extractPPT(filePath, document);
+				document = reader.extractPPT(file.getPath(), document);
 			}
 
 			//サーバに追加
@@ -185,5 +176,4 @@ public class Crawler {
 		}
 		return fileName;
 	}
-
 }

@@ -22,30 +22,22 @@ public class ConsistentHashingTest {
 		list.add("S"); list.add("T"); list.add("U"); list.add("V"); list.add("W"); list.add("X");
 		list.add("Y"); list.add("Z");
 
-/*
-		ConsistentHashing hash = new ConsistentHashing();
-
-		hash.addNode("localhost:8081", "localhost:8082", "localhost:8083", "localhost:8084");
-		hash.nodeList();
-
-		for (String str : list) {
-			System.out.println(str);
-			String node = hash.searchNode(str);
-			System.out.println(node);
-			String nextNode = hash.nextNode(node);
-			System.out.println("nextNode: " + nextNode);
-			System.out.println("next+nextNode: " + hash.nextNode(nextNode));
-		}
-
-		System.out.println();
-		String next = hash.nextNode("localhost:8081");
-		System.out.println(next);
-		System.out.println(hash.prevNode(next));
-*/
-
 		XMLConfig config = new XMLConfig("demo/gse-config.xml");
 		List<String> nodes = config.getNodes("node");
 		System.out.println(nodes);
+
+		/*
+		ConsistentHashing hash = new ConsistentHashing();
+		hash.addNode(nodes);
+		hash.nodeList();
+
+		for (String str : list) {
+			String node = hash.searchNode(str);
+			System.out.println(str + " : " + node);
+		}
+
+		System.out.println();
+		*/
 
 		//仮想ノードなし
 		ConsistentHashing2 hash2 = new ConsistentHashing2();
@@ -54,5 +46,7 @@ public class ConsistentHashingTest {
 		for (String str : list) {
 			System.out.println(str + " : " + hash2.searchNode(str));
 		}
+
+
 	}
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lse-config>
+	<dir>demo</dir>
+	<location>
+		<host>127.0.0.1</host>
+		<port>9160</port>
+	</location>
+	<nodes>
+		<node>127.0.0.1</node>
+	</nodes>
+	<lse-solr>
+		<host>localhost</host>
+		<port>6365</port>
+	</lse-solr>
+</lse-config>
