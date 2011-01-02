@@ -49,7 +49,7 @@ public class XMLConfig {
 	//-----------------------------------------------------
 
 	/**
-	 * getElementメソッド
+	 * getHost2Portメソッド
 	 *
 	 * @param name
 	 * @return
@@ -66,6 +66,7 @@ public class XMLConfig {
 	}
 
 	/**
+	 * getNodeメソッド
 	 *
 	 * @param name
 	 * @return
@@ -78,6 +79,18 @@ public class XMLConfig {
 			nodes.add(cElement.getFirstChild().getNodeValue());
 		}
 		return nodes;
+	}
+
+	/**
+	 * getElementメソッド
+	 *
+	 * @param name
+	 * @return
+	 */
+	public String getElement(String name) {
+		NodeList list = root.getElementsByTagName(name);
+		Element cElement = (Element) list.item(0);
+		return cElement.getFirstChild().getNodeValue();
 	}
 
 	/**
@@ -98,5 +111,8 @@ public class XMLConfig {
 		System.out.println(config.getHost2Port("location"));
 		System.out.println(config.getHost2Port("account"));
 		System.out.println(config.getNodes("node"));
+		System.out.println(config.getHost2Port("lse"));
+		System.out.println(config.getElement("replication"));
+		System.out.println(config.getHost2Port("manager"));
 	}
 }

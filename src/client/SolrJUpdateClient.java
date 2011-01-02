@@ -24,7 +24,7 @@ public class SolrJUpdateClient {
 		//Account
 		String account = "test1 test2";
 		//ファイルのパス
-		String filePath = "demo/sample.ppt";
+		String filePath = "demo/data.txt";
 		//複数のサーバ
 		String[] server = {"http://localhost:6365/solr/"};
 		//ConsistentHashingで格納するサーバを決める

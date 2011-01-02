@@ -40,9 +40,8 @@ public class ConsistentHashing2 {
 	 * addNodeメソッド (ノードの追加する)
 	 *
 	 * @param node ノードのアドレスを指定する
-	 * @throws NoSuchAlgorithmException
 	 */
-	public void addNode(String node) throws NoSuchAlgorithmException {
+	public void addNode(String node) {
 		//物理ノードに追加する
 		continuum.put(getHash(node), node);
 	}
@@ -51,9 +50,8 @@ public class ConsistentHashing2 {
 	 * addNodeメソッド (複数のノードを一遍に登録する)
 	 *
 	 * @param nodes
-	 * @throws NoSuchAlgorithmException
 	 */
-	public void addNode(String... nodes) throws NoSuchAlgorithmException {
+	public void addNode(String... nodes) {
 		for (int i = 0; i < nodes.length; i++) {
 			//物理ノードに追加する
 			continuum.put(getHash(nodes[i]), nodes[i]);
@@ -64,9 +62,8 @@ public class ConsistentHashing2 {
 	 * addNodeメソッド (Listでノードを一遍に登録する)
 	 *
 	 * @param nodes
-	 * @throws NoSuchAlgorithmException
 	 */
-	public void addNode(List<String> nodes) throws NoSuchAlgorithmException {
+	public void addNode(List<String> nodes) {
 		for (String node : nodes) {
 			//物理ノードに追加する
 			continuum.put(getHash(node), node);
@@ -77,9 +74,8 @@ public class ConsistentHashing2 {
 	 * delNodeメソッド (ノードの削除する)
 	 *
 	 * @param node
-	 * @throws NoSuchAlgorithmException
 	 */
-	public void delNode(String node) throws NoSuchAlgorithmException {
+	public void delNode(String node) {
 		//物理ノードに追加する
 		continuum.remove(getHash(node));
 	}
@@ -88,9 +84,8 @@ public class ConsistentHashing2 {
 	 * delNodeメソッド (複数のノードを一遍に削除する)
 	 *
 	 * @param nodes
-	 * @throws NoSuchAlgorithmException
 	 */
-	public void delNode(String... nodes) throws NoSuchAlgorithmException {
+	public void delNode(String... nodes) {
 		for (int i = 0; i < nodes.length; i++) {
 			//物理ノードに追加する
 			continuum.remove(getHash(nodes[i]));
@@ -102,9 +97,8 @@ public class ConsistentHashing2 {
 	 *
 	 * @param key
 	 * @return
-	 * @throws NoSuchAlgorithmException
 	 */
-	public String nextNode(String key) throws NoSuchAlgorithmException {
+	public String nextNode(String key) {
 		BigInteger hash = continuum.higherKey(getHash(key));
 		if (hash == null) {
 			return continuum.get(continuum.firstKey());
@@ -118,9 +112,8 @@ public class ConsistentHashing2 {
 	 *
 	 * @param key
 	 * @return
-	 * @throws NoSuchAlgorithmException
 	 */
-	public String prevNode(String key) throws NoSuchAlgorithmException {
+	public String prevNode(String key) {
 		BigInteger hash = continuum.lowerKey(getHash(key));
 		if (hash == null) {
 			return continuum.get(continuum.lastKey());
@@ -134,9 +127,8 @@ public class ConsistentHashing2 {
 	 *
 	 * @param key
 	 * @return
-	 * @throws NoSuchAlgorithmException
 	 */
-	public String searchNode(String key) throws NoSuchAlgorithmException {
+	public String searchNode(String key) {
 		return search(continuum, getHash(key));
 	}
 
@@ -158,9 +150,14 @@ public class ConsistentHashing2 {
 	 * @return
 	 * @throws NoSuchAlgorithmException
 	 */
-	private static BigInteger getHash(String value) throws NoSuchAlgorithmException {
-		MessageDigest digest = MessageDigest.getInstance("md5");
-		byte[] byteHash = digest.digest(value.getBytes());
+	private static BigInteger getHash(String value) {
+		byte[] byteHash = null;
+		try {
+			MessageDigest digest = MessageDigest.getInstance("md5");
+			byteHash = digest.digest(value.getBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return new BigInteger(byteHash);
 	}
 

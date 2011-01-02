@@ -55,9 +55,9 @@ public class SolrJSearchClient {
 		String locationHost = locationConfig.get("host");
 		int locationPort = Integer.valueOf(locationConfig.get("port"));
 		//ユーザーからのクエリー
-		String queryString = "高城亜樹";
+		String queryString = "秋元";
 		//ユーザーのアカウント情報
-		String account = "test1";
+		String account = "demo";
 		//クエリーの解析
 		QueryConverter queryConverter = new QueryConverter();
 		queryConverter.parser(queryString);
