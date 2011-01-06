@@ -3,7 +3,7 @@
 //
 //修正できる「solrconfig.xml」のファイルを作成する
 //---------------------------------------------------------
-package master;
+package localsearchengine.config;
 
 import java.io.File;
 
@@ -632,13 +632,13 @@ public class SolrConfig {
 		conf.fieldHandler();
 		conf.debugHandler();
 		conf.csvHandler();
-		conf.replicationHandler("http://localhost:7100/solr/core0/replication", "10:00:00", "commit", "startup");
+		conf.replicationHandler("http://localhost:7100/solr/core0/replication", "00:00:30", "optimize", "startup");
 		conf.termsHandler();
 		conf.adminHandler();
 		conf.pingHandler();
 		conf.highlighting();
 		conf.queryResponseWriter();
-		conf.fileWrite();
+		conf.fileWrite("demo/sampleSolrConfig2.xml");
 		System.out.println(System.currentTimeMillis() - time);
 	}
 

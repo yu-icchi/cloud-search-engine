@@ -31,25 +31,31 @@ public class LSEDaemon {
 			System.out.println(xml.get("dir"));
 			System.out.println(xml.get("location"));
 			System.out.println(xml.get("nodes"));
-			System.out.println(xml.get("lse-solr"));
+			System.out.println(xml.get("solr"));
 			//Deamon実行
 			daemon = new Daemon();
 			//初期設定
 			daemon.dir((String) xml.get("dir"));
 			daemon.location((Map<String, String>) xml.get("location"));
 			daemon.addNode((List<String>) xml.get("nodes"));
-			daemon.lseSolr((Map<String, String>) xml.get("lse"));
+			daemon.lseSolr((Map<String, String>) xml.get("solr"));
+			//solrConfig作成
+			daemon.solrConfigWriter("core0");
+			daemon.solrConfigWriter("core1");
+			daemon.solrConfigWriter("core2");
 			//スタート
+			/*
 			daemon.start();
 			for (int i = 0; i < 1000; i++) {
 				Thread.sleep(10 * 1000L);
 				daemon.put("data" + i);
 			}
+			*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			//デーモンのストップ
-			daemon.stop();
+			//daemon.stop();
 		}
 	}
 
@@ -73,7 +79,7 @@ public class LSEDaemon {
 		//nodes
 		result.put("nodes", config.getNodes("node"));
 		//lse
-		result.put("lse", config.getHost2Port("lse-solr"));
+		result.put("solr", config.getHost2Port("solr"));
 
 		return result;
 	}

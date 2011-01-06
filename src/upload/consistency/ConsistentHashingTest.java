@@ -26,7 +26,7 @@ public class ConsistentHashingTest {
 		List<String> nodes = config.getNodes("node");
 		System.out.println(nodes);
 
-		/*
+
 		ConsistentHashing hash = new ConsistentHashing();
 		hash.addNode(nodes);
 		hash.nodeList();
@@ -35,10 +35,10 @@ public class ConsistentHashingTest {
 			String node = hash.searchNode(str);
 			System.out.println(str + " : " + node);
 		}
+		String node = hash.searchNode("A");
 
-		System.out.println();
-		*/
-
+		System.out.println(hash.nextNode(node));
+		/*
 		//仮想ノードなし
 		ConsistentHashing2 hash2 = new ConsistentHashing2();
 		hash2.addNode(nodes);
@@ -46,7 +46,7 @@ public class ConsistentHashingTest {
 		for (String str : list) {
 			System.out.println(str + " : " + hash2.searchNode(str));
 		}
-
+		*/
 
 	}
 }

@@ -110,6 +110,19 @@ public class CassandraClient {
 	//データ格納メソッド
 	//-----------------------------------------------------
 
+	public void insertNodes(String host, String type,  String data) {
+		try {
+			//ColumnPathの作成
+			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
+			columnPath.setColumn(type.getBytes("utf-8"));
+			//レコードを挿入
+			client.insert(KEYSPACE, host, columnPath, data.getBytes("utf-8"), System.currentTimeMillis(), ConsistencyLevel.QUORUM);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	/**
 	 * insertMaxDocメソッド
 	 *
@@ -285,6 +298,29 @@ public class CassandraClient {
 			}
 			return list;
 		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Map<String, String> getNodes(String host) {
+		try {
+			SlicePredicate slicePredicate = new SlicePredicate();
+			SliceRange sliceRange = new SliceRange();
+			sliceRange.setStart(new byte[] {});
+			sliceRange.setFinish(new byte[] {});
+			slicePredicate.setSlice_range(sliceRange);
+			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, host, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
+			Map<String, String> map = new HashMap<String, String>();
+			for (ColumnOrSuperColumn csc : results) {
+				Column column = csc.getColumn();
+				String name = new String(column.getName());
+				String value = new String(column.getValue());
+				map.put(name, value);
+			}
+			return map;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;

@@ -13,9 +13,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 
+import localsearchengine.config.SolrConfig;
 import localsearchengine.crawler.FileCrawler;
 import location.Location;
 
@@ -47,6 +53,8 @@ public class Daemon {
 	private String lseSolrServer;
 	//solr port
 	private String solrPort = "6365";
+
+	private String lseNode;
 
 	//-----------------------------------------------------
 	//コンストラクタ
@@ -112,6 +120,7 @@ public class Daemon {
 	 * @param server
 	 */
 	public void lseSolr(Map<String, String> server) {
+		lseNode = server.get("host");
 		lseSolrServer = "http://" + server.get("host") + ":" + server.get("port") + "/solr/";
 	}
 
@@ -125,6 +134,72 @@ public class Daemon {
 
 	public String getSolrPort() {
 		return solrPort;
+	}
+
+	//-----------------------------------------------------
+	//SolrConfig作成
+	//-----------------------------------------------------
+
+	public void solrConfigWriter(String core) {
+		System.out.println("core: " + core);
+		//solrconfig.xmlを作成する
+		SolrConfig conf = new SolrConfig();
+		conf.abortOnConfigurationError();
+		conf.lib();
+		conf.indexDefaults();
+		conf.mainIndex();
+		conf.jmx();
+		conf.updateHandler();
+		conf.query();
+		conf.requestDispatcher();
+		conf.standardHandler();
+		conf.xmlHandler();
+		conf.javabinHandler();
+		conf.documentHandler();
+		conf.fieldHandler();
+		conf.debugHandler();
+		conf.csvHandler();
+		conf.replicationHandler(lseSolrServer + "replication", "00:00:30", "optimize", "startup");
+		conf.termsHandler();
+		conf.adminHandler();
+		conf.pingHandler();
+		conf.highlighting();
+		conf.queryResponseWriter();
+		//Consistent Hashing
+		System.out.println(hash.nextNode(lseNode));
+		conf.fileWrite("src/localsearchengine/config/" + core + "SolrConfig.xml");
+		//マルチコアで指定したコアをRELOADする
+		boolean flag = solrServerCoreReload(lseSolrServer +"admin/core?action=RELOAD&core=" + core);
+		System.out.println(flag);
+	}
+
+	/**
+	 * solrServerCoreReloadメソッド
+	 *
+	 * @param url
+	 * @return
+	 */
+	private static boolean solrServerCoreReload(String url) {
+		HttpClient client = new HttpClient();
+		GetMethod method = new GetMethod(url);
+		method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, false));
+		try {
+			int statusCode = client.executeMethod(method);
+			if (statusCode != HttpStatus.SC_OK) {
+				System.out.println("Method failed: " + method.getStatusText());
+				//404 Not Found Error
+				if (method.getStatusText().indexOf("Not Found") != -1) {
+					return false;
+				}
+			}
+			byte[] responseBody = method.getResponseBody();
+			System.out.println(new String(responseBody));
+			return true;
+		} catch(Exception e) {
+			return false;
+		} finally {
+			method.releaseConnection();
+		}
 	}
 
 	//-----------------------------------------------------
