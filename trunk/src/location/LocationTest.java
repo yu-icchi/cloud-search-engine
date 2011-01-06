@@ -1,44 +1,39 @@
 package location;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
-
-import location.query.QueryConverter;
 
 public class LocationTest {
 
 	/**
 	 * @param args
-	 * @throws ParseException
+	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 
-		/*
-		//クエリーの設定
-		String query = "solr | ipod";
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("node1", "192.168.168.101");
+		map.put("node2", "192.168.168.102");
+		map.put("node3", "192.168.168.103");
 
-		//クエリーの解析
-		QueryConverter queryConverter = new QueryConverter();
-		queryConverter.parser(query);
-
-		//データベース(Locationサーバ)にアクセス
 		Location location = new Location();
-		//正規化したクエリーを与える
-		location.query(queryConverter.getQuery());
-		//クエリーのタームを与える
-		Map<String, Object> map = location.get(queryConverter.getTermList());
+		location.setNodes("192.168.168.101", map);
 
-		//結果
-		System.out.println("LocationTest: " + map);
-		List<String> list = (List<String>) map.get("url");
-		System.out.println("maxDocs: " + map.get("maxDocs"));
-		System.out.println("url: " + list);
-		System.out.println("maxDocs: " + map.get("docFreq"));
-		*/
+		System.out.println(location.getNodes("192.168.168.101"));
 
-		GlobalIDF location = new GlobalIDF();
-		location.set("http://192.168.168:8081/solr/");
+		location.setNodes("192.168.168.101", "node2", "192.168.168.105");
+
+		System.out.println(location.getNodes("192.168.168.101"));
+
+		location.deleteNodes("192.168.168.101", "node1");
+
+		System.out.println(location.getNodes("192.168.168.101"));
+
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("solr");
+		System.out.println(location.get(list));
+
 	}
 
 }

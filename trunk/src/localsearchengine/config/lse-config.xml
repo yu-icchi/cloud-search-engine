@@ -6,10 +6,12 @@
 		<port>9160</port>
 	</location>
 	<nodes>
-		<node>127.0.0.1</node>
+		<node>192.168.168.100</node>
+		<node>192.168.168.150</node>
+		<node>192.168.168.180</node>
 	</nodes>
-	<lse-solr>
-		<host>localhost</host>
+	<solr>
+		<host>192.168.168.100</host>
 		<port>6365</port>
-	</lse-solr>
+	</solr>
 </lse-config>

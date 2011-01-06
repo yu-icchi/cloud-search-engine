@@ -147,6 +147,33 @@ public class Location {
 	}
 
 	/**
+	 * setNodesメソッド
+	 *
+	 * @param nodes
+	 */
+	public void setNodes(String host, Map<String, String> nodes) {
+		try {
+			//Cassandraに接続する
+			CassandraClient cc = new CassandraClient(_host, _port);
+			cc.insertMap(host, nodes);
+			cc.closeConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void setNodes(String host, String type, String node) {
+		try {
+			//Cassandraに接続する
+			CassandraClient cc = new CassandraClient(_host, _port);
+			cc.insertNodes(host, type, node);
+			cc.closeConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * setMaxDocsメソッド
 	 *
 	 *  @param  url (String) URLを指定する
@@ -198,6 +225,13 @@ public class Location {
 		return data;
 	}
 
+	public Map<String, String> getNodes(String host) {
+		CassandraClient cc = new CassandraClient(_host, _port);
+		Map<String, String> map = cc.getNodes(host);
+		cc.closeConnection();
+		return map;
+	}
+
 	/**
 	 * getメソッド(ArrayList版)
 	 *
@@ -207,6 +241,9 @@ public class Location {
 	public Map<String, Object> get(ArrayList<String> input) {
 		//結果を返すデータ構造
 		Map<String, Object> result = new HashMap<String, Object>();
+		//MaxDocsの値を取得する
+		int maxDocs_number = getMaxDocs();
+		result.put("maxDocs", maxDocs_number);
 		Map<String, Integer> term = new HashMap<String, Integer>();
 		Map<String, List<String>> urls = new HashMap<String, List<String>>();
 		Object data;
@@ -255,9 +292,6 @@ public class Location {
 		}
 		result.put("docFreq", term);
 		result.put("url", data);
-		//MaxDocsの値を取得する
-		int maxDocs_number = getMaxDocs();
-		result.put("maxDocs", maxDocs_number);
 
 		return result;
 	}
@@ -402,6 +436,12 @@ public class Location {
 			cc.delete("MaxDocs", url);
 			cc.closeConnection();
 		}
+	}
+
+	public void deleteNodes(String host, String type) {
+		CassandraClient cc = new CassandraClient(_host, _port);
+		cc.delete(host, type);
+		cc.closeConnection();
 	}
 
 	/**
