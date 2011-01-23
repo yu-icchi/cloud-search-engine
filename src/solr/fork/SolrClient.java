@@ -64,11 +64,13 @@ public class SolrClient {
 	}
 
 	public static void main(String[] args) throws Exception {
-		SolrClient client = new SolrClient("http://localhost:6365/solr/");
+		SolrClient client1 = new SolrClient("http://192.168.220.131:6365/solr/core0/");
+		SolrClient client2 = new SolrClient("http://192.168.220.132:6365/solr/core0/");
+		SolrClient client3 = new SolrClient("http://192.168.220.133:6365/solr/core0/");
 		List<Map<String, String>> debugList = new ArrayList<Map<String, String>>();
-		debugList.add(client.getExplain("芥川"));
-		debugList.add(client.getExplain("菊池"));
-		debugList.add(client.getExplain("夏目"));
+		debugList.add(client1.getExplain("芥川"));
+		debugList.add(client2.getExplain("芥川"));
+		debugList.add(client3.getExplain("芥川"));
 
 		Map<String, Integer> docFreq2 = new HashMap<String, Integer>();
 		docFreq2.put("芥川", 208);
@@ -80,13 +82,18 @@ public class SolrClient {
 		System.out.println(documentResult);
 
 		String ids = "";
+		int rows = 10;
 
-		for (int i = 0; i < client.getRow(); i++) {
+		for (int i = 0; i < rows -1 ; i++) {
 			String id = documentResult.get(i).get("id").toString();
 			ids +=  "id:" + id + " ";
 		}
 
-		System.out.println(client.getResponse(ids));
+		ids += "id:" + documentResult.get(rows - 1).get("id").toString();
+
+		System.out.println(client1.getResponse(ids));
+		System.out.println(client2.getResponse(ids));
+		System.out.println(client3.getResponse(ids));
 	}
 
 	public void setRow(int row) {
