@@ -1,7 +1,6 @@
 package solr.fork;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -25,14 +24,9 @@ public class ThreadPoolExecutorTester {
 
 		@Override
 		public Map<String, String> call() throws Exception {
-			Map<String, String> map = new HashMap<String, String>();
-			long l = Math.round(Math.random() * 100);
-			Thread.sleep(l);
-			String msg = Long.valueOf(l).toString();
-			map.put("time", msg);
 			//SolrClinet
-			//SolrClient client = new SolrClient("http://localhost:6365/solr/");
-			//Map<String, String> map = client.getExplain("芥川");
+			SolrClient client = new SolrClient("http://localhost:6365/solr/");
+			Map<String, String> map = client.getExplain("芥川");
 			return map;
 		}
 
@@ -63,7 +57,7 @@ public class ThreadPoolExecutorTester {
         // 結果表示
         for (int i = 0; i < result.size(); i++) {
         	try {
-        		System.out.println(i + ": wait is " + result.get(i).get() + "msec");
+        		System.out.println(i + ": Explain is " + result.get(i).get().keySet());
         	} catch (InterruptedException e) {
         		throw new RuntimeException(e);
         	} catch (ExecutionException e) {
