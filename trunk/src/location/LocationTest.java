@@ -1,6 +1,5 @@
 package location;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,26 +12,32 @@ public class LocationTest {
 	public static void main(String[] args) throws Exception {
 
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("node1", "192.168.168.101");
-		map.put("node2", "192.168.168.102");
-		map.put("node3", "192.168.168.103");
+		map.put("node1", "http://192.168.220.133:6365/solr/core0/");
+		map.put("node2", "http://192.168.220.132:6365/solr/core1/");
+		map.put("node3", "");
 
 		Location location = new Location();
-		location.setNodes("192.168.168.101", map);
+		//location.setNodes("http://192.168.220.133:6365/solr/core0/", map);
 
-		System.out.println(location.getNodes("192.168.168.101"));
+		//Map<String, String> data = location.getNodes("http://192.168.220.133:6365/solr/core0/");
 
-		location.setNodes("192.168.168.101", "node2", "192.168.168.105");
+		//System.out.println(data.get("node1"));
+		//System.out.println(data.get("node2"));
 
-		System.out.println(location.getNodes("192.168.168.101"));
+		location.setNodes("http://192.168.220.132:6365/solr/core0/", "node1", "http://192.168.220.132:6365/solr/core0/");
 
-		location.deleteNodes("192.168.168.101", "node1");
+		//System.out.println(location.getNodes("http://192.168.220.131:6365/solr/core0/"));
 
-		System.out.println(location.getNodes("192.168.168.101"));
+		//location.deleteNodes("http://192.168.220.132:6365/solr/core0/", "node1");
 
-		ArrayList<String> list = new ArrayList<String>();
-		list.add("solr");
-		System.out.println(location.get(list));
+		//data = location.getNodes("http://192.168.220.131:6365/solr/core0/");
+
+		//System.out.println(data.get("node1"));
+		//System.out.println(data.get("node2"));
+
+		//location.setNodes("http://192.168.220.131:6365/solr/core0/", "node1", "192.168.168.105");
+
+		//System.out.println(location.getNodes("http://192.168.220.131:6365/solr/core0/"));
 
 	}
 

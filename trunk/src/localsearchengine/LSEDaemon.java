@@ -9,9 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import localsearchengine.config.XMLConfig;
 import localsearchengine.demon.Daemon;
-
-import client.config.XMLConfig;
 
 public class LSEDaemon {
 
@@ -21,6 +20,8 @@ public class LSEDaemon {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
+
+		long time = System.currentTimeMillis();
 
 		//Deamon
 		Daemon daemon = null;
@@ -40,23 +41,24 @@ public class LSEDaemon {
 			daemon.addNode((List<String>) xml.get("nodes"));
 			daemon.lseSolr((Map<String, String>) xml.get("solr"));
 			//solrConfig作成
-			daemon.solrConfigWriter("core0");
-			daemon.solrConfigWriter("core1");
-			daemon.solrConfigWriter("core2");
+			//daemon.solrConfigWriter("core0");
+			//daemon.solrConfigWriter("core1");
+			//daemon.solrConfigWriter("core2");
 			//スタート
-			/*
 			daemon.start();
 			for (int i = 0; i < 1000; i++) {
 				Thread.sleep(10 * 1000L);
 				daemon.put("data" + i);
 			}
-			*/
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			//デーモンのストップ
-			//daemon.stop();
+			daemon.stop();
 		}
+
+		System.out.println(System.currentTimeMillis() - time);
 	}
 
 	/**

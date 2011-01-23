@@ -192,7 +192,8 @@ public class CassandraClient {
 				columnFamilyMap.put(COLUMN_FAMILY, mutationList);
 				map.put(new String(term), columnFamilyMap);
 			}
-			client.batch_mutate(KEYSPACE, map, ConsistencyLevel.QUORUM);
+			System.out.println("insertDocFreq");
+			client.batch_mutate(KEYSPACE, map, ConsistencyLevel.ONE);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -658,8 +659,8 @@ public class CassandraClient {
 			sliceRange.setStart(new byte[0]);
 			sliceRange.setFinish(new byte[0]);
 			slicePredicate.setSlice_range(sliceRange);
-
-			List<KeySlice> list = client.get_range_slices(KEYSPACE, columnParent, slicePredicate, keyRange, ConsistencyLevel.QUORUM);
+			//ConsistencyLevel.QUORUMで行なうと時間がかかり過ぎるため、ConsistencyLevel.ONEにする
+			List<KeySlice> list = client.get_range_slices(KEYSPACE, columnParent, slicePredicate, keyRange, ConsistencyLevel.ONE);
 
 			//key毎にURLがあるか調べて削除する
 			for (KeySlice slice : list) {

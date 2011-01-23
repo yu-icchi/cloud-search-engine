@@ -24,9 +24,9 @@ public class SolrJUpdateClient {
 		//Account
 		String account = "test1 test2";
 		//ファイルのパス
-		String filePath = "demo/data.txt";
+		String filePath = "demo/kumofs.txt";
 		//複数のサーバ
-		String[] server = {"http://localhost:6365/solr/"};
+		String[] server = {"http://192.168.220.133:6365/solr/"};
 		//ConsistentHashingで格納するサーバを決める
 		ConsistentHashing hash = new ConsistentHashing();
 		hash.addNode(server);
@@ -37,8 +37,8 @@ public class SolrJUpdateClient {
 		boolean flag = crawler.setIndex();
 		if (flag) {
 			//LocationServerを更新させる
-			Location location = new Location();
-			location.set(node);
+			//Location location = new Location("192.168.220.133", 9160);
+			//location.set(node);
 			//正常
 			System.out.println("成功");
 		} else {
