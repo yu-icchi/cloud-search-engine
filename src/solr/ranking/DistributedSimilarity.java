@@ -142,6 +142,8 @@ public class DistributedSimilarity {
 		//インデックスIDを取得する
 		Iterator it = data.keySet().iterator();
 
+		int i = 0;
+
 		//複数のDocumentに対して処理する
 		while (it.hasNext()) {
 			String id = (String) it.next();
@@ -150,11 +152,12 @@ public class DistributedSimilarity {
 			Map<String, DistributedScore> map = new HashMap<String, DistributedScore>();
 			//解析し、修正したスコアを返す
 			//System.out.println(data.get(id));
-			DistributedScore score = scoreAnalyze((String) data.get(id));
+			DistributedScore score = scoreAnalyze((String) data.get(id), i);
 			//Mapに格納
 			map.put(id, score);
 			//スコアリストに追加する
 			scoreList.add(map);
+			i++;
 		}
 
 		//sumOfSqueredWeightsの計算
@@ -162,6 +165,36 @@ public class DistributedSimilarity {
 		//System.out.println(sumOfSquaredWeightsValue2);
 		//System.out.println("QueryNormSum:" + (float) (1.0 / Math.sqrt(sumOfSquaredWeightsValue2)));
 
+	}
+
+	/**
+	 * solrScoreメソッド (SolrからScoreデータを持ってくる)
+	 *
+	 * @param datas
+	 */
+	public void solrScoreImport(List<Map<String, String>> datas) {
+
+		//スコアリスト
+		scoreList = new ArrayList<Map<String, DistributedScore>>();
+		//スコア修正
+		for (Map<String, String> data : datas) {
+			//インデックスIDを取得する
+			Iterator<String> it = data.keySet().iterator();
+			int i = 0;
+			//複数のDocumentに対して処理する
+			while (it.hasNext()) {
+				//ID取得
+				String id = it.next();
+				//スコアクラスのMap
+				Map<String, DistributedScore> map = new HashMap<String, DistributedScore>();
+				DistributedScore score = scoreAnalyze(data.get(id), i);
+				//Mapに格納
+				map.put(id, score);
+				//スコアリストに追加する
+				scoreList.add(map);
+				i++;
+			}
+		}
 	}
 
 	/**
@@ -194,10 +227,10 @@ public class DistributedSimilarity {
 				DistributedScore score = map.get(id);
 				score.setQueryNormSum(sumOfSquaredWeightsValue);
 				score.setMaxOverlap(maxOverlap);
-				System.out.println("maxOverlap: " + maxOverlap);
-				System.out.println("CoordNum: " + score.coord());
-				System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
-				System.out.println(id + " : " + score.score());
+				//System.out.println("maxOverlap: " + maxOverlap);
+				//System.out.println("CoordNum: " + score.coord());
+				//System.out.println("QueryNorm:" + (float) (1.0 / Math.sqrt((double) score.getQueryNormSum())));
+				//System.out.println(id + " : " + score.score());
 				Map<String, Object> resultMap = new HashMap<String, Object>();
 				resultMap.put("id", id);
 				resultMap.put("score", score.score());
@@ -228,7 +261,7 @@ public class DistributedSimilarity {
 	 * @param data
 	 * @return DistributedScore
 	 */
-	static DistributedScore scoreAnalyze(String data) {
+	static DistributedScore scoreAnalyze(String data, int flag) {
 
 		//スコアクラス
 		DistributedScore score = new DistributedScore();
@@ -264,7 +297,7 @@ public class DistributedSimilarity {
 					//boost値が存在するか調べる
 					if (tmp.indexOf("boost") != -1) {
 						boost = extractWeight(i+1);
-						System.out.println("boost:" + boost);
+						//System.out.println("boost:" + boost);
 						for (String k_str : key) {
 							boostMap.put(k_str, boost);
 						}
@@ -281,24 +314,26 @@ public class DistributedSimilarity {
 				if (key != "") {
 					//TFを取得し、格納する
 					tf = extractWeight(i+1);
-					System.out.println("tf:" + tf);
+					//System.out.println("tf:" + tf);
 					//IDFを計算し、格納する
 					idf = 0.0f;
 					for (String term : extractKeywordList(line)) {
 						idf += idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(term));
 					}
 					//idfList.add(idf);
-					System.out.println("Ranking-idf: " + idf);
-					sumOfSquaredWeightsValue += (idf * boost) * (idf * boost);
-					System.out.println((idf * boost) * (idf * boost));
+					//System.out.println("Ranking-idf: " + idf);
+					if (flag == 0) {
+						sumOfSquaredWeightsValue += (idf * boost) * (idf * boost);
+					}
+					//System.out.println((idf * boost) * (idf * boost));
 					//idf = idf(DistributedSimilarity.maxDocs, DistributedSimilarity.docFreq.get(key));
 					//System.out.println("idf:" + idf);
 					//Normを取得し、格納する
 					norm = extractWeight(i+3);
-					System.out.println("norm:" + norm);
+					//System.out.println("norm:" + norm);
 					//スコアクラスに総合スコアの重みを格納
 					score.setWeight(tf * (idf * idf) * boost * norm);
-					System.out.println("Weight1:" + score.getWeight());
+					//System.out.println("Weight1:" + score.getWeight());
 					//System.out.println("QueryNormSum:" + (float) (1.0 / Math.sqrt(score.getQueryNormSum())));
 					//オーバーラップ変数
 					maxOverlap++;

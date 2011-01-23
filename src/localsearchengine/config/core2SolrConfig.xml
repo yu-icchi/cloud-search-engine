@@ -82,7 +82,7 @@
       <str name="replicateAfter">startup</str>
     </lst>
     <lst name="slave">
-      <str name="masterUrl">http://127.0.0.1:6365/solr/replication</str>
+      <str name="masterUrl">http://localhost:6365/solr/replication</str>
       <str name="pollInterval">00:00:30</str>
       <str name="compression">internal</str>
     </lst>

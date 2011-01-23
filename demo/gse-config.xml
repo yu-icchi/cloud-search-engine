@@ -9,9 +9,9 @@
 		<port>3100</port>
 	</account>
 	<nodes>
-		<node>192.168.1.106</node>
-		<node>192.168.1.6</node>
-		<node>192.168.1.104</node>
+		<node>192.168.220.131</node>
+		<node>192.168.220.132</node>
+		<node>192.168.220.133</node>
 	</nodes>
 	<lse>
 		<host>localhost</host>

@@ -246,12 +246,13 @@ public class Location {
 		result.put("maxDocs", maxDocs_number);
 		Map<String, Integer> term = new HashMap<String, Integer>();
 		Map<String, List<String>> urls = new HashMap<String, List<String>>();
-		Object data;
+		Object data = null;
 		List<String> urlList;
 		//Cassandraに接続する
 		CassandraClient cc = new CassandraClient(_host, _port);
 		//複数クエリの結果を取得する
 		List<Map<String, String>> list = cc.get(input);
+		System.out.println(list);
 		//接続を切断する
 		cc.closeConnection();
 		//結果をまとめる
@@ -282,14 +283,17 @@ public class Location {
 			}
 		}
 		System.out.println(urls);
-		//QbSS
-		QbSS qbss = new QbSS(_query, urls);
-		try {
-			data = qbss.parser();
-		} catch(Exception e) {
-			System.out.println("アクセス先がありません");
-			return null;
-		}
+		//query式が与えられているか
+		//if (!_query.isEmpty()) {
+			//QbSS
+			QbSS qbss = new QbSS(_query, urls);
+			try {
+				data = qbss.parser();
+			} catch(Exception e) {
+				System.out.println("アクセス先がありません");
+				return null;
+			}
+		//}
 		result.put("docFreq", term);
 		result.put("url", data);
 
@@ -402,14 +406,13 @@ public class Location {
 	 * @param url
 	 * @throws Exception
 	 */
-	public void deleteURL(String url) {
-		try {
-			//URLのチェック
-			if (urlCheck(url)) {
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public void deleteURL(String url) throws Exception {
+		//URLのチェック
+		if (urlCheck(url)) {
+			//Cassandraにアクセスする
+			CassandraClient cc = new CassandraClient(_host, _port);
+			cc.deleteURL(url);
+			cc.closeConnection();
 		}
 	}
 
@@ -488,15 +491,16 @@ public class Location {
 	 *   @return (boolean) True or False
 	 */
 	private static boolean urlCheck(String url) {
-		//「http://localhost:8983/solr/」or「http://localhost:8983/core0/solr/」のような形にマッチするようになっている
-		final String MATCH_URL = "^https?:\\/\\/[-_.a-zA-Z0-9]+(:[0-9]+)*(\\/[-_a-zA-Z0-9]+)*(\\/solr\\/)$";
-		Pattern pattern = Pattern.compile(MATCH_URL);
-		Matcher match = pattern.matcher(url);
-		if (match.find()) {
-			return true;
-		} else {
-			return false;
-		}
+		//「http://localhost:8983/solr/」or「http://localhost:8983/solr/core0/」のような形にマッチするようになっている(\\/[-_a-zA-Z0-9]+)*
+		//final String MATCH_URL = "^https?:\\/\\/[-_.a-zA-Z0-9]+(:[0-9]+)*(\\/solr\\/)$";
+		//Pattern pattern = Pattern.compile(MATCH_URL);
+		//Matcher match = pattern.matcher(url);
+		//if (match.find()) {
+		//	return true;
+		//} else {
+		//	return false;
+		//}
+		return true;
 	}
 
 	/**

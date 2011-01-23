@@ -21,11 +21,11 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 
+import upload.consistency.ConsistentHashing;
+
 import localsearchengine.config.SolrConfig;
 import localsearchengine.crawler.FileCrawler;
 import location.Location;
-
-import upload.consistency.ConsistentHashing2;
 
 public class Daemon {
 
@@ -45,7 +45,7 @@ public class Daemon {
 	List<File> list = new ArrayList<File>();
 
 	//Consistent Hashingのデータ
-	private ConsistentHashing2 hash = new ConsistentHashing2();
+	private ConsistentHashing hash = new ConsistentHashing();
 	//
 	private String locationServerHost;
 	private int locationServerPort;
@@ -55,6 +55,8 @@ public class Daemon {
 	private String solrPort = "6365";
 
 	private String lseNode;
+
+	private List<String> locationServerList = new ArrayList<String>();
 
 	//-----------------------------------------------------
 	//コンストラクタ
@@ -102,6 +104,9 @@ public class Daemon {
 	 */
 	public void addNode(List<String> nodes) {
 		hash.addNode(nodes);
+		for (String node : nodes) {
+			locationServerList.add(node);
+		}
 	}
 
 	/**
@@ -235,6 +240,15 @@ public class Daemon {
 		this.modifierFile();
 	}
 
+	private void locationUpdate() {
+		//locationへ通知する
+		Location ls = new Location(locationServerHost, locationServerPort);
+		for (String node : locationServerList) {
+			node = "http://" + node + ":" + solrPort + "/solr/";
+			ls.set(node);
+		}
+	}
+
 	/**
 	 * putメソッド
 	 * @test
@@ -272,8 +286,8 @@ public class Daemon {
 					solr.commit();
 					solr.optimize();
 					//locationへ通知する
-					Location ls = new Location(locationServerHost, locationServerPort);
-					ls.set(node);
+					//this.locationUpdate();
+					System.out.println("success");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -286,6 +300,7 @@ public class Daemon {
 	 * 新たに追加されたファイルを見つけ、リストを更新する
 	 */
 	private void newFile() {
+		boolean flag = false;
 		File[] fileList = TARGET_DIR.listFiles();
 		//listPath(TARGET_DIR, list);
 		for (File file : fileList) {
@@ -299,13 +314,22 @@ public class Daemon {
 				node = "http://" + node + ":" + solrPort + "/solr/";
 				//solrに格納する
 				FileCrawler crawler = new FileCrawler(TARGET_DIR.getName(), file, node);
-				boolean flag = crawler.setIndex();
-				if (flag) {
-					System.out.println("success");
-					//locationへ通知する
-					Location ls = new Location(locationServerHost, locationServerPort);
-					ls.set(node);
+				//Solrを更新
+				/*
+				try {
+					SolrServer solr = new CommonsHttpSolrServer(node);
+					solr.commit();
+					solr.optimize();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+				*/
+				flag = crawler.setIndex();
+			}
+			if (flag) {
+				//locationへ通知する
+				//this.locationUpdate();
+				System.out.println("success");
 			}
 		}
 
@@ -316,6 +340,7 @@ public class Daemon {
 	 * 更新されたファイルを見つけ、リストを更新する
 	 */
 	private void modifierFile() {
+		boolean flag = false;
 		Iterator<String> it = registereds.iterator();
 		while (it.hasNext()) {
 			String filepath = it.next();
@@ -335,15 +360,14 @@ public class Daemon {
 					node = "http://" + node + ":" + solrPort + "/solr/";
 					//solrに格納する
 					FileCrawler crawler = new FileCrawler(TARGET_DIR.getName(), file, node);
-					boolean flag = crawler.setIndex();
-					if (flag) {
-						System.out.println("success");
-						//locationへ通知する
-						Location ls = new Location(locationServerHost, locationServerPort);
-						ls.set(node);
-					}
+					flag = crawler.setIndex();
 				}
 			}
+		}
+		if (flag) {
+			//locationへ通知する
+			//this.locationUpdate();
+			System.out.println("success");
 		}
 	}
 

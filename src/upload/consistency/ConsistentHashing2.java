@@ -158,6 +158,7 @@ public class ConsistentHashing2 {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		return new BigInteger(byteHash);
 	}
 

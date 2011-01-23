@@ -5,7 +5,7 @@
 //---------------------------------------------------------
 package client;
 
-import java.net.InetAddress;
+//import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -55,9 +55,9 @@ public class SolrJSearchClient {
 		String locationHost = locationConfig.get("host");
 		int locationPort = Integer.valueOf(locationConfig.get("port"));
 		//ユーザーからのクエリー
-		String queryString = "秋元";
+		String queryString = "芥川";
 		//ユーザーのアカウント情報
-		String account = "demo";
+		String account = "aozora";
 		//クエリーの解析
 		QueryConverter queryConverter = new QueryConverter();
 		queryConverter.parser(queryString);
@@ -85,21 +85,42 @@ public class SolrJSearchClient {
 		for (int i = 0; i < urlList.size(); i++) {
 			//URLを取り出す
 			String url = urlList.get(i).toString();
-			//「http://」を切り取る
+			//レプリケーションとの切り替え
+			Map<String, String> replica = location.getNodes(url);
+			if (replica.get("node1") != null) {
+				url = replica.get("node1");
+				//System.out.println(node1);
+			} else if (replica.get("node2") != null) {
+				url = replica.get("node2");
+				//System.out.println(node2);
+			} else if (replica.get("node3") != null) {
+				url = replica.get("node3");
+				//System.out.println(node3);
+			} else {
+				return;
+			}
+			//shardsパラメータ作成
 			shards += url.substring(7, url.length()) + ",";
 		}
 		//GSEのSolrサーバのクエリー設定
 		SolrQuery query = new SolrQuery();
+		//
+		query.setRows(20);
+		//
+		query.setStart(0);
 		//スコア情報指定
 		query.set("debugQuery", "on");
 		//分散検索のアクセス先
-		query.set("shards", shards);
+		System.out.println(shards);
+		query.set("shards", shards /*"192.168.220.131:6365/solr/core0/,192.168.220.132:6365/solr/core0/,192.168.220.133:6365/solr/core0/"*/);
 		//正規化したクエリーを指定
-		query.setQuery("(" + queryConverter.getQuery() + ") AND account:" + account);
+		System.out.println("Query : " + queryConverter.getQuery());
+		System.out.println();
+		query.setQuery("(" + queryConverter.getQuery() + ") AND account:" + account/*queryConverter.getQuery()*/);
 		//GSEサーバのSolrのアドレスを読み出す
 		//Solrサーバを指定する
-		InetAddress address = InetAddress.getLocalHost();
-		SolrServer server = new CommonsHttpSolrServer("http://" + address.getHostAddress() + ":6365/solr/");
+		//InetAddress address = InetAddress.getLocalHost();
+		SolrServer server = new CommonsHttpSolrServer("http://" + "192.168.220.131" + ":6365/solr/core0/");
 		//POST通信で検索をする
 		QueryResponse response = server.query(query, SolrRequest.METHOD.POST);
 		//Solrの結果を格納
@@ -114,15 +135,24 @@ public class SolrJSearchClient {
 		//debugQueryの結果を持ってくる
 		Map<String, String> debug = response.getExplainMap();
 		//ランキング修正をする
-		DistributedSimilarity ranking = new DistributedSimilarity(docFreq, maxDocs);
+		//Map<String, Integer> docFreq2 = new HashMap<String, Integer>();
+		//docFreq2.put("芥川", 208);
+		//docFreq2.put("夏目", 82);
+		//docFreq2.put("菊池", 56);
+		DistributedSimilarity ranking = new DistributedSimilarity(docFreq/*docFreq2*/, maxDocs/*1211*/);
 		//Solrのスコアデータを格納する
 		ranking.solrScoreImport(debug);
 		//ランキング修正結果を返す
 		List<Map<String, Object>> documentResult = ranking.ranking();
 		//Documentをランキング順に表示する
-		for (int i = 0; i < documentResult.size(); i++) {
+		for (int i = 0; i < /*documentResult.size()*/10; i++) {
 			//ランキング結果を順番に表示
-			System.out.println(solrResultMap.get(documentResult.get(i).get("id")).getFieldValueMap());
+			System.out.println("---------- " + (i+1) + " ----------");
+			System.out.println("score : " + documentResult.get(i).get("score"));
+			System.out.println("id : " + documentResult.get(i).get("id"));
+			List<String> msg = (List<String>) solrResultMap.get(documentResult.get(i).get("id")).get("text");
+			System.out.println(msg.get(0) + " " + msg.get(1));
+			System.out.println();
 		}
 	}
 }
