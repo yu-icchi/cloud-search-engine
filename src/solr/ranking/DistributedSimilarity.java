@@ -343,7 +343,7 @@ public class DistributedSimilarity {
 			//coordの部分を探す、無ければ"1"にする
 			if (str[1].indexOf("coord") != -1) {
 				float coord = extractWeight(i);
-				System.out.println("Coord:" + extractCoord(_data[i]));
+				//System.out.println("Coord:" + extractCoord(_data[i]));
 				score.setCoord(coord);
 				score.setOverlap(extractCoord(_data[i]));
 			} else {
