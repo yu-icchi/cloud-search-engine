@@ -28,6 +28,7 @@ import client.config.XMLConfig;
 import analysis.SenAnalyzerExtract;
 
 import solr.ranking.DistributedSimilarity;
+import upload.consistency.ConsistentHashing;
 
 public class SolrJSearchClient {
 
@@ -82,9 +83,27 @@ public class SolrJSearchClient {
 		if (urlList == null) {
 			return;
 		}
+		//Nodes List
+
+		Map<String, String> data = location.getNodes("nodelist");
+		Iterator<String> it = data.keySet().iterator();
+		ConsistentHashing hash = new ConsistentHashing();
+		while (it.hasNext()) {
+			String id = it.next();
+			if (data.get(id).equals("active")) {
+				hash.addNode(id);
+			}
+		}
+		hash.nodeList();
+
 		for (int i = 0; i < urlList.size(); i++) {
 			//URLを取り出す
 			String url = urlList.get(i).toString();
+			/*
+			if (hash.isNode(url)) {
+				System.out.println(hash.nextNode(url));
+			}
+			*/
 			//レプリケーションとの切り替え
 			Map<String, String> replica = location.getNodes(url);
 			if (replica.get("node1") != null) {

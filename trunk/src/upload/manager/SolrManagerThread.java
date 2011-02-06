@@ -7,7 +7,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 public class SolrManagerThread {
 	public static void main(String[] args) {
 		HttpClient httpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
-		httpClient.getHostConfiguration().setHost("localhost", 8983, "http");
+		httpClient.getHostConfiguration().setHost("localhost", 6365, "http");
 		String[] urlisToGet = {
 			"/solr/admin",
 			"/solr/admin/ping"

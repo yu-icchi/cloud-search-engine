@@ -155,6 +155,10 @@ public class ConsistentHashing {
 		}
 	}
 
+	public boolean isNode(String key) {
+		return continuum.containsValue(key);
+	}
+
 	/**
 	 * searchNodeメソッド (格納する文書のアドレスを調べる)
 	 *

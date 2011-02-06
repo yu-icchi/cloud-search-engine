@@ -42,37 +42,33 @@ public class ConsistentHashingTest {
 		List<String> node2 = new ArrayList<String>();
 		List<String> node3 = new ArrayList<String>();
 
-		for (String str : list) {
-			String node = hash.searchNode(str);
-			//System.out.println(str + " : " + node);
+		for (int i = 0; i < 400; i++) {
+			String node = hash.searchNode(list[i]);
 			if (node.equals("192.168.220.131")) {
-				node1.add(str);
+				node1.add(list[i]);
 			}
 			if (node.equals("192.168.220.132")) {
-				node2.add(str);
+				node2.add(list[i]);
 			}
 			if (node.equals("192.168.220.133")) {
-				node3.add(str);
+				node3.add(list[i]);
 			}
 		}
-		//String node = hash.searchNode("A");
 
 		System.out.println("192.168.220.131 : " + node1.size());
 		System.out.println("192.168.220.132 : " + node2.size());
 		System.out.println("192.168.220.133 : " + node3.size());
 
-		String kumo = hash.searchNode("demo/kumofs.txt");
-		System.out.println(kumo);
-
 		hash.addNode("192.168.220.134");
 		hash.nodeList();
+
+		//System.out.println(hash.prevNode("192.168.220.134"));
 
 		List<String> node11 = new ArrayList<String>();
 		List<String> node22 = new ArrayList<String>();
 
 		for (String str : node1) {
 			String node = hash.searchNode(str);
-			//System.out.println(str + " : " + node);
 			if (node.equals("192.168.220.131")) {
 				node11.add(str);
 			}
@@ -84,46 +80,63 @@ public class ConsistentHashingTest {
 		System.out.println("192.168.220.131 : " + node11.size());
 		System.out.println("192.168.220.134 : " + node22.size());
 
+		System.out.println();
+
+		//List<String> node4 = new ArrayList<String>();
+
+		for (int i = 400; i < 800; i++) {
+			String node = hash.searchNode(list[i]);
+			if (node.equals("192.168.220.131")) {
+				node11.add(list[i]);
+			}
+			if (node.equals("192.168.220.132")) {
+				node2.add(list[i]);
+			}
+			if (node.equals("192.168.220.133")) {
+				node3.add(list[i]);
+			}
+			if (node.equals("192.168.220.134")) {
+				node22.add(list[i]);
+			}
+		}
+
+		System.out.println("192.168.220.131 : " + node11.size());
+		System.out.println("192.168.220.132 : " + node2.size());
+		System.out.println("192.168.220.133 : " + node3.size());
+		System.out.println("192.168.220.134 : " + node22.size());
+
 		hash.addNode("192.168.220.135");
 		hash.nodeList();
-
 
 		List<String> node33 = new ArrayList<String>();
 		List<String> node44 = new ArrayList<String>();
 
+		int i = 0;
+
 		for (String str : node2) {
 			String node = hash.searchNode(str);
-			//System.out.println(str + " : " + node);
 			if (node.equals("192.168.220.132")) {
 				node33.add(str);
 			}
 			if (node.equals("192.168.220.135")) {
 				node44.add(str);
 			}
+			if (node.equals("192.168.220.131")) {
+				System.out.println(node + " : " + str);
+			}
+			if (node.equals("192.168.220.133")) {
+				System.out.println(node + " : " + str);
+			}
+			if (node.equals("192.168.220.134")) {
+				//System.out.println(node + " : " + str);
+				i++;
+			}
 		}
 
 		System.out.println("192.168.220.132 : " + node33.size());
 		System.out.println("192.168.220.135 : " + node44.size());
 
-		hash.addNode("192.168.220.136");
-		hash.nodeList();
-
-		List<String> node55 = new ArrayList<String>();
-		List<String> node66 = new ArrayList<String>();
-
-		for (String str : node2) {
-			String node = hash.searchNode(str);
-			//System.out.println(str + " : " + node);
-			if (node.equals("192.168.220.132")) {
-				node55.add(str);
-			}
-			if (node.equals("192.168.220.136")) {
-				node66.add(str);
-			}
-		}
-
-		System.out.println("192.168.220.132 : " + node55.size());
-		System.out.println("192.168.220.136 : " + node66.size());
+		System.out.println(i);
 
 		/*
 		//仮想ノードなし
