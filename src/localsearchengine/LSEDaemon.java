@@ -33,7 +33,7 @@ public class LSEDaemon {
 			System.out.println(xml.get("location"));
 			System.out.println(xml.get("nodes"));
 			System.out.println(xml.get("solr"));
-			//Deamon実行
+			//Daemon実行
 			daemon = new Daemon();
 			//初期設定
 			daemon.dir((String) xml.get("dir"));
