@@ -23,13 +23,13 @@ public class LocationTest {
 		map.put("192.168.220.134:6365", "active");
 
 		Location location = new Location();
-		location.setNodes("nodelist", map);
+		//location.setNodes("nodelist", map);
 
-		location.setNodes("nodelist", "192.168.220.132:6365", "fault");
+		//location.setNodes("nodelist", "192.168.220.132:6365", "fault");
 
-		//location.deleteNodes("nodelist", "192.168.220.132:6365");
+		//location.deleteNodes("nodelist", "http://192.168.220.131:6365/solr/core0/");
 
-		//location.setNodes("nodelist", "192.168.220.134:6365", "fault");
+		//location.setNodes("nodelist", "192.168.220.132:6365", "fault");
 
 		Map<String, String> data = location.getNodes("nodelist");
 
@@ -51,6 +51,7 @@ public class LocationTest {
 
 		}
 
+
 		hash.nodeList();
 		System.out.println(fault);
 
@@ -67,6 +68,7 @@ public class LocationTest {
 		}
 
 		System.out.println(url);
+
 
 		//System.out.println(data.get("node1"));
 		//System.out.println(data.get("node2"));

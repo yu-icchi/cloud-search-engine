@@ -25,9 +25,9 @@ public class SolrClient {
 
 	private int start = 0;
 
-	public SolrClient(String adress) {
+	public SolrClient(String address) {
 		try {
-			server = new CommonsHttpSolrServer(adress);
+			server = new CommonsHttpSolrServer(address);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
