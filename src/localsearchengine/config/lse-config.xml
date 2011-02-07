@@ -2,14 +2,16 @@
 <lse-config>
 	<dir>aozora</dir>
 	<location>
-		<host>localhost</host>
+		<host>192.168.168.168</host>
 		<port>9160</port>
 	</location>
 	<nodes>
-		<node>192.168.1.3</node>
+		<node>192.168.168.164</node>
+		<node>192.168.168.165</node>
+		<node>192.168.168.167</node>
 	</nodes>
 	<solr>
-		<host>localhost</host>
+		<host>192.168.168.164</host>
 		<port>6365</port>
 	</solr>
 </lse-config>

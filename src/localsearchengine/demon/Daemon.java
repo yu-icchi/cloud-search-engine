@@ -1,5 +1,5 @@
 //---------------------------------------------------------
-//Deamonクラス
+//Daemonクラス
 //
 //LSEの処理をするメインのクラスである。
 //LSEでローカルファイルシステムにアクセスして、更新などの処理に対してSolrにインデックス作成をさせる。
@@ -283,10 +283,10 @@ public class Daemon {
 					//solrサーバに接続する
 					SolrServer solr = new CommonsHttpSolrServer(node);
 					solr.deleteById(filepath);
-					solr.commit();
+					//solr.commit();
 					solr.optimize();
 					//locationへ通知する
-					//this.locationUpdate();
+					this.locationUpdate();
 					System.out.println("success");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -315,20 +315,20 @@ public class Daemon {
 				//solrに格納する
 				FileCrawler crawler = new FileCrawler(TARGET_DIR.getName(), file, node);
 				//Solrを更新
-				/*
+
 				try {
 					SolrServer solr = new CommonsHttpSolrServer(node);
-					solr.commit();
+					//solr.commit();
 					solr.optimize();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				*/
+
 				flag = crawler.setIndex();
 			}
 			if (flag) {
 				//locationへ通知する
-				//this.locationUpdate();
+				this.locationUpdate();
 				System.out.println("success");
 			}
 		}
@@ -360,13 +360,23 @@ public class Daemon {
 					node = "http://" + node + ":" + solrPort + "/solr/";
 					//solrに格納する
 					FileCrawler crawler = new FileCrawler(TARGET_DIR.getName(), file, node);
+					//Solrを更新
+
+					try {
+						SolrServer solr = new CommonsHttpSolrServer(node);
+						//solr.commit();
+						solr.optimize();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
 					flag = crawler.setIndex();
 				}
 			}
 		}
 		if (flag) {
 			//locationへ通知する
-			//this.locationUpdate();
+			this.locationUpdate();
 			System.out.println("success");
 		}
 	}
