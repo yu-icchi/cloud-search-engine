@@ -46,10 +46,8 @@ public class LSEDaemon {
 			//daemon.solrConfigWriter("core2");
 			//スタート
 			daemon.start();
-			for (int i = 0; i < 1000; i++) {
-				Thread.sleep(10 * 1000L);
-				daemon.put("data" + i);
-			}
+			//無限ループ
+			while (true);
 
 		} catch (Exception e) {
 			e.printStackTrace();
