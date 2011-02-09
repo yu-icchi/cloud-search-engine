@@ -17,6 +17,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+
 import location.qbss.QbSS;
 import location.query.LocationQueryConverter;
 
@@ -31,7 +37,7 @@ public class Location {
 	//Solrサーバのタームフィールドの指定
 	static String _termField = "text";
 	//ホスト名
-	static String _host = "localhost";
+	static String _host = "192.168.168.164";
 	//ポート番号
 	static int _port = 9160;
 	//クエリ
@@ -125,7 +131,7 @@ public class Location {
 				//MaxDocsデータを格納する
 				setMaxDocs(url);
 				//idf値を取得する
-				List<Object> list = docFreq(url + "terms");
+				List<Object> list = docFreq(url + "terms?terms.fl=" + _termField + "&terms.limit=-1&terms.raw=true&wt=json");
 				//List → List<Map<String, String>>
 				List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 				Map<String, String> map;
@@ -182,7 +188,7 @@ public class Location {
 	public static void setMaxDocs(String url) {
 		try {
 			CassandraClient cc = new CassandraClient(_host, _port);
-			cc.insertMaxDoc(url, maxDoc(url + "admin/luke"));
+			cc.insertMaxDoc(url, maxDoc(url + "admin/luke?wt=json"));
 			cc.closeConnection();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -512,6 +518,8 @@ public class Location {
 	 */
 	@SuppressWarnings("unchecked")
 	private static List docFreq(String url) throws Exception {
+		System.out.println("docFreq");
+		/*
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL(url);
 		URLConnection con = solrURL.openConnection();
@@ -524,10 +532,29 @@ public class Location {
 		//JSONをListで取り出す
 		String line = in.readLine();
 		Map map = (Map) JSON.decode(line);
-		//System.out.println(map);
+		System.out.println(map);
 		List list = (List) map.get("terms");
 		//返す
 		return (List) list.get(1);
+		*/
+		HttpClient httpClient = new HttpClient();
+		PostMethod method = new PostMethod(url);
+		try {
+			int status = httpClient.executeMethod(method);
+			if (status != HttpStatus.SC_OK) {
+				System.out.println("Method failed: " + method.getStatusText());
+			}
+			byte[] responseBody = method.getResponseBody();
+			System.out.println(new String(responseBody));
+			Map map = (Map) JSON.decode(new String(responseBody));
+			List list = (List) map.get("terms");
+			return (List) list.get(1);
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			method.releaseConnection();
+		}
+		return null;
 	}
 
 	/**
@@ -539,6 +566,8 @@ public class Location {
 	 */
 	@SuppressWarnings("unchecked")
 	private static String maxDoc(String url) throws Exception {
+		System.out.println("maxdoc");
+		/*
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL(url);
 		URLConnection con = solrURL.openConnection();
@@ -553,5 +582,24 @@ public class Location {
 		Map map = (Map) JSON.decode(line);
 		map = (Map) map.get("index");
 		return map.get("maxDoc").toString();
+		*/
+		HttpClient httpClient = new HttpClient();
+		PostMethod method = new PostMethod(url);
+		try {
+			int status = httpClient.executeMethod(method);
+			if (status != HttpStatus.SC_OK) {
+				System.out.println("Method failed: " + method.getStatusText());
+			}
+			byte[] responseBody = method.getResponseBody();
+			System.out.println(new String(responseBody));
+			Map map = (Map) JSON.decode(new String(responseBody));
+			map = (Map) map.get("index");
+			return map.get("maxDoc").toString();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			method.releaseConnection();
+		}
+		return null;
 	}
 }

@@ -145,9 +145,9 @@ public class FileCrawler {
 			//サーバに追加
 			solr.add(document);
 			//コミット
-			//solr.commit();
+			solr.commit();
 			//最適化
-			//solr.optimize();
+			solr.optimize();
 
 			return true;
 		} catch (Exception e) {

@@ -46,7 +46,7 @@ public class SolrForkSearchClient {
 		int locationPort = Integer.valueOf(locationConfig.get("port"));
 
 		//ユーザーからのクエリー
-		String queryString = "芥川 夏目";
+		String queryString = "猫　夏目";
 
 		//ユーザーのアカウント情報
 		String account = "aozora";

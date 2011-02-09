@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gse-config>
 	<location>
-		<host>localhost</host>
+		<host>192.168.168.164</host>
 		<port>9160</port>
 	</location>
 	<account>
@@ -9,9 +9,9 @@
 		<port>3100</port>
 	</account>
 	<nodes>
-		<node>192.168.220.131</node>
-		<node>192.168.220.132</node>
-		<node>192.168.220.133</node>
+		<node>192.168.168.165</node>
+		<node>192.168.168.166</node>
+		<node>192.168.168.167</node>
 	</nodes>
 	<lse>
 		<host>localhost</host>
