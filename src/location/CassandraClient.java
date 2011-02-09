@@ -135,7 +135,7 @@ public class CassandraClient {
 			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
 			columnPath.setColumn(url.getBytes("utf-8"));
 			//レコードを挿入
-			client.insert(KEYSPACE, "MaxDocs", columnPath, data.getBytes("utf-8"), System.currentTimeMillis(), ConsistencyLevel.QUORUM);
+			client.insert(KEYSPACE, "MaxDocs", columnPath, data.getBytes("utf-8"), System.currentTimeMillis(), ConsistencyLevel.ONE);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

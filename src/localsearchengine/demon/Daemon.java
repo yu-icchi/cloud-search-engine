@@ -238,6 +238,7 @@ public class Daemon {
 		this.removeFile();
 		this.newFile();
 		this.modifierFile();
+		this.locationUpdate();
 	}
 
 	private void locationUpdate() {
@@ -286,7 +287,7 @@ public class Daemon {
 					//solr.commit();
 					solr.optimize();
 					//locationへ通知する
-					this.locationUpdate();
+					//this.locationUpdate();
 					System.out.println("success");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -315,7 +316,7 @@ public class Daemon {
 				//solrに格納する
 				FileCrawler crawler = new FileCrawler(TARGET_DIR.getName(), file, node);
 				//Solrを更新
-
+				/*
 				try {
 					SolrServer solr = new CommonsHttpSolrServer(node);
 					//solr.commit();
@@ -323,12 +324,12 @@ public class Daemon {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-
+				*/
 				flag = crawler.setIndex();
 			}
 			if (flag) {
 				//locationへ通知する
-				this.locationUpdate();
+				//this.locationUpdate();
 				System.out.println("success");
 			}
 		}
@@ -361,7 +362,7 @@ public class Daemon {
 					//solrに格納する
 					FileCrawler crawler = new FileCrawler(TARGET_DIR.getName(), file, node);
 					//Solrを更新
-
+					/*
 					try {
 						SolrServer solr = new CommonsHttpSolrServer(node);
 						//solr.commit();
@@ -369,14 +370,14 @@ public class Daemon {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-
+					*/
 					flag = crawler.setIndex();
 				}
 			}
 		}
 		if (flag) {
 			//locationへ通知する
-			this.locationUpdate();
+			//this.locationUpdate();
 			System.out.println("success");
 		}
 	}
