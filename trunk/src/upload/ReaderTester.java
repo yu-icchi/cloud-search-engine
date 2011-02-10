@@ -11,7 +11,7 @@ public class ReaderTester {
 		//System.out.println(readerDoc.extractDoc("demo/sample.doc"));
 
 		PDFReader readerPDF = new PDFReader();
-		readerPDF.extractPDF("demo/DPSWS1992.pdf");
+		readerPDF.extractPDF("demo/a2-mapion.pdf");
 
 		//PowerPointReader readerPPT = new PowerPointReader();
 		//System.out.println(readerPPT.extractPPT("demo/sample.ppt"));
