@@ -47,8 +47,8 @@ public class LSEDaemon {
 			//スタート
 			daemon.start();
 			//無限ループ
-			while (true);
-
+			//while (true);
+			Thread.sleep(3600 * 1000L);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

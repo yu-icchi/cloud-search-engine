@@ -46,7 +46,7 @@ public class SolrForkSearchClient {
 		int locationPort = Integer.valueOf(locationConfig.get("port"));
 
 		//ユーザーからのクエリー
-		String queryString = "猫　夏目";
+		String queryString = "芥川龍之介";
 
 		//ユーザーのアカウント情報
 		String account = "aozora";
@@ -78,7 +78,7 @@ public class SolrForkSearchClient {
 		SolrFork server = new SolrFork();
 
 		//アクセス先とキーワード
-		server.searchExplain(urlList, "(" + queryString + ") AND account:" + account);
+		server.searchExplain(urlList, "(" + queryConverter.getQuery() + ") AND account:" + account);
 		Map<String, String> debugList = server.getExplain();
 
 		//ランキング修正

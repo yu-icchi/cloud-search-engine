@@ -23,7 +23,7 @@ public class LocationTest {
 		map.put("192.168.220.134:6365", "active");
 
 		Location location = new Location();
-		//location.setNodes("nodelist", map);
+		location.setNodes("nodelist", map);
 
 		//location.setNodes("nodelist", "192.168.220.132:6365", "fault");
 

@@ -34,7 +34,7 @@ public class PDFReader {
 			PDFTextStripper stripper = new PDFTextStripper();
 			out = new ByteArrayOutputStream();
 			stripper.writeText(pdf, new BufferedWriter(new OutputStreamWriter(out)));
-			System.out.println(out.toString().trim());
+			System.out.println(stripper.getText(pdf));
 			pdfStream.close();
 		} catch(FileNotFoundException e) {
 			e.printStackTrace();
@@ -52,20 +52,29 @@ public class PDFReader {
 	 */
 	public SolrInputDocument extractPDF(String filePath, SolrInputDocument document) {
 		ByteArrayOutputStream out = null;
+		FileInputStream pdfStream = null;
+		PDDocument pdf = null;
 		try {
-			FileInputStream pdfStream = new FileInputStream(filePath);
+			pdfStream = new FileInputStream(filePath);
 			PDFParser parser = new PDFParser(pdfStream);
 			parser.parse();
-			PDDocument pdf = parser.getPDDocument();
+			pdf = parser.getPDDocument();
 			PDFTextStripper stripper = new PDFTextStripper();
 			out = new ByteArrayOutputStream();
 			stripper.writeText(pdf, new BufferedWriter(new OutputStreamWriter(out)));
 			document.addField("text", out.toString());
-			pdfStream.close();
-			return document;
+			//document.addField("text", stripper.getText(pdf));
 		} catch(Exception e) {
-			return document;
+			e.printStackTrace();
+		} finally {
+			try {
+				pdf.close();
+				pdfStream.close();
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		return document;
 	}
-
 }
