@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lse-config>
-	<dir>aozora</dir>
+	<dir>data</dir>
 	<location>
-		<host>192.168.168.164</host>
+		<host>192.168.168.163</host>
 		<port>9160</port>
 	</location>
 	<nodes>

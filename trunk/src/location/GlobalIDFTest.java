@@ -11,7 +11,7 @@ public class GlobalIDFTest {
 	 */
 	public static void main(String[] args) throws Exception {
 		long time = System.currentTimeMillis();
-		Location g_idf = new Location("192.168.168.164", 9160);
+		Location g_idf = new Location("192.168.168.163", 9160);
 
 		//-------------------------------------------------
 		//setメソッド

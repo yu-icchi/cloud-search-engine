@@ -545,7 +545,7 @@ public class Location {
 				System.out.println("Method failed: " + method.getStatusText());
 			}
 			byte[] responseBody = method.getResponseBody();
-			System.out.println(new String(responseBody));
+			//System.out.println(new String(responseBody));
 			Map map = (Map) JSON.decode(new String(responseBody));
 			List list = (List) map.get("terms");
 			return (List) list.get(1);
@@ -591,7 +591,7 @@ public class Location {
 				System.out.println("Method failed: " + method.getStatusText());
 			}
 			byte[] responseBody = method.getResponseBody();
-			System.out.println(new String(responseBody));
+			//System.out.println(new String(responseBody));
 			Map map = (Map) JSON.decode(new String(responseBody));
 			map = (Map) map.get("index");
 			return map.get("maxDoc").toString();
