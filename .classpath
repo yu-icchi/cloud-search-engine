@@ -39,8 +39,6 @@
 	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/lucene-snowball-2.9.3.jar"/>
 	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/lucene-spellchecker-2.9.3.jar"/>
 	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/servlet-api-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/slf4j-api-1.5.5.jar"/>
-	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/slf4j-jdk14-1.5.5.jar"/>
 	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/wstx-asl-3.2.7.jar"/>
 	<classpathentry kind="lib" path="lib/jsonic-1.2.0/jsonic-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/juniversalchardet-1.0.3.jar"/>
@@ -56,7 +54,6 @@
 	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/dist/solrj-lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/dist/solrj-lib/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/dist/solrj-lib/jcl-over-slf4j-1.5.5.jar"/>
-	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/dist/solrj-lib/slf4j-api-1.5.5.jar"/>
 	<classpathentry kind="lib" path="lib/apache-solr-1.4.1/dist/solrj-lib/wstx-asl-3.2.7.jar"/>
 	<classpathentry kind="lib" path="lib/pdfbox/pdfbox-app-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/poi/poi-scratchpad-3.6-20091214.jar"/>
