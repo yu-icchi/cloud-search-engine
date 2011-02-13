@@ -53,7 +53,6 @@ public class PDFReader {
 				System.out.println(out.toString().substring(beginIndex, endIndex).trim());
 			}
 			//System.out.println(stripper.getText(pdf));
-			pdfStream.close();
 		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		} catch(IOException e) {
@@ -93,28 +92,27 @@ public class PDFReader {
 			int beginIndex = 0;
 			int endIndex = 0;
 			//一行ごと書き込み
-			System.out.println(out.toString().length());
+			//System.out.println(out.toString().length());
 			for (int i = 0; i < out.toString().length(); i++) {
 				beginIndex = COUNT * i;
 				endIndex = beginIndex + COUNT;
 				if (out.toString().length() < endIndex) {
 					endIndex = out.toString().length();
-					System.out.println(beginIndex + " : " + endIndex);
-					System.out.println(out.toString().substring(beginIndex, endIndex).trim());
+					//System.out.println(beginIndex + " : " + endIndex);
+					//System.out.println(out.toString().substring(beginIndex, endIndex).trim());
 					document.addField("text", out.toString().substring(beginIndex, endIndex).trim());
+					//終了
 					break;
 				}
-				System.out.println(beginIndex + " : " + endIndex);
-				System.out.println(out.toString().substring(beginIndex, endIndex).trim());
+				//System.out.println(beginIndex + " : " + endIndex);
+				//System.out.println(out.toString().substring(beginIndex, endIndex).trim());
 				document.addField("text", out.toString().substring(beginIndex, endIndex).trim());
 			}
-			pdfStream.close();
-		} catch(FileNotFoundException e) {
-			e.printStackTrace();
-		} catch(IOException e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
+				//クローズ処理
 				pdf.close();
 				pdfStream.close();
 				out.close();

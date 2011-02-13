@@ -122,13 +122,18 @@ public class FileCrawler {
 			//フィールドの指定
 			document.addField("id", FileCrawler.file.getPath());
 			document.addField("account", FileCrawler.account);
-
+			document.addField("type", suffix);
 			System.out.println(new Date(file.lastModified()));
+			document.addField("time", new Date(file.lastModified()).toString());
 			System.out.println(file.getPath());
+			document.addField("path", file.getPath());
 			System.out.println(file.length());
+			document.addField("size", file.length());
+			System.out.println(file.getName());
+			document.addField("title", file.getName());
 
 			//拡張子により読み込み処理を変える
-			if (suffix.equals("txt")) {
+			if (suffix.equals("txt") || suffix.equals("html")) {
 				TextFileReader reader = new TextFileReader();
 				document = reader.extractText(file.getPath(), document);
 			} else if (suffix.equals("doc")) {

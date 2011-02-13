@@ -42,6 +42,8 @@ public class Daemon {
 	//登録されているファイルの最終更新時刻
 	private Map<String, Long> lastmodifieds;
 
+	private boolean LSFLAG = false;
+
 	List<File> list = new ArrayList<File>();
 
 	//Consistent Hashingのデータ
@@ -52,7 +54,7 @@ public class Daemon {
 	//
 	private String lseSolrServer;
 	//solr port
-	private String solrPort = "6365";
+	private String solrPort = "8983";
 
 	private String lseNode;
 
@@ -127,6 +129,7 @@ public class Daemon {
 	public void lseSolr(Map<String, String> server) {
 		lseNode = server.get("host");
 		lseSolrServer = "http://" + server.get("host") + ":" + server.get("port") + "/solr/";
+		setSolrPort(Integer.valueOf(server.get("port")).intValue());
 	}
 
 	public String getLSESolr() {
@@ -241,12 +244,25 @@ public class Daemon {
 		this.locationUpdate();
 	}
 
+
 	private void locationUpdate() {
-		//locationへ通知する
-		Location ls = new Location(locationServerHost, locationServerPort);
-		for (String node : locationServerList) {
-			node = "http://" + node + ":" + solrPort + "/solr/";
-			ls.set(node);
+		if (LSFLAG == true) {
+			//locationへ通知する
+			Location ls = new Location(locationServerHost, locationServerPort);
+			for (String node : locationServerList) {
+				node = "http://" + node + ":" + solrPort + "/solr/";
+				ls.set(node);
+			}
+			LSFLAG = false;
+			System.out.println("end locationUpdate");
+		}
+	}
+
+
+	private void threadLocationUpdate(String node) {
+		if (LSFLAG) {
+			ThreadLocation th = new ThreadLocation(node);
+			th.start();
 		}
 	}
 
@@ -288,12 +304,15 @@ public class Daemon {
 					solr.optimize();
 					//locationへ通知する
 					//this.locationUpdate();
+					//this.threadLocationUpdate(node);
+					LSFLAG = true;
 					System.out.println("success");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
+		//this.threadLocationUpdate(lseSolrServer);
 	}
 
 	/**
@@ -326,6 +345,8 @@ public class Daemon {
 				}
 				*/
 				flag = crawler.setIndex();
+				LSFLAG = flag;
+				//this.threadLocationUpdate(node);
 			}
 			if (flag) {
 				//locationへ通知する
@@ -333,7 +354,7 @@ public class Daemon {
 				System.out.println("success");
 			}
 		}
-
+		//this.threadLocationUpdate(locationServerHost);
 	}
 
 	/**
@@ -372,6 +393,8 @@ public class Daemon {
 					}
 					*/
 					flag = crawler.setIndex();
+					LSFLAG = flag;
+					//this.threadLocationUpdate(node);
 				}
 			}
 		}
@@ -380,6 +403,7 @@ public class Daemon {
 			//this.locationUpdate();
 			System.out.println("success");
 		}
+		//this.threadLocationUpdate(locationServerHost);
 	}
 
 	/**
@@ -428,5 +452,18 @@ public class Daemon {
 			}
 		}
 
+	}
+
+	private class ThreadLocation extends Thread {
+
+		private String node;
+
+		public ThreadLocation(String node) {
+			this.node = node;
+		}
+		public void run() {
+			Location ls = new Location(locationServerHost, locationServerPort);
+			ls.set("http://" + this.node + ":" + solrPort + "/solr/");
+		}
 	}
 }

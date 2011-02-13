@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gse-config>
 	<location>
-		<host>192.168.168.161</host>
+		<host>192.168.220.141</host>
 		<port>9160</port>
 	</location>
 	<account>
