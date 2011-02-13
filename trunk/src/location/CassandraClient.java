@@ -380,7 +380,7 @@ public class CassandraClient {
 			slicePredicate.setSlice_range(sliceRange);
 			//multigetメソッドを使う
 			Map<String, List<ColumnOrSuperColumn>> results = client.multiget_slice(KEYSPACE,
-					keys, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
+					keys, columnParent, slicePredicate, ConsistencyLevel.ONE);
 			//出力する
 			//結果を出力する変数
 			List<Map<String, String>> lists = new ArrayList<Map<String, String>>();
@@ -532,7 +532,7 @@ public class CassandraClient {
 			sliceRange.setFinish(new byte[] {});
 			slicePredicate.setSlice_range(sliceRange);
 			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
-			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, "MaxDocs", columnParent, slicePredicate, ConsistencyLevel.QUORUM);
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, "MaxDocs", columnParent, slicePredicate, ConsistencyLevel.ONE);
 			//結果を出力する変数
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (ColumnOrSuperColumn c : results) {

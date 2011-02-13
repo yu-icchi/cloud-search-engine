@@ -11,12 +11,12 @@ public class GlobalIDFTest {
 	 */
 	public static void main(String[] args) throws Exception {
 		long time = System.currentTimeMillis();
-		Location g_idf = new Location("192.168.168.163", 9160);
+		Location g_idf = new Location("192.168.220.136", 9160);
 
 		//-------------------------------------------------
 		//setメソッド
 		//-------------------------------------------------
-		g_idf.set("http://192.168.168.167:6365/solr/");
+		g_idf.set("http://192.168.220.137:8983/solr/");
 		//g_idf.set("http://localhost:6365/solr/");
 		//g_idf.setSuperColumn("http://localhost:8983/solr/");
 		//g_idf.setSuperColumn("http://localhost:7574/solr/");
@@ -38,7 +38,7 @@ public class GlobalIDFTest {
 		//Map<String, Object> obj = g_idf.get(list);
 		//System.out.println(obj);
 
-		System.out.println(g_idf.get("solr"));
+		//System.out.println(g_idf.get("solr"));
 
 		//System.out.println(GlobalIDF.getMaxDocs());
 

@@ -1,27 +1,22 @@
 //---------------------------------------------------------
-//GlobalIDFクラス(URLを指定し、データベースからGlobal-IDFの値を登録・取得する)
+//Location Databaseアクセスするクラス(URLを指定し、データベースからdocFreq・maxDocの値を登録・取得する)
 //
-//直接Cassandraにアクセスし、データベースの管理をしる
+//直接Cassandraにアクセスし、データベースの管理をする
 //---------------------------------------------------------
 package location;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.request.LukeRequest;
+import org.apache.solr.client.solrj.response.LukeResponse;
 
 import location.qbss.QbSS;
 import location.query.LocationQueryConverter;
@@ -188,7 +183,8 @@ public class Location {
 	public static void setMaxDocs(String url) {
 		try {
 			CassandraClient cc = new CassandraClient(_host, _port);
-			cc.insertMaxDoc(url, maxDoc(url + "admin/luke?wt=json"));
+			//cc.insertMaxDoc(url, maxDoc(url + "admin/luke?wt=json"));
+			cc.insertMaxDoc(url, maxDoc(url));
 			cc.closeConnection();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -518,7 +514,7 @@ public class Location {
 	 */
 	@SuppressWarnings("unchecked")
 	private static List docFreq(String url) throws Exception {
-		System.out.println("docFreq");
+		System.out.println("server : " + url);
 		/*
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL(url);
@@ -548,6 +544,8 @@ public class Location {
 			//System.out.println(new String(responseBody));
 			Map map = (Map) JSON.decode(new String(responseBody));
 			List list = (List) map.get("terms");
+			Map time = (Map) map.get("responseHeader");
+			System.out.println("QTime : " + time.get("QTime"));
 			return (List) list.get(1);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -565,8 +563,8 @@ public class Location {
 	 *  @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private static String maxDoc(String url) throws Exception {
-		System.out.println("maxdoc");
+	public static String maxDoc(String url) throws Exception {
+		System.out.println("server : " + url);
 		/*
 		//POST送信でトップサーバにアクセス
 		URL solrURL = new URL(url);
@@ -583,6 +581,16 @@ public class Location {
 		map = (Map) map.get("index");
 		return map.get("maxDoc").toString();
 		*/
+		//SolrJ使用
+		SolrServer solr = new CommonsHttpSolrServer(url);
+		LukeRequest luke = new LukeRequest();
+		luke.setShowSchema(false);
+		LukeResponse rsp = luke.process(solr);
+		Integer max = rsp.getMaxDoc();
+		System.out.println("maxDoc : " + max);
+		return max.toString();
+		/*
+		//HttpClient使用
 		HttpClient httpClient = new HttpClient();
 		PostMethod method = new PostMethod(url);
 		try {
@@ -601,5 +609,6 @@ public class Location {
 			method.releaseConnection();
 		}
 		return null;
+		*/
 	}
 }

@@ -46,10 +46,10 @@ public class SolrForkSearchClient {
 		int locationPort = Integer.valueOf(locationConfig.get("port"));
 
 		//ユーザーからのクエリー
-		String queryString = "芥川龍之介";
+		String queryString = "中国";
 
 		//ユーザーのアカウント情報
-		String account = "aozora";
+		String account = "data";
 
 		//検索数
 		int rows = 10;
@@ -86,6 +86,11 @@ public class SolrForkSearchClient {
 		ranking.solrScoreImport(debugList);
 		List<Map<String, Object>> documentResult = ranking.ranking();
 		//System.out.println(documentResult);
+
+		//10件以下の場合
+		if (documentResult.size() < rows) {
+			rows = documentResult.size();
+		}
 
 		//上位10件のidの列挙
 		String ids = "";

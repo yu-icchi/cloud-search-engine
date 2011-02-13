@@ -17,12 +17,11 @@ public class LocationTest {
 	public static void main(String[] args) throws Exception {
 
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("192.168.220.131:6365", "active");
-		map.put("192.168.220.132:6365", "active");
-		map.put("192.168.220.133:6365", "active");
-		map.put("192.168.220.134:6365", "active");
+		map.put("192.168.220.137:8983", "active");
+		map.put("192.168.220.139:8983", "active");
+		map.put("192.168.220.140:8983", "active");
 
-		Location location = new Location();
+		Location location = new Location("192.168.220.141", 9160);
 		location.setNodes("nodelist", map);
 
 		//location.setNodes("nodelist", "192.168.220.132:6365", "fault");
