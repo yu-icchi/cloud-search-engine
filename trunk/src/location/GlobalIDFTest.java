@@ -16,7 +16,7 @@ public class GlobalIDFTest {
 		//-------------------------------------------------
 		//setメソッド
 		//-------------------------------------------------
-		g_idf.set("http://192.168.220.137:8983/solr/");
+		g_idf.set("http://192.168.220.140:8983/solr/");
 		//g_idf.set("http://localhost:6365/solr/");
 		//g_idf.setSuperColumn("http://localhost:8983/solr/");
 		//g_idf.setSuperColumn("http://localhost:7574/solr/");
