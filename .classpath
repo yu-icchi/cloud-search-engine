@@ -71,8 +71,6 @@
 	<classpathentry kind="lib" path="lib/hadoop/hadoop-hdfs-0.21.0.jar"/>
 	<classpathentry kind="lib" path="lib/hadoop/hadoop-common-0.21.0.jar"/>
 	<classpathentry kind="lib" path="lib/hadoop/hadoop-mapred-0.21.0.jar"/>
-	<classpathentry kind="lib" path="app/SecondLevelSolr/sen1/sen/lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="app/SecondLevelSolr/sen1/sen/lib/sen.jar"/>
 	<classpathentry kind="lib" path="lib/msgpack-0.5.1-devel.jar"/>
 	<classpathentry kind="lib" path="lib/msgpack-rpc-0.6.1-devel.jar"/>
 	<classpathentry kind="lib" path="lib/netty-3.2.4.Final.jar"/>
