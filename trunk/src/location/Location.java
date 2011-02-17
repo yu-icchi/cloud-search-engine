@@ -32,7 +32,7 @@ public class Location {
 	//Solrサーバのタームフィールドの指定
 	static String _termField = "text";
 	//ホスト名
-	static String _host = "192.168.168.164";
+	static String _host = "localhost";
 	//ポート番号
 	static int _port = 9160;
 	//クエリ
@@ -116,58 +116,57 @@ public class Location {
 	/**
 	 * setメソッド(格納)
 	 *
-	 *  @param url (String) URLを指定する
+	 *  @param host (String) HOST名を指定する
 	 */
 	@SuppressWarnings("unchecked")
-	public void set(String url) {
-		try {
-			//URLのチェック
-			if (urlCheck(url)) {
-				//MaxDocsデータを格納する
-				setMaxDocs(url);
-				//idf値を取得する
-				List<Object> list = docFreq(url + "terms?terms.fl=" + _termField + "&terms.limit=-1&terms.raw=true&wt=json");
-				//List → List<Map<String, String>>
-				List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-				Map<String, String> map;
-				for (int i = 0; i < list.size(); i+=2) {
-					map = new HashMap<String, String>();
-					map.put("term", list.get(i).toString());
-					map.put("docFreq", list.get(i + 1).toString());
-					map.put("url", url);
-					data.add(map);
-				}
-				//Cassandraに接続する
-				CassandraClient cc = new CassandraClient(_host, _port);
-				cc.insertDocFreq(data);
-				cc.closeConnection();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public void set(String host, String port) throws Exception {
+		//MaxDocsデータを格納する
+		setMaxDocs(host, port);
+		//docFreq値を取得する
+		List<Object> list = docFreq(host, port);
+		//List → List<Map<String, String>>
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		Map<String, String> map;
+		for (int i = 0; i < list.size(); i+=2) {
+			map = new HashMap<String, String>();
+			map.put("term", list.get(i).toString());
+			map.put("docFreq", list.get(i + 1).toString());
+			map.put("url", host);
+			data.add(map);
 		}
+		//Cassandraに接続する
+		CassandraClient cc = new CassandraClient(_host, _port);
+		cc.insertDocFreq(data);
+		cc.closeConnection();
 	}
 
 	/**
-	 * setNodesメソッド
+	 * setNodesメソッド（まとめて保存）
 	 *
 	 * @param nodes
 	 */
-	public void setNodes(String host, Map<String, String> nodes) {
+	public void setNodes(Map<String, String> nodes) {
 		try {
 			//Cassandraに接続する
 			CassandraClient cc = new CassandraClient(_host, _port);
-			cc.insertMap(host, nodes);
+			cc.insertNodes(nodes);
 			cc.closeConnection();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void setNodes(String host, String type, String node) {
+	/**
+	 * setNodesメソッド（1つ保存）
+	 *
+	 * @param host
+	 * @param type
+	 */
+	public void setNodes(String host, String type) {
 		try {
 			//Cassandraに接続する
 			CassandraClient cc = new CassandraClient(_host, _port);
-			cc.insertNodes(host, type, node);
+			cc.insertNodes(host, type);
 			cc.closeConnection();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -180,11 +179,10 @@ public class Location {
 	 *  @param  url (String) URLを指定する
 	 *  @throws Exception
 	 */
-	public static void setMaxDocs(String url) {
+	public static void setMaxDocs(String host, String port) {
 		try {
 			CassandraClient cc = new CassandraClient(_host, _port);
-			//cc.insertMaxDoc(url, maxDoc(url + "admin/luke?wt=json"));
-			cc.insertMaxDoc(url, maxDoc(url));
+			cc.insertMaxDoc(host, maxDoc(host, port));
 			cc.closeConnection();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -227,9 +225,14 @@ public class Location {
 		return data;
 	}
 
-	public Map<String, String> getNodes(String host) {
+	/**
+	 * getNodesメソッド
+	 * @param host
+	 * @return
+	 */
+	public Map<String, String> getNodes() {
 		CassandraClient cc = new CassandraClient(_host, _port);
-		Map<String, String> map = cc.getNodes(host);
+		Map<String, String> map = cc.getNodes();
 		cc.closeConnection();
 		return map;
 	}
@@ -254,7 +257,7 @@ public class Location {
 		CassandraClient cc = new CassandraClient(_host, _port);
 		//複数クエリの結果を取得する
 		List<Map<String, String>> list = cc.get(input);
-		System.out.println(list);
+		//System.out.println(list);
 		//接続を切断する
 		cc.closeConnection();
 		//結果をまとめる
@@ -284,7 +287,7 @@ public class Location {
 				urls.put(map.get("key"), rightList);
 			}
 		}
-		System.out.println(urls);
+		//System.out.println(urls);
 		//query式が与えられているか
 		//if (!_query.isEmpty()) {
 			//QbSS
@@ -383,19 +386,16 @@ public class Location {
 	 *  @param url (String) URLを指定する
 	 */
 	@SuppressWarnings("unchecked")
-	public void delete(String url) {
+	public void delete(String host, String port) {
 		try {
-			//URLのチェック
-			if (urlCheck(url)) {
-				//idf値を取得する
-				List list = docFreq(url + "terms");
-				for (int i = 0; i < list.size(); i+=2) {
-					//Cassandraのデータベースを削除する
-					CassandraClient cc = new CassandraClient(_host, _port);
-					//一致するタームフィールドを削除する
-					cc.delete(list.get(i).toString(), url);
-					cc.closeConnection();
-				}
+			//docFreq値を取得する
+			List list = docFreq(host, port);
+			for (int i = 0; i < list.size(); i+=2) {
+				//Cassandraのデータベースを削除する
+				CassandraClient cc = new CassandraClient(_host, _port);
+				//一致するタームフィールドを削除する
+				cc.delete(list.get(i).toString(), host);
+				cc.closeConnection();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -405,17 +405,14 @@ public class Location {
 	/**
 	 * deleteURLメソッド
 	 *
-	 * @param url
+	 * @param host
 	 * @throws Exception
 	 */
-	public void deleteURL(String url) throws Exception {
-		//URLのチェック
-		if (urlCheck(url)) {
-			//Cassandraにアクセスする
-			CassandraClient cc = new CassandraClient(_host, _port);
-			cc.deleteURL(url);
-			cc.closeConnection();
-		}
+	public void deleteURL(String host) throws Exception {
+		//Cassandraにアクセスする
+		CassandraClient cc = new CassandraClient(_host, _port);
+		cc.deleteURL(host);
+		cc.closeConnection();
 	}
 
 	/**
@@ -432,20 +429,22 @@ public class Location {
 	/**
 	 * deleteMaxDocsメソッド
 	 *
-	 * @param url (String)MaxDocsの中から指定したURLを削除する
+	 * @param host (String)MaxDocsの中から指定したURLを削除する
 	 */
-	public void deleteMaxDocs(String url) {
-		//URLのチェック
-		if (urlCheck(url)) {
-			CassandraClient cc = new CassandraClient(_host, _port);
-			cc.delete("MaxDocs", url);
-			cc.closeConnection();
-		}
+	public void deleteMaxDocs(String host) {
+		CassandraClient cc = new CassandraClient(_host, _port);
+		//MD5("MaxDocs")=>9b8fc883a0157d95b549084d9958a2dd
+		cc.delete("9b8fc883a0157d95b549084d9958a2dd", host);
+		cc.closeConnection();
 	}
 
-	public void deleteNodes(String host, String type) {
+	/**
+	 * deleteNodesメソッド
+	 * @param host
+	 */
+	public void deleteNodes(String host) {
 		CassandraClient cc = new CassandraClient(_host, _port);
-		cc.delete(host, type);
+		cc.deleteNodes(host);
 		cc.closeConnection();
 	}
 
@@ -471,11 +470,9 @@ public class Location {
 	public static int getMaxDocs() {
 		int maxDocs_number = 0;
 		CassandraClient cc = new CassandraClient(_host, _port);
-		//cc.insertMaxDoc(url, maxDoc(url + "admin/luke"));
 		List<Map<String, String>> list = cc.getMaxDocs();
 		for (int i = 0; i < list.size(); i++) {
 			for (Map.Entry<String, String> e : list.get(i).entrySet()) {
-				//System.out.println(e.getKey() + " : " + e.getValue());
 				if (e.getKey().equals("maxDocs")) {
 					int n = Integer.valueOf(e.getValue()).intValue();
 					maxDocs_number += n;
@@ -487,65 +484,29 @@ public class Location {
 	}
 
 	/**
-	 * urlCheckメソッド
-	 *
-	 *  @param url (String) URLを指定する
-	 *   @return (boolean) True or False
-	 */
-	private static boolean urlCheck(String url) {
-		//「http://localhost:8983/solr/」or「http://localhost:8983/solr/core0/」のような形にマッチするようになっている(\\/[-_a-zA-Z0-9]+)*
-		//final String MATCH_URL = "^https?:\\/\\/[-_.a-zA-Z0-9]+(:[0-9]+)*(\\/solr\\/)$";
-		//Pattern pattern = Pattern.compile(MATCH_URL);
-		//Matcher match = pattern.matcher(url);
-		//if (match.find()) {
-		//	return true;
-		//} else {
-		//	return false;
-		//}
-		return true;
-	}
-
-	/**
 	 * docFreqメソッド(SolrサーバのdocFreqの値を取得する)
 	 *
-	 *  @param url (String) URLを指定する
+	 *  @param host (String) HOST名を指定する
 	 *  @return (List) List< Map<String, String, String> >
 	 *  @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private static List docFreq(String url) throws Exception {
-		System.out.println("server : " + url);
-		/*
-		//POST送信でトップサーバにアクセス
-		URL solrURL = new URL(url);
-		URLConnection con = solrURL.openConnection();
-		con.setDoOutput(true);
-		PrintWriter out = new PrintWriter(con.getOutputStream());
-		//パラメータ設定
-		out.print("terms.fl=" + _termField + "&terms.limit=-1&terms.raw=true&wt=json");
-		out.close();
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		//JSONをListで取り出す
-		String line = in.readLine();
-		Map map = (Map) JSON.decode(line);
-		System.out.println(map);
-		List list = (List) map.get("terms");
-		//返す
-		return (List) list.get(1);
-		*/
+	private static List docFreq(String host, String port) throws Exception {
+		String url = setSolrAddress(host, port);
+		url += "terms?terms.fl=" + _termField + "&terms.limit=-1&terms.raw=true&wt=json";
 		HttpClient httpClient = new HttpClient();
 		PostMethod method = new PostMethod(url);
 		try {
 			int status = httpClient.executeMethod(method);
 			if (status != HttpStatus.SC_OK) {
-				System.out.println("Method failed: " + method.getStatusText());
+				//System.out.println("Method failed: " + method.getStatusText());
 			}
 			byte[] responseBody = method.getResponseBody();
 			//System.out.println(new String(responseBody));
-			Map map = (Map) JSON.decode(new String(responseBody));
+			Map map = (Map) JSON.decode(new String(responseBody, "UTF-8"));
 			List list = (List) map.get("terms");
-			Map time = (Map) map.get("responseHeader");
-			System.out.println("QTime : " + time.get("QTime"));
+			//Map time = (Map) map.get("responseHeader");
+			//System.out.println("QTime : " + time.get("QTime"));
 			return (List) list.get(1);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -558,57 +519,29 @@ public class Location {
 	/**
 	 * maxDocメソッド
 	 *
-	 *  @param url (String) URLを指定する
+	 *  @param host (String) HOSTを指定する
 	 *  @return (String) maxDoc値を返す
 	 *  @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
-	public static String maxDoc(String url) throws Exception {
-		System.out.println("server : " + url);
-		/*
-		//POST送信でトップサーバにアクセス
-		URL solrURL = new URL(url);
-		URLConnection con = solrURL.openConnection();
-		con.setDoOutput(true);
-		PrintWriter out = new PrintWriter(con.getOutputStream());
-		//パラメータ設定
-		out.print("wt=json");
-		out.close();
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		//JSONをListで取り出す
-		String line = in.readLine();
-		Map map = (Map) JSON.decode(line);
-		map = (Map) map.get("index");
-		return map.get("maxDoc").toString();
-		*/
+	private static String maxDoc(String host, String port) throws Exception {
+		String url = setSolrAddress(host, port);
 		//SolrJ使用
 		SolrServer solr = new CommonsHttpSolrServer(url);
 		LukeRequest luke = new LukeRequest();
 		luke.setShowSchema(false);
 		LukeResponse rsp = luke.process(solr);
 		Integer max = rsp.getMaxDoc();
-		System.out.println("maxDoc : " + max);
+		//System.out.println("maxDoc : " + max);
 		return max.toString();
-		/*
-		//HttpClient使用
-		HttpClient httpClient = new HttpClient();
-		PostMethod method = new PostMethod(url);
-		try {
-			int status = httpClient.executeMethod(method);
-			if (status != HttpStatus.SC_OK) {
-				System.out.println("Method failed: " + method.getStatusText());
-			}
-			byte[] responseBody = method.getResponseBody();
-			//System.out.println(new String(responseBody));
-			Map map = (Map) JSON.decode(new String(responseBody));
-			map = (Map) map.get("index");
-			return map.get("maxDoc").toString();
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			method.releaseConnection();
-		}
-		return null;
-		*/
+	}
+
+	/**
+	 * Apache Solrのアドレスを作成メソッド
+	 * @param host
+	 * @param port
+	 * @return
+	 */
+	private static String setSolrAddress(String host, String port) {
+		return "http://" + host + ":" + port + "/solr/";
 	}
 }

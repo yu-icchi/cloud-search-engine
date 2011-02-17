@@ -85,7 +85,7 @@ public class SolrJSearchClient {
 		}
 		//Nodes List
 
-		Map<String, String> data = location.getNodes("nodelist");
+		Map<String, String> data = location.getNodes();
 		Iterator<String> it = data.keySet().iterator();
 		ConsistentHashing hash = new ConsistentHashing();
 		while (it.hasNext()) {
@@ -105,7 +105,7 @@ public class SolrJSearchClient {
 			}
 			*/
 			//レプリケーションとの切り替え
-			Map<String, String> replica = location.getNodes(url);
+			Map<String, String> replica = location.getNodes();
 			if (replica.get("node1") != null) {
 				url = replica.get("node1");
 				//System.out.println(node1);
