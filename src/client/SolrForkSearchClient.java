@@ -46,10 +46,10 @@ public class SolrForkSearchClient {
 		int locationPort = Integer.valueOf(locationConfig.get("port"));
 
 		//ユーザーからのクエリー
-		String queryString = "検索";
+		String queryString = "芥川";
 
 		//ユーザーのアカウント情報
-		String account = "data";
+		String account = "demo";
 
 		//検索数
 		int rows = 10;

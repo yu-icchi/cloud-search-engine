@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- LSEDaemonで必要な情報を設定する -->
+<config>
+	<!-- LSEDaemonのポート番号の指定 -->
+	<port>1988</port>
+
+	<!-- ファイル読み込みをするディレクトリを指定する -->
+	<dir>demo</dir>
+	<!-- ディレクトリのクローリングする間隔の指定（単位：秒） -->
+	<crawlerTimeSec>3</crawlerTimeSec>
+
+	<!-- Location Server（Apache Cassandra）のアドレスとポートを指定する -->
+	<location>
+		<host>192.168.220.141</host>
+		<port>9160</port>
+	</location>
+	<!-- 自身のApache Solrのインデックス情報をLocation Serverに通知する間隔の指定（単位：秒） -->
+	<locationTimeSec>10</locationTimeSec>
+
+	<!-- LSEクラスタを構築する全サーバのアドレス情報をまとめる（この情報によりConsistent Hashingを作成する） -->
+	<nodes>
+		<node>192.168.220.137</node>
+		<node>192.168.220.139</node>
+		<node>192.168.220.140</node>
+	</nodes>
+
+	<!-- Apache Solrが動作しているかを調べる間隔時間（単位：秒） -->
+	<solrPingTimeSec>30</solrPingTimeSec>
+
+	<!-- 自身のApache Solrのアドレスとポートの指定をする -->
+	<solr>
+		<host>192.168.220.137</host>
+		<port>8983</port>
+	</solr>
+</config>

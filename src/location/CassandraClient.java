@@ -110,17 +110,45 @@ public class CassandraClient {
 	//データ格納メソッド
 	//-----------------------------------------------------
 
-	public void insertNodes(String host, String type,  String data) {
+	public void insertNodes(String host,  String type) {
 		try {
 			//ColumnPathの作成
 			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
-			columnPath.setColumn(type.getBytes("utf-8"));
+			columnPath.setColumn(host.getBytes("utf-8"));
 			//レコードを挿入
-			client.insert(KEYSPACE, host, columnPath, data.getBytes("utf-8"), System.currentTimeMillis(), ConsistencyLevel.QUORUM);
+			//MD5("Nodes")=>187c6ad3a74cc93ac6c2229d398e383e
+			client.insert(KEYSPACE, "187c6ad3a74cc93ac6c2229d398e383e", columnPath, type.getBytes("utf-8"), System.currentTimeMillis(), ConsistencyLevel.QUORUM);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * insertNodesメソッド(Map<String, String>をデータベースに格納する)
+	 *
+	 *  @param (Map<(String)カラム名 , (String)値>) Map型のデータを指定する
+	 */
+	public void insertNodes(Map<String, String> nodes) {
+		try {
+			Map<String, List<ColumnOrSuperColumn>> cfmap = new HashMap<String, List<ColumnOrSuperColumn>>();
+			List<ColumnOrSuperColumn> columns = new ArrayList<ColumnOrSuperColumn>();
+			Column column;
+			ColumnOrSuperColumn columnOrSuperColumn;
+			long timestamp = System.currentTimeMillis();
+			for (Map.Entry<String, String> e : nodes.entrySet()) {
+				//追加するカラムデータ
+				column = new Column(e.getKey().getBytes("utf-8"), e.getValue().getBytes("utf-8"), timestamp);
+				columnOrSuperColumn = new ColumnOrSuperColumn();
+				columnOrSuperColumn.setColumn(column);
+				columns.add(columnOrSuperColumn);
+			}
+			cfmap.put(COLUMN_FAMILY, columns);
+			//MD5("Nodes")=>187c6ad3a74cc93ac6c2229d398e383e
+			client.batch_insert(KEYSPACE, "187c6ad3a74cc93ac6c2229d398e383e", cfmap, ConsistencyLevel.QUORUM);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -129,13 +157,14 @@ public class CassandraClient {
 	 *  @param (String) urlを指定する
 	 *  @param (String) dataを指定する
 	 */
-	public void insertMaxDoc(String url, String data) {
+	public void insertMaxDoc(String host, String data) {
 		try {
 			//ColumnPathの作成
 			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
-			columnPath.setColumn(url.getBytes("utf-8"));
+			columnPath.setColumn(host.getBytes("utf-8"));
 			//レコードを挿入
-			client.insert(KEYSPACE, "MaxDocs", columnPath, data.getBytes("utf-8"), System.currentTimeMillis(), ConsistencyLevel.ONE);
+			//MD5("MaxDocs")=>9b8fc883a0157d95b549084d9958a2dd
+			client.insert(KEYSPACE, "9b8fc883a0157d95b549084d9958a2dd", columnPath, data.getBytes("utf-8"), System.currentTimeMillis(), ConsistencyLevel.ONE);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -170,33 +199,26 @@ public class CassandraClient {
 	}
 
 	/**
-	 * insertIDFメソッド
+	 * insertDocFreqメソッド
 	 *
 	 *  @param (List<Map<String, String>>) dataを入れる
 	 */
-	public void insertDocFreq(List<Map<String, String>> data) {
-		try {
-			Map<String, Map<String, List<Mutation>>> map = new HashMap<String, Map<String, List<Mutation>>>();
-			long timestamp = System.currentTimeMillis();
-			for (int i = 0; i < data.size(); i++) {
-				List<Mutation> mutationList = new ArrayList<Mutation>();
-				String term = data.get(i).get("term");
-				String doc = data.get(i).get("docFreq");
-				String url = data.get(i).get("url");
-				//登録するMutationオブジェクトのListを生成
-				//mutationList.add(toMutation("idf", idf, timestamp));
-				//mutationList.add(toMutation("url", url, timestamp));
-				mutationList.add(toMutation(url, doc, timestamp));
-				//カラムファミリとMutationのリストのMapを作成する
-				Map<String, List<Mutation>> columnFamilyMap = new HashMap<String, List<Mutation>>();
-				columnFamilyMap.put(COLUMN_FAMILY, mutationList);
-				map.put(new String(term), columnFamilyMap);
-			}
-			System.out.println("insertDocFreq");
-			client.batch_mutate(KEYSPACE, map, ConsistencyLevel.ONE);
-		} catch(Exception e) {
-			e.printStackTrace();
+	public void insertDocFreq(List<Map<String, String>> data) throws Exception {
+		Map<String, Map<String, List<Mutation>>> map = new HashMap<String, Map<String, List<Mutation>>>();
+		long timestamp = System.currentTimeMillis();
+		for (int i = 0; i < data.size(); i++) {
+			List<Mutation> mutationList = new ArrayList<Mutation>();
+			String term = data.get(i).get("term");
+			String doc = data.get(i).get("docFreq");
+			String url = data.get(i).get("url");
+			//登録するMutationオブジェクトのListを生成
+			mutationList.add(toMutation(url, doc, timestamp));
+			//カラムファミリとMutationのリストのMapを作成する
+			Map<String, List<Mutation>> columnFamilyMap = new HashMap<String, List<Mutation>>();
+			columnFamilyMap.put(COLUMN_FAMILY, mutationList);
+			map.put(new String(term), columnFamilyMap);
 		}
+		client.batch_mutate(KEYSPACE, map, ConsistencyLevel.ONE);
 	}
 
 	/**
@@ -257,17 +279,12 @@ public class CassandraClient {
 	 *  @param (long) timestampを指定する
 	 *  @return (Mutation) Mutationオブジェクトを返す
 	 */
-	static Mutation toMutation(final String name, final String value, final long timestamp) {
-		try {
-			Mutation mutation = new Mutation();
-			ColumnOrSuperColumn columnOrSuperColumn = new ColumnOrSuperColumn();
-			columnOrSuperColumn.setColumn(new Column(name.getBytes("utf-8"), value.getBytes("utf-8"), timestamp));
-			mutation.setColumn_or_supercolumn(columnOrSuperColumn);
-			return mutation;
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	static Mutation toMutation(final String name, final String value, final long timestamp) throws Exception {
+		Mutation mutation = new Mutation();
+		ColumnOrSuperColumn columnOrSuperColumn = new ColumnOrSuperColumn();
+		columnOrSuperColumn.setColumn(new Column(name.getBytes("utf-8"), value.getBytes("utf-8"), timestamp));
+		mutation.setColumn_or_supercolumn(columnOrSuperColumn);
+		return mutation;
 	}
 
 	//-----------------------------------------------------
@@ -304,7 +321,7 @@ public class CassandraClient {
 		return null;
 	}
 
-	public Map<String, String> getNodes(String host) {
+	public Map<String, String> getNodes() {
 		try {
 			SlicePredicate slicePredicate = new SlicePredicate();
 			SliceRange sliceRange = new SliceRange();
@@ -312,7 +329,8 @@ public class CassandraClient {
 			sliceRange.setFinish(new byte[] {});
 			slicePredicate.setSlice_range(sliceRange);
 			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
-			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, host, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
+			//MD5("Nodes")=>187c6ad3a74cc93ac6c2229d398e383e
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, "187c6ad3a74cc93ac6c2229d398e383e", columnParent, slicePredicate, ConsistencyLevel.QUORUM);
 			Map<String, String> map = new HashMap<String, String>();
 			for (ColumnOrSuperColumn csc : results) {
 				Column column = csc.getColumn();
@@ -341,7 +359,7 @@ public class CassandraClient {
 			sliceRange.setFinish(new byte[] {});
 			slicePredicate.setSlice_range(sliceRange);
 			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
-			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, key, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, key, columnParent, slicePredicate, ConsistencyLevel.ONE);
 			//結果を出力する変数
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (ColumnOrSuperColumn c : results) {
@@ -419,7 +437,7 @@ public class CassandraClient {
 			slicePredicate.setSlice_range(sliceRange);
 			//multigetメソッドを使う
 			Map<String, List<ColumnOrSuperColumn>> results = client.multiget_slice(KEYSPACE,
-					keys, columnParent, slicePredicate, ConsistencyLevel.QUORUM);
+					keys, columnParent, slicePredicate, ConsistencyLevel.ONE);
 			//出力する
 			//結果を出力する変数
 			List<Map<String, String>> lists = new ArrayList<Map<String, String>>();
@@ -532,7 +550,8 @@ public class CassandraClient {
 			sliceRange.setFinish(new byte[] {});
 			slicePredicate.setSlice_range(sliceRange);
 			ColumnParent columnParent = new ColumnParent(COLUMN_FAMILY);
-			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, "MaxDocs", columnParent, slicePredicate, ConsistencyLevel.ONE);
+			//MD5("MaxDocs")=>9b8fc883a0157d95b549084d9958a2dd
+			List<ColumnOrSuperColumn> results = client.get_slice(KEYSPACE, "9b8fc883a0157d95b549084d9958a2dd", columnParent, slicePredicate, ConsistencyLevel.ONE);
 			//結果を出力する変数
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (ColumnOrSuperColumn c : results) {
@@ -632,6 +651,26 @@ public class CassandraClient {
 			columnPath.setColumn(url.getBytes("utf-8"));
 			//レコードを削除する
 			client.remove(KEYSPACE, key, columnPath, System.currentTimeMillis(), ConsistencyLevel.QUORUM);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * deleteメソッド
+	 *
+	 *  @param (String) keyを指定する
+	 *  @param (String) urlを指定する
+	 */
+	public void deleteNodes(String host) {
+		try {
+			//ColumnPathの作成
+			ColumnPath columnPath = new ColumnPath(COLUMN_FAMILY);
+			columnPath.setColumn(host.getBytes("utf-8"));
+			//レコードを削除する
+			//MD5("Nodes")=>187c6ad3a74cc93ac6c2229d398e383e
+			client.remove(KEYSPACE, "187c6ad3a74cc93ac6c2229d398e383e", columnPath, System.currentTimeMillis(), ConsistencyLevel.QUORUM);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

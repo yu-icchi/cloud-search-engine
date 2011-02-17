@@ -251,7 +251,7 @@ public class Daemon {
 			Location ls = new Location(locationServerHost, locationServerPort);
 			for (String node : locationServerList) {
 				node = "http://" + node + ":" + solrPort + "/solr/";
-				ls.set(node);
+				//ls.set(node);
 			}
 			LSFLAG = false;
 			System.out.println("end locationUpdate");
@@ -463,7 +463,7 @@ public class Daemon {
 		}
 		public void run() {
 			Location ls = new Location(locationServerHost, locationServerPort);
-			ls.set("http://" + this.node + ":" + solrPort + "/solr/");
+			//ls.set("http://" + this.node + ":" + solrPort + "/solr/");
 		}
 	}
 }

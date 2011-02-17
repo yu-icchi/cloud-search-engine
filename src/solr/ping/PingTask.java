@@ -17,7 +17,7 @@ public class PingTask {
 
 	protected boolean fStop;
 
-	private Location location = new Location();
+	private Location location = new Location("localhost", 9160);
 
 	protected List<String> serverList = new ArrayList<String>();
 
@@ -30,13 +30,13 @@ public class PingTask {
 
 	public void addServer(String address) {
 		serverList.add(address);
-		location.setNodes("nodelist", address, "active");
+		location.setNodes(address, "active");
 	}
 
-	public void addServer(String[] address) {
+	public void addServer(String... address) {
 		for (String str : address) {
 			serverList.add(str);
-			location.setNodes("nodelist", str, "active");
+			location.setNodes(str, "active");
 		}
 	}
 
@@ -53,21 +53,21 @@ public class PingTask {
 			String address = it.next();
 			System.out.println(address);
 			try {
-				url = "http://" + address + "/solr/core0/";
+				url = "http://" + address + "/solr/";
 				server = new CommonsHttpSolrServer(url);
 				res = server.ping();
 				System.out.println(res);
 			} catch (MalformedURLException e) {
 				System.out.println("URLがおかしいよ");
-				location.deleteNodes("nodelist", address);
+				location.deleteNodes(address);
 				it.remove();
 			} catch (SolrServerException e) {
 				System.out.println("サーバにアクセスできん");
-				location.setNodes("nodelist", address, "fault");
+				location.setNodes(address, "fault");
 				it.remove();
 			} catch (IOException e) {
 				System.out.println("読み込めん");
-				location.deleteNodes("nodelist", address);
+				location.deleteNodes(address);
 				it.remove();
 			}
 		}
