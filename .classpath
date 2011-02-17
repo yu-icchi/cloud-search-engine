@@ -68,12 +68,10 @@
 	<classpathentry kind="lib" path="lib/poi/ooxml-lib/geronimo-stax-api_1.0_spec-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/poi/ooxml-lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/serializer.jar"/>
-	<classpathentry kind="lib" path="lib/hadoop/hadoop-hdfs-0.21.0.jar"/>
-	<classpathentry kind="lib" path="lib/hadoop/hadoop-common-0.21.0.jar"/>
-	<classpathentry kind="lib" path="lib/hadoop/hadoop-mapred-0.21.0.jar"/>
-	<classpathentry kind="lib" path="lib/msgpack-0.5.1-devel.jar"/>
-	<classpathentry kind="lib" path="lib/msgpack-rpc-0.6.1-devel.jar"/>
-	<classpathentry kind="lib" path="lib/netty-3.2.4.Final.jar"/>
 	<classpathentry kind="lib" path="lib/apache-cassandra-0.6.2/slf4j-api-1.5.8.jar"/>
+	<classpathentry kind="lib" path="lib/msgpack/msgpack-0.5.1-devel.jar"/>
+	<classpathentry kind="lib" path="lib/msgpack/msgpack-rpc-0.6.1-devel.jar"/>
+	<classpathentry kind="lib" path="lib/msgpack/netty-3.2.4.Final.jar"/>
+	<classpathentry kind="lib" path="lib/sen/lib/sen.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
