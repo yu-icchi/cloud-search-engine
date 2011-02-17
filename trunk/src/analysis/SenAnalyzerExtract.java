@@ -21,7 +21,7 @@ public class SenAnalyzerExtract {
 	 * コンストラクタ
 	 */
 	public SenAnalyzerExtract() {
-		System.setProperty("sen.home", "app/SecondLevelSolr/Sen1/sen");
+		System.setProperty("sen.home", "lib/sen");
 	}
 
 	/**
@@ -29,7 +29,7 @@ public class SenAnalyzerExtract {
 	 * @param array
 	 */
 	public SenAnalyzerExtract(ArrayList<String> array) {
-		System.setProperty("sen.home", "app/SecondLevelSolr/Sen1/sen");
+		System.setProperty("sen.home", "lib/sen");
 		this.setStringArray(array);
 	}
 
