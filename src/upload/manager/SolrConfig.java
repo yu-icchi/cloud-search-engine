@@ -3,7 +3,7 @@
 //
 //修正できる「solrconfig.xml」のファイルを作成する
 //---------------------------------------------------------
-package localsearchengine.config;
+package upload.manager;
 
 import java.io.File;
 
