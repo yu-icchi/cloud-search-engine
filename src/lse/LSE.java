@@ -18,6 +18,13 @@ public interface LSE {
 	void stopAll();
 
 	/**
+	 * 指定したSolrサーバのインデックスを最適化させる
+	 * @param host
+	 * @param port
+	 */
+	void optimize(String host, String port);
+
+	/**
 	 * Location Serverへの更新要求
 	 * @param flag
 	 */
