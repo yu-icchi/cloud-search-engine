@@ -81,9 +81,12 @@ public class AutoLocationCheck {
 	public void update() {
 		try {
 			if (this.flag == true) {
-				//Apache Solrサーバのインデックスを最適化する
+				//Apache Solrサーバのインデックスを更新する
 				SolrServer solr = new CommonsHttpSolrServer(setSolrAddress());
-				solr.optimize();
+				//コミット
+				solr.commit();
+				//最適化
+				//solr.optimize();
 				//最適化終了後にLocation Serverに書き込み
 				Location location = new Location(this.cassandra.get("host"), Integer.valueOf(this.cassandra.get("port")));
 				location.set(this.solr.get("host"), this.solr.get("port"));

@@ -530,8 +530,9 @@ public class Location {
 		LukeRequest luke = new LukeRequest();
 		luke.setShowSchema(false);
 		LukeResponse rsp = luke.process(solr);
-		Integer max = rsp.getMaxDoc();
+		//Integer max = rsp.getMaxDoc();
 		//System.out.println("maxDoc : " + max);
+		Integer max = rsp.getNumDocs();
 		return max.toString();
 	}
 

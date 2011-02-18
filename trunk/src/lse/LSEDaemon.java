@@ -15,6 +15,8 @@ import lse.auto.AutoLocationCheck;
 import lse.auto.AutoNodesCheck;
 import lse.logic.ConsistentHashing;
 
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.msgpack.rpc.Server;
 import org.msgpack.rpc.loop.EventLoop;
 
@@ -51,7 +53,7 @@ public class LSEDaemon implements LSE {
 	public void startAll() {
 		lsCheck.start();
 		dirCheck.start();
-		//nodesCheck.start();
+		nodesCheck.start();
 	}
 
 	/**
@@ -61,7 +63,7 @@ public class LSEDaemon implements LSE {
 	public void stopAll() {
 		lsCheck.stop();
 		dirCheck.stop();
-		//nodesCheck.stop();
+		nodesCheck.stop();
 	}
 
 	/**
@@ -88,6 +90,70 @@ public class LSEDaemon implements LSE {
 		hash.delNode(node);
 	}
 
+	/**
+	 * @Override
+	 * インデックスの最適化
+	 */
+	public void optimize(String host, String port) {
+		//最適化するSolrサーバを決める
+		String address = setSolrAddress(host, port);
+		try {
+			SolrServer solr = new CommonsHttpSolrServer(address);
+			solr.optimize();
+			System.out.println("LSEDaemon " + address + " Optimize... [ok]");
+		} catch (Exception e) {
+			System.out.println("LSEDaemon " + address + " Optimize... [Error]");
+		}
+	}
+
+	//-----------------------------------------------------
+	//staticメソッド
+	//-----------------------------------------------------
+	/**
+	 * configDataメソッド
+	 *
+	 * @param path
+	 * @return
+	 * @throws Exception
+	 */
+	private static Map<String, Object> configData(String path) throws Exception {
+
+		Map<String, Object> result = new HashMap<String, Object>();
+
+		//LSEクラスタを制御するための設定ファイルを読み込む
+		XMLConfig config = null;
+
+		config = new XMLConfig(path);
+		//デーモンのポート番号
+		result.put("port", config.getElement("port"));
+		//ディレクトリ
+		result.put("dir", config.getElement("dir"));
+		//ディレクトリのチェック間隔時間
+		result.put("crawlerTimeSec", config.getElement("crawlerTimeSec"));
+		//location　Server
+		result.put("location", config.getHost2Port("location"));
+		//location Server Time
+		result.put("locationTimeSec", config.getElement("locationTimeSec"));
+		//nodes
+		result.put("nodes", config.getNodes("node"));
+		//solr
+		result.put("solr", config.getHost2Port("solr"));
+		//pingをする間隔時間
+		result.put("pingTime", config.getElement("solrPingTimeSec"));
+
+		return result;
+	}
+
+	/**
+	 * Apache Solrのアドレスを作成メソッド
+	 * @param host
+	 * @param port
+	 * @return
+	 */
+	private String setSolrAddress(String host, String port) {
+		return "http://" + host + ":" + port + "/solr/";
+	}
+
 	//-----------------------------------------------------
 	//メイン処理
 	//-----------------------------------------------------
@@ -99,8 +165,13 @@ public class LSEDaemon implements LSE {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		try {
+			//起動時にconfig.xmlファイルを指定する
+			String path = System.getProperty("config");
+			if (path == null) {
+				System.out.println("Not Find... [config.xml]");
+			}
 			//config.xmlの読み込み
-			Map<String, Object> xml = configData("src/lse/config.xml");
+			Map<String, Object> xml = configData(path);
 			int port = Integer.valueOf(xml.get("port").toString()).intValue();
 			String dir = xml.get("dir").toString();
 			Map<String, String> location = (Map<String, String>) xml.get("location");
@@ -143,41 +214,6 @@ public class LSEDaemon implements LSE {
 		} catch (Exception e) {
 			System.out.println("LSEDaemon... [Error]");
 		}
-	}
-
-	/**
-	 * configDataメソッド
-	 *
-	 * @param path
-	 * @return
-	 * @throws Exception
-	 */
-	private static Map<String, Object> configData(String path) throws Exception {
-
-		Map<String, Object> result = new HashMap<String, Object>();
-
-		//LSEクラスタを制御するための設定ファイルを読み込む
-		XMLConfig config = null;
-
-		config = new XMLConfig(path);
-		//デーモンのポート番号
-		result.put("port", config.getElement("port"));
-		//ディレクトリ
-		result.put("dir", config.getElement("dir"));
-		//ディレクトリのチェック間隔時間
-		result.put("crawlerTimeSec", config.getElement("crawlerTimeSec"));
-		//location　Server
-		result.put("location", config.getHost2Port("location"));
-		//location Server Time
-		result.put("locationTimeSec", config.getElement("locationTimeSec"));
-		//nodes
-		result.put("nodes", config.getNodes("node"));
-		//solr
-		result.put("solr", config.getHost2Port("solr"));
-		//pingをする間隔時間
-		result.put("pingTime", config.getElement("solrPingTimeSec"));
-
-		return result;
 	}
 
 }

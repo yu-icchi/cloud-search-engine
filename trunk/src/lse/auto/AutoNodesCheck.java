@@ -94,9 +94,9 @@ public class AutoNodesCheck {
 	 */
 	public void check() {
 		//Solrサーバにアクセスする
-		SolrPing nextSolrServer1 = new SolrPing(this.nextNode, this.cassandra);
+		Thread nextSolrServer1 = new Thread(new SolrPing(this.nextNode, this.cassandra));
 		nextSolrServer1.start();
-		SolrPing nextSolrServer2 = new SolrPing(this.next2Node, this.cassandra);
+		Thread nextSolrServer2 = new Thread(new SolrPing(this.next2Node, this.cassandra));
 		nextSolrServer2.start();
 	}
 
@@ -156,7 +156,7 @@ public class AutoNodesCheck {
 	/**
 	 * SolrPingをスレッドにして調べる
 	 */
-	private class SolrPing extends Thread {
+	private class SolrPing implements Runnable {
 
 		//Solr Server
 		private Map<String, String> solr = null;

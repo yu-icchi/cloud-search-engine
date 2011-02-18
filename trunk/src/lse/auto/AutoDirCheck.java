@@ -158,9 +158,9 @@ public class AutoDirCheck {
 	    			FileCrawler fc = new FileCrawler(TARGET_DIR.getName(), file, address);
 	    			boolean flag = fc.setIndex();
 	    			if (flag == false) {
-	    				System.out.print("AutoDirCheck : checkModifiedFile [" + filename + "]... [Error]");
+	    				System.out.println("AutoDirCheck : checkModifiedFile [" + address + " : " + filename + "]... [Error]");
 	    			} else {
-	    				System.out.print("AutoDirCheck : checkModifiedFile [" + filename + "]... [ok]");
+	    				System.out.println("AutoDirCheck : checkModifiedFile [" + address + " : " + filename + "]... [ok]");
 	    				//更新したノードを格納
 	    				this.setSolrAddress.add(node);
 	    			}
@@ -192,9 +192,9 @@ public class AutoDirCheck {
 						FileCrawler fc = new FileCrawler(TARGET_DIR.getName(), file, address);
 						boolean flag = fc.setIndex();
 						if (flag == false) {
-							System.out.print("AutoDirCheck : checkModifiedFile [" + file.getPath() + "]... [Error]");
+							System.out.println("AutoDirCheck : checkNewFile [" + address + " : " + file.getPath() + "]... [Error]");
 						} else {
-							System.out.print("AutoDirCheck : checkModifiedFile [" + file.getPath() + "]... [ok]");
+							System.out.println("AutoDirCheck : checkNewFile [" + address + " : " + file.getPath() + "]... [ok]");
 		    				//更新したノードを格納
 		    				this.setSolrAddress.add(node);
 		    			}
@@ -227,12 +227,12 @@ public class AutoDirCheck {
 					SolrServer solr = new CommonsHttpSolrServer(address);
 					solr.deleteById(filename);
 					//solr.commit();
-					solr.optimize();
-					System.out.print("AutoDirCheck : checkRemovedFile [" + filename + "]... [ok]");
+					//solr.optimize();
+					System.out.println("AutoDirCheck : checkRemovedFile ["+ address + " : " + filename + "]... [ok]");
 					//更新したノードを格納
 					this.setSolrAddress.add(node);
 				} catch (Exception e) {
-					System.out.print("AutoDirCheck : checkRemovedFile [" + filename + "]... [Error]");
+					System.out.println("AutoDirCheck : checkRemovedFile [" + address + " : " + filename + "]... [Error]");
 				}
 			}
 		}
