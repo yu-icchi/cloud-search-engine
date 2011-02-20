@@ -106,7 +106,7 @@ public class AutoLocationCheck {
 	 * @return
 	 */
 	private String setSolrAddress() {
-		return "http://" + this.solr.get("host") + ":" + this.solr.get("port") + "/solr/";
+		return "http://" + this.solr.get("host") + ":" + this.solr.get("port") + "/solr/core0/";
 	}
 
 	//-----------------------------------------------------

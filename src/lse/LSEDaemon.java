@@ -17,6 +17,7 @@ import lse.logic.ConsistentHashing;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.msgpack.rpc.Server;
 import org.msgpack.rpc.loop.EventLoop;
 
@@ -33,6 +34,8 @@ public class LSEDaemon implements LSE {
 	private static AutoDirCheck dirCheck = null;
 	//他のノードを監視しするクラス
 	private static AutoNodesCheck nodesCheck = null;
+
+	private static Map<String, String> solr = null;
 
 	//-----------------------------------------------------
 	//LSEインターフェースのオーバーライドの定義
@@ -51,6 +54,14 @@ public class LSEDaemon implements LSE {
 	 * デーモンスレッドを全て起動させる
 	 */
 	public void startAll() {
+		try {
+			//Apache SolrのmulticotreをRELOADさせる
+			SolrServer solrServer = new CommonsHttpSolrServer("http://" + solr.get("host") + ":" + solr.get("port") + "/solr/");
+			CoreAdminRequest.reloadCore("core0", solrServer);
+			CoreAdminRequest.reloadCore("core1", solrServer);
+		} catch (Exception e) {
+			System.out.println("LSEDaemon Solr Multicore RELOAD is Error");
+		}
 		lsCheck.start();
 		dirCheck.start();
 		nodesCheck.start();
@@ -140,6 +151,9 @@ public class LSEDaemon implements LSE {
 		result.put("solr", config.getHost2Port("solr"));
 		//pingをする間隔時間
 		result.put("pingTime", config.getElement("solrPingTimeSec"));
+		//Multicoreの保存ディレクトリ
+		result.put("core0", config.getElement("core0"));
+		result.put("core1", config.getElement("core1"));
 
 		return result;
 	}
@@ -150,8 +164,71 @@ public class LSEDaemon implements LSE {
 	 * @param port
 	 * @return
 	 */
-	private String setSolrAddress(String host, String port) {
-		return "http://" + host + ":" + port + "/solr/";
+	private static String setSolrAddress(String host, String port) {
+		return "http://" + host + ":" + port + "/solr/core0/";
+	}
+
+	/**
+	 * Master側
+	 * solrconfig.xmlを作成するメソッド
+	 * @param dir
+	 */
+	private static void solrConfigMaster(String dir) {
+		SolrConfig conf = new SolrConfig();
+		conf.abortOnConfigurationError();
+		conf.lib();
+		conf.indexDefaults();
+		conf.mainIndex();
+		conf.jmx();
+		conf.updateHandler();
+		conf.query();
+		conf.requestDispatcher();
+		conf.standardHandler();
+		conf.xmlHandler();
+		conf.javabinHandler();
+		conf.documentHandler();
+		conf.fieldHandler();
+		conf.debugHandler();
+		conf.csvHandler();
+		conf.replicationHandlerMaster("optimize", "startup", "commit");
+		conf.termsHandler();
+		conf.adminHandler();
+		conf.pingHandler();
+		conf.highlighting();
+		conf.queryResponseWriter();
+		conf.fileWrite(dir);
+	}
+
+	/**
+	 * Slave側
+	 * @param dir
+	 * @param host
+	 * @param port
+	 */
+	private static void solrConfigSlave(String dir, String host, String port) {
+		SolrConfig conf = new SolrConfig();
+		conf.abortOnConfigurationError();
+		conf.lib();
+		conf.indexDefaults();
+		conf.mainIndex();
+		conf.jmx();
+		conf.updateHandler();
+		conf.query();
+		conf.requestDispatcher();
+		conf.standardHandler();
+		conf.xmlHandler();
+		conf.javabinHandler();
+		conf.documentHandler();
+		conf.fieldHandler();
+		conf.debugHandler();
+		conf.csvHandler();
+		conf.replicationHandlerSlave(setSolrAddress(host, port) + "replication", "00:05:00");
+		conf.termsHandler();
+		conf.adminHandler();
+		conf.pingHandler();
+		conf.highlighting();
+		conf.queryResponseWriter();
+		conf.fileWrite(dir);
 	}
 
 	//-----------------------------------------------------
@@ -176,10 +253,12 @@ public class LSEDaemon implements LSE {
 			String dir = xml.get("dir").toString();
 			Map<String, String> location = (Map<String, String>) xml.get("location");
 			List<String> nodes = (List<String>) xml.get("nodes");
-			Map<String, String> solr = (Map<String, String>) xml.get("solr");
+			solr = (Map<String, String>) xml.get("solr");
 			long lsTime = Integer.valueOf(xml.get("locationTimeSec").toString()).longValue();
 			long crawlerTime = Integer.valueOf(xml.get("crawlerTimeSec").toString()).longValue();
 			long pingTime = Integer.valueOf(xml.get("pingTime").toString()).longValue();
+			String core0Dir = xml.get("core0").toString();
+			String core1Dir = xml.get("core1").toString();
 
 			//MessagePack-RPCでServer作成
 			EventLoop loop = EventLoop.defaultEventLoop();
@@ -190,6 +269,12 @@ public class LSEDaemon implements LSE {
 
 			//Consistent Hashing作成
 			hash.addNode(nodes);
+
+			//SolrConfig.xmlの作成（multicore数が２つの場合である）
+			//Master側でのsolrconfig.xmlの作成
+			solrConfigMaster(core0Dir);
+			//Slave側でのsolrconfig.xmlの作成
+			solrConfigSlave(core1Dir, hash.prevNode(solr.get("host")), solr.get("port"));
 
 			//ディレクトリチェックデーモンの起動
 			dirCheck = new AutoDirCheck(dir, crawlerTime);

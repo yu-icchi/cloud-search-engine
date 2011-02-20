@@ -9,7 +9,9 @@ package lse.auto;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrServer;
@@ -44,6 +46,8 @@ public class AutoNodesCheck {
 	//監視用ノード
 	private Map<String, String> nextNode = new HashMap<String, String>();
 	private Map<String, String> next2Node = new HashMap<String, String>();
+	//監視ノードリスト
+	private List<Map<String, String>> nextNodeList = new ArrayList<Map<String, String>>();
 
 	//-----------------------------------------------------
 	//コンストラクタ
@@ -70,10 +74,12 @@ public class AutoNodesCheck {
 		this.nextNode.put("host", hash.nextNode(this.solr.get("host")));
 		this.nextNode.put("port", this.solr.get("port"));
 		location.setNodes(this.nextNode.get("host"), "active");
+		this.nextNodeList.add(this.nextNode);
 		//次の次のノードを登録
 		this.next2Node.put("host", hash.nextNode(this.nextNode.get("host")));
 		this.next2Node.put("port", this.solr.get("port"));
 		location.setNodes(this.next2Node.get("host"), "active");
+		this.nextNodeList.add(this.next2Node);
 		//標準出力
 		System.out.println("AutoNodesCheck : start [" + this.solr.get("host") + "]... [ok]");
 		//デーモンスレッド化
@@ -94,10 +100,18 @@ public class AutoNodesCheck {
 	 */
 	public void check() {
 		//Solrサーバにアクセスする
-		Thread nextSolrServer1 = new Thread(new SolrPing(this.nextNode, this.cassandra));
-		nextSolrServer1.start();
-		Thread nextSolrServer2 = new Thread(new SolrPing(this.next2Node, this.cassandra));
-		nextSolrServer2.start();
+		for (Map<String, String> next : this.nextNodeList) {
+			Thread nextSolrServer = new Thread(new SolrPing(next, this.cassandra));
+			nextSolrServer.start();
+		}
+	}
+
+	/**
+	 * resetメソッド
+	 * @param node
+	 */
+	public void resetNodeList(Map<String, String> node) {
+		this.nextNodeList.remove(node);
 	}
 
 	//-----------------------------------------------------
@@ -180,12 +194,15 @@ public class AutoNodesCheck {
 				res = server.ping();
 			} catch (MalformedURLException e) {
 				this.location.setNodes(this.solr.get("host"), "fault");
+				resetNodeList(this.solr);
 				System.out.println("Solr Ping " + res + " : " + this.solr.get("host") + " [URL is Error]");
 			} catch (SolrServerException e) {
 				this.location.setNodes(this.solr.get("host"), "fault");
+				resetNodeList(this.solr);
 				System.out.println("Solr Ping " + res + " : " + this.solr.get("host") + " [Server is Error]");
 			} catch (IOException e) {
 				this.location.setNodes(this.solr.get("host"), "fault");
+				resetNodeList(this.solr);
 				System.out.println("Solr Ping " + res + " : " + this.solr.get("host") + " [IO is Error]");
 			}
 		}
@@ -196,7 +213,7 @@ public class AutoNodesCheck {
 		 * @return
 		 */
 		private String setSolrAddress() {
-			return "http://" + this.solr.get("host") + ":" + this.solr.get("port") + "/solr/";
+			return "http://" + this.solr.get("host") + ":" + this.solr.get("port") + "/solr/core0/";
 		}
 	}
 }

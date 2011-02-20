@@ -21,22 +21,20 @@ public class LocationNodeTester {
 		map.put("192.168.220.139", "active");
 		map.put("192.168.220.140", "active");
 
-		Location location = new Location("192.168.220.141", 9160);
+		Location location = new Location("192.168.1.2", 9160);
 		//location.setNodes(map);
 
-		//location.setNodes("192.168.220.137", "fault");
+		//location.setNodes("192.168.220.139", "active");
 
 		//location.deleteNodes("192.168.220.139");
 
 		Map<String, String> data = location.getNodes();
 
-		Iterator<String> it = data.keySet().iterator();
-
 		ConsistentHashing hash = new ConsistentHashing();
 
 		List<String> fault = new ArrayList<String>();
 
-		while (it.hasNext()) {
+		for (Iterator<String> it = data.keySet().iterator(); it.hasNext();) {
 			String id = it.next();
 			System.out.println(id + " (" + data.get(id) + ")");
 
@@ -45,9 +43,7 @@ public class LocationNodeTester {
 			if (data.get(id).equals("fault")) {
 				fault.add(id);
 			}
-
 		}
-
 
 		hash.nodeList();
 		System.out.println(fault);

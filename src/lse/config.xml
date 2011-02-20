@@ -11,7 +11,7 @@
 
 	<!-- Location Server（Apache Cassandra）のアドレスとポートを指定する -->
 	<location>
-		<host>192.168.220.141</host>
+		<host>192.168.1.2</host>
 		<port>9160</port>
 	</location>
 	<!-- 自身のApache Solrのインデックス情報をLocation Serverに通知する間隔の指定（単位：秒） -->
@@ -32,4 +32,9 @@
 		<host>192.168.220.137</host>
 		<port>8983</port>
 	</solr>
+
+	<!-- Apache Solr、マルチコアでのsolrconfig.xmlファイル保存のディレクトリ指定 -->
+	<core0>demo/core0/</core0>
+	<core1>demo/core1/</core1>
+
 </config>
