@@ -262,7 +262,7 @@ public class AutoDirCheck {
 	 * @return
 	 */
 	private String setSolrAddress(String host) {
-		return "http://" + host + ":" + this.solrPort + "/solr/";
+		return "http://" + host + ":" + this.solrPort + "/solr/core0/";
 	}
 
 	//-----------------------------------------------------

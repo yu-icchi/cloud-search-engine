@@ -543,6 +543,6 @@ public class Location {
 	 * @return
 	 */
 	private static String setSolrAddress(String host, String port) {
-		return "http://" + host + ":" + port + "/solr/";
+		return "http://" + host + ":" + port + "/solr/core0/";
 	}
 }

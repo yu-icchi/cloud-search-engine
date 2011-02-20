@@ -344,7 +344,7 @@ public class SolrConfig {
 	 */
 	public void replicationHandlerSlave(String host, String interval) {
 		String[] replicationTag = {"name", "class"};
-		String[] replicationData = {"/replication", "solr.SearchHandler"};
+		String[] replicationData = {"/replication", "solr.ReplicationHandler"};
 		Element replication = setElement2("requestHandler", replicationTag, replicationData, null);
 		Element replicationLst = setElement("lst", "name", "slave", null);
 		replicationLst.appendChild(setElement("str", "name", "masterUrl", host));
@@ -361,7 +361,7 @@ public class SolrConfig {
 	 */
 	public void replicationHandlerMaster(String... replicateAfter) {
 		String[] replicationTag = {"name", "class"};
-		String[] replicationData = {"/replication", "solr.SearchHandler"};
+		String[] replicationData = {"/replication", "solr.ReplicationHandler"};
 		Element replication = setElement2("requestHandler", replicationTag, replicationData, null);
 		Element replicationLst = setElement("lst", "name", "master", null);
 		for (String str : replicateAfter) {
@@ -380,7 +380,7 @@ public class SolrConfig {
 	 */
 	public void replicationHandler(String host, String interval, String... data) {
 		String[] replicationTag = {"name", "class"};
-		String[] replicationData = {"/replication", "solr.SearchHandler"};
+		String[] replicationData = {"/replication", "solr.ReplicationHandler"};
 		Element replication = setElement2("requestHandler", replicationTag, replicationData, null);
 		//Master
 		Element master = setElement("lst", "name", "master", null);
@@ -632,13 +632,14 @@ public class SolrConfig {
 		conf.fieldHandler();
 		conf.debugHandler();
 		conf.csvHandler();
-		conf.replicationHandler("http://localhost:7100/solr/core0/replication", "00:00:30", "optimize", "startup");
+		//conf.replicationHandlerMaster("optimize", "startup", "commite");
+		conf.replicationHandlerSlave("192.168.220.135", "00:01:00");
 		conf.termsHandler();
 		conf.adminHandler();
 		conf.pingHandler();
 		conf.highlighting();
 		conf.queryResponseWriter();
-		conf.fileWrite("demo/sampleSolrConfig2.xml");
+		conf.fileWrite("demo/solrconfig.xml");
 		System.out.println(System.currentTimeMillis() - time);
 	}
 

@@ -5,6 +5,8 @@
 //---------------------------------------------------------
 package client;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ import analysis.SenAnalyzerExtract;
 
 import solr.fork.SolrFork;
 import solr.ranking.DistributedSimilarity;
+import upload.consistency.ConsistentHashing;
 
 public class SolrForkSearchClient {
 
@@ -36,7 +39,6 @@ public class SolrForkSearchClient {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
-
 		//GSEのConfig.xmlデータを取得する
 		XMLConfig config = new XMLConfig("demo/gse-config.xml");
 
@@ -49,7 +51,7 @@ public class SolrForkSearchClient {
 		String queryString = "芥川";
 
 		//ユーザーのアカウント情報
-		String account = "demo";
+		String account = "demo1";
 
 		//検索数
 		int rows = 10;
@@ -66,11 +68,36 @@ public class SolrForkSearchClient {
 		SenAnalyzerExtract analyzerExtract = new SenAnalyzerExtract(queryConverter.getTermList());
 		//クエリーのタームを与える
 		Map<String, Object> map = location.get(analyzerExtract.extract());
-		System.out.println(map);
-		//URL
-		List<String> urlList = (List<String>) map.get("url");
+
+		//Location ServerからNodesリストを取得する
+		Map<String, String> nodes = location.getNodes();
+		//分散ルール
+		ConsistentHashing hash = new ConsistentHashing();
+		//停止ノードリスト
+		List<String> fault = new ArrayList<String>();
+		for (Iterator<String> it = nodes.keySet().iterator(); it.hasNext();) {
+			String id = it.next();
+			hash.addNode(id);
+			//停止しているノードを登録する
+			if (nodes.get(id).equals("fault")) {
+				fault.add(id);
+			}
+		}
+
+		//URL作成
+		List<String> urlList = new ArrayList<String>();
+		for (String node : (List<String>) map.get("url")) {
+			if (fault.contains(node)) {
+				node = hash.nextNode(node);
+				urlList.add("http://" + node + ":8983/solr/core1/");
+			} else {
+				urlList.add("http://" + node + ":8983/solr/core0/");
+			}
+		}
+
 		//maxDocs
 		int maxDocs = (Integer) map.get("maxDocs");
+
 		//docFreq
 		Map<String, Integer> docFreq = (Map<String, Integer>) map.get("docFreq");
 
@@ -85,7 +112,6 @@ public class SolrForkSearchClient {
 		DistributedSimilarity ranking = new DistributedSimilarity(docFreq, maxDocs);
 		ranking.solrScoreImport(debugList);
 		List<Map<String, Object>> documentResult = ranking.ranking();
-		//System.out.println(documentResult);
 
 		//10件以下の場合
 		if (documentResult.size() < rows) {
