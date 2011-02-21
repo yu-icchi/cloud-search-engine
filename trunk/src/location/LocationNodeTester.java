@@ -24,7 +24,7 @@ public class LocationNodeTester {
 		Location location = new Location("192.168.1.2", 9160);
 		//location.setNodes(map);
 
-		//location.setNodes("192.168.220.139", "active");
+		location.setNodes("192.168.220.137", "fault");
 
 		//location.deleteNodes("192.168.220.139");
 

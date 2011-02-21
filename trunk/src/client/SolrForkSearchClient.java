@@ -139,6 +139,9 @@ public class SolrForkSearchClient {
 			System.out.println("id : " + documentResult.get(i).get("id"));
 			List<String> msg = (List<String>) doc.get(documentResult.get(i).get("id")).get("text");
 			System.out.println(msg.get(0) + " " + msg.get(1));
+			System.out.println(doc.get(documentResult.get(i).get("id")).get("time"));
+			System.out.println(doc.get(documentResult.get(i).get("id")).get("type"));
+			System.out.println(doc.get(documentResult.get(i).get("id")).get("title"));
 			System.out.println();
 		}
 	}
