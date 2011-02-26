@@ -72,7 +72,7 @@
 	<classpathentry kind="lib" path="lib/msgpack/msgpack-0.5.1-devel.jar"/>
 	<classpathentry kind="lib" path="lib/msgpack/msgpack-rpc-0.6.1-devel.jar"/>
 	<classpathentry kind="lib" path="lib/msgpack/netty-3.2.4.Final.jar"/>
-	<classpathentry kind="lib" path="lib/sen/lib/sen.jar"/>
-	<classpathentry kind="lib" path="lib/sen/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/sen.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
