@@ -18,6 +18,38 @@ public interface LSE {
 	void stopAll();
 
 	/**
+	 * LocationCheckデーモンだけ起動させる
+	 */
+	void startLSCheck();
+
+	void startDirCheck();
+
+	void startNodeCheck();
+
+	/**
+	 * LocationCheckデーモンだけ停止させる
+	 */
+	void stopLSCheck();
+
+	void stopDirCheck();
+
+	void stopNodeCheck();
+
+	/**
+	 * LocationCheckデーモンだけ再起動させる
+	 */
+	void restartLSCheck();
+
+	void restartDirCheck();
+
+	void restartNodeCheck();
+
+	/**
+	 * Apache Solrのマルチコアをリロードする
+	 */
+	void mlticoreRELOAD();
+
+	/**
 	 * 指定したSolrサーバのインデックスを最適化させる
 	 * @param host
 	 * @param port

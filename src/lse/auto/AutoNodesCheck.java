@@ -70,15 +70,15 @@ public class AutoNodesCheck {
 		fStop = false;
 		//Locationクラスの定義
 		Location location = new Location(this.cassandra.get("host"), Integer.valueOf(this.cassandra.get("port")));
+		//自身のSolrサーバをactiveで登録する
+		location.setNodes(this.solr.get("host"), "active");
 		//次のノードを登録
 		this.nextNode.put("host", hash.nextNode(this.solr.get("host")));
 		this.nextNode.put("port", this.solr.get("port"));
-		location.setNodes(this.nextNode.get("host"), "active");
 		this.nextNodeList.add(this.nextNode);
 		//次の次のノードを登録
 		this.next2Node.put("host", hash.nextNode(this.nextNode.get("host")));
 		this.next2Node.put("port", this.solr.get("port"));
-		location.setNodes(this.next2Node.get("host"), "active");
 		this.nextNodeList.add(this.next2Node);
 		//標準出力
 		System.out.println("AutoNodesCheck : start [" + this.solr.get("host") + "]... [ok]");

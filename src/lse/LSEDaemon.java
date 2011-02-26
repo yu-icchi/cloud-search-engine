@@ -117,6 +117,96 @@ public class LSEDaemon implements LSE {
 		}
 	}
 
+	/**
+	 * @Override
+	 * LocationCheckデーモンだけ起動させる
+	 */
+	public void startLSCheck() {
+		lsCheck.start();
+	}
+
+	/**
+	 * @Override
+	 * DirCheckデーモンだけ起動させる
+	 */
+	public void startDirCheck() {
+		dirCheck.start();
+	}
+
+	/**
+	 * @Override
+	 * NodesCheckデーモンだけ起動させる
+	 */
+	public void startNodeCheck() {
+		nodesCheck.start();
+	}
+
+	/**
+	 * @Override
+	 * LocationCheckデーモンだけ停止させる
+	 */
+	public void stopLSCheck() {
+		lsCheck.stop();
+	}
+
+	/**
+	 * @Override
+	 * DirCheckデーモンだけ停止させる
+	 */
+	public void stopDirCheck() {
+		dirCheck.stop();
+	}
+
+	/**
+	 * @Override
+	 * NodesCheckデーモンだけ停止させる
+	 */
+	public void stopNodeCheck() {
+		nodesCheck.stop();
+	}
+
+	/**
+	 * @Override
+	 * LocationCheckデーモンだけ再起動させる
+	 */
+	public void restartLSCheck() {
+		lsCheck.stop();
+		lsCheck.start();
+	}
+
+	/**
+	 * @Override
+	 * DirCheckデーモンだけ再起動させる
+	 */
+	public void restartDirCheck() {
+		dirCheck.stop();
+		dirCheck.start();
+	}
+
+	/**
+	 * @Override
+	 * NodesCheckデーモンだけ再起動させる
+	 */
+	public void restartNodeCheck() {
+		nodesCheck.stop();
+		nodesCheck.start();
+	}
+
+	/**
+	 * @Override
+	 * Apache SolrのmulticotreをRELOADさせる
+	 */
+	public void mlticoreRELOAD() {
+		try {
+			//Apache SolrのmulticotreをRELOADさせる
+			SolrServer solrServer = new CommonsHttpSolrServer("http://" + solr.get("host") + ":" + solr.get("port") + "/solr/");
+			CoreAdminRequest.reloadCore("core0", solrServer);
+			CoreAdminRequest.reloadCore("core1", solrServer);
+		} catch (Exception e) {
+			System.out.println("LSEDaemon Solr Multicore RELOAD is Error");
+		}
+	}
+
 	//-----------------------------------------------------
 	//staticメソッド
 	//-----------------------------------------------------
