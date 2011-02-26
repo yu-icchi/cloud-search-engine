@@ -7,6 +7,8 @@ package lse.logic;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -103,6 +105,19 @@ public class ConsistentHashing {
 				circle.put(getHash(node + "_" + i), node);
 			}
 		}
+	}
+
+	/**
+	 * getNodeメソッド（Listでノード全てを出力する）
+	 *
+	 * @return List
+	 */
+	public List<String> getNode() {
+		List<String> nodes = new ArrayList<String>();
+		for (Iterator<BigInteger> it = continuum.keySet().iterator(); it.hasNext();) {
+			nodes.add(continuum.get(it));
+		}
+		return nodes;
 	}
 
 	/**
