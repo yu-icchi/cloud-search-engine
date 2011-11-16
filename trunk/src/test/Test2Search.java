@@ -12,7 +12,7 @@ public class Test2Search {
 		
 		SolrQuery query = new SolrQuery();
 		query.setQuery("小澤龍之介");
-		SolrServer server = new CommonsHttpSolrServer("http://192.168.1.129:8983/solr/");
+		SolrServer server = new CommonsHttpSolrServer("http://192.168.168.243:8983/solr/");
 		QueryResponse response = server.query(query, SolrRequest.METHOD.POST);
 		SolrDocumentList list = response.getResults();
 		

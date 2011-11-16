@@ -11,7 +11,7 @@ public class Test2Index {
 	public static void main(String[] args) throws Exception{
 
 		SolrServer server =
-			new CommonsHttpSolrServer("http://192.168.1.129:8983/solr");
+			new CommonsHttpSolrServer("http://192.168.168.243:8983/solr");
 		SolrInputDocument document = new SolrInputDocument();
 		document.addField("id", "http://gihyo.jp/ThisIsSample1");
 		document.addField("name", "小澤龍之介");
